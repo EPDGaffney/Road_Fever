@@ -15,6 +15,24 @@ ARoadFeverCharacterNed::ARoadFeverCharacterNed()
 void ARoadFeverCharacterNed::SetupPlayerInputComponent( class UInputComponent* InInputComponent )
 {
 	Super::SetupPlayerInputComponent( InInputComponent );
+
+	if ( InInputComponent )
+	{
+		InInputComponent->BindAxis( "MoveForward", this, &ARoadFeverCharacterNed::MoveForward );
+		InInputComponent->BindAxis( "MoveRight", this, &ARoadFeverCharacterNed::MoveRight );
+	}
+}
+
+// Moves the Character in the X axis. [10/12/2015 Matthew Woolley]
+void ARoadFeverCharacterNed::MoveForward( float InInputVal )
+{
+	_move( InInputVal, EAxis::X );
+}
+
+// Moves the Character in the Y axis. [10/12/2015 Matthew Woolley]
+void ARoadFeverCharacterNed::MoveRight( float InInputVal )
+{
+	_move( InInputVal, EAxis::Y );
 }
 
 void ARoadFeverCharacterNed::_move( float InInputVal, EAxis::Type InMoveAxis )
