@@ -1,8 +1,8 @@
 // Copyright Square Crank Games. All Rights Reserved.
 
 #include "Road_Fever.h"
-#include "Public/Inventory.h"
-#include "Runtime/UMG/Public/UMG.h"
+#include "Public/Inventory/Inventory.h"
+#include "Public/UMG.h"
 #include "SlateBasics.h"
 #include "SlateExtras.h"
 #include "Characters/RoadFeverCharacterNed.h"
