@@ -43,11 +43,15 @@ public:
 	class UBoxComponent* TriggerArea;
 
 	// The transform that, when triggered, the Character's camera moves to. [11/12/2015 Matthew Woolley]
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Renderung" )
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Rendering" )
 	FCameraPositioning CameraPosition;
 
 	// The camera that gets shown in the editor to help the LDs position them. [11/12/2015 Matthew Woolley]
 	UPROPERTY( EditAnywhere )
 	class UCameraComponent* EditorCameraReference;
+
+	// Whether or not the game starts using this camera. [11/12/2015 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Rendering" )
+	bool bIsPrimaryCamera;
 
 };

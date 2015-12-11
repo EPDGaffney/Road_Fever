@@ -63,6 +63,9 @@ public:
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Rendering" )
 	class UCameraComponent* CharactersCamera;
 
+	// Gets the camera dummy. [11/12/2015 Matthew Woolley]
+	class ARoadFeverCameraDummy* GetCameraDummy() { return CameraDummy; }
+
 protected:
 	// Moves the Character in the X axis. [10/12/2015 Matthew Woolley]
 	UFUNCTION( BlueprintCallable, Category = "Movement" )
