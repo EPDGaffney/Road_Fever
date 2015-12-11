@@ -20,7 +20,7 @@ UInteractComponent::~UInteractComponent()
 // When the character wants to interact with this object [8/6/2015 Matthew Woolley]
 void UInteractComponent::OnInteract_Implementation()
 {
-	// No default behaviour for interacting [8/6/2015 Matthew Woolley]
+	// No default behavior for interacting [8/6/2015 Matthew Woolley]
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("No interaction event setup!"));
 	GetOwner()->Destroy();
 }
