@@ -3,6 +3,7 @@
 #include "Road_Fever.h"
 #include "RoadFeverCharacterNed.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Dummy Classes/RoadFeverCameraDummy.h"
 
 
 
@@ -37,7 +38,9 @@ ARoadFeverCharacterNed::ARoadFeverCharacterNed()
 // Called at the beginning of game-play. [10/12/2015 Matthew Woolley]
 void ARoadFeverCharacterNed::BeginPlay()
 {
-
+	// Create the ARoadFeverCameraDummy class for the camera-system. [11/12/2015 Matthew Woolley]
+	CameraDummy = Cast<class ARoadFeverCameraDummy>( GetWorld()->SpawnActor( ARoadFeverCameraDummy::StaticClass() ) );
+	CameraDummy->AttachRootComponentToActor( this, NAME_None, EAttachLocation::SnapToTarget );
 }
 
 // Called every frame. [10/12/2015 Matthew Woolley]

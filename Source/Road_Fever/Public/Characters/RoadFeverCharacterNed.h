@@ -108,4 +108,8 @@ private:
 	// Called to preform generic movement function. [10/12/2015 Matthew Woolley]
 	UFUNCTION( Category = "Movement" )
 	void _move( float InInputVal, EAxis::Type InMoveAxis );
+
+	// Used by the camera-system when detecting the Character. [11/12/2015 Matthew Woolley]
+	UPROPERTY()
+	class ARoadFeverCameraDummy* CameraDummy;
 };
