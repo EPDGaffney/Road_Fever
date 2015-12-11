@@ -16,6 +16,7 @@ ARoadFeverCameraSystem::ARoadFeverCameraSystem()
 	TriggerArea = CreateDefaultSubobject<UBoxComponent>( TEXT( "TriggerArea" ) );
 	TriggerArea->AttachParent = RootComponent;
 	TriggerArea->bAbsoluteRotation = true;
+	TriggerArea->OnComponentBeginOverlap.AddDynamic( this, &ARoadFeverCameraSystem::OnActorEnter );
 
 	// Create the editor's camera. [11/12/2015 Matthew Woolley]
 	EditorCameraReference = CreateDefaultSubobject<UCameraComponent>( TEXT( "EditorCameraReference" ) );
@@ -36,7 +37,7 @@ void ARoadFeverCameraSystem::BeginPlay()
 	EditorCameraReference->DestroyComponent();
 }
 
-void ARoadFeverCameraSystem::OnActorEnter( class AActor* InOtherActor )
+void ARoadFeverCameraSystem::OnActorEnter( class AActor* InOtherActor, class UPrimitiveComponent* InOtherComp, int32 InOtherBodyIndex, bool bInFromSweep, const FHitResult& InSweepResult )
 {
 	// If it is the player's camera dummy. [11/12/2015 Matthew Woolley]
 	if ( InOtherActor->IsA( ARoadFeverCameraDummy::StaticClass() ) )
