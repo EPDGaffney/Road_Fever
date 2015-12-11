@@ -14,17 +14,95 @@ public:
 	// Called when this Character enters memory. [10/12/2015 Matthew Woolley]
 	ARoadFeverCharacterNed();
 
+	// Called at the beginning of game-play. [10/12/2015 Matthew Woolley]
+	virtual void BeginPlay() override;
+
+	// Called every frame. [10/12/2015 Matthew Woolley]
+	virtual void Tick( float InDeltaSeconds ) override;
+
 	// Called to bind player input. [10/12/2015 Matthew Woolley]
 	virtual void SetupPlayerInputComponent( class UInputComponent* InInputComponent ) override;
 
+	// The current input from the player for forwards-movement. [10/12/2015 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Movement" )
+	float MoveForwardAxis;
+
+	// Whether or not the Character is sprinting. [10/12/2015 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Movement" )
+	bool bIsSprinting;
+
+	// The maximum distance the player can be from an enemy and still auto-aim. [10/12/2015 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack" )
+	float AutoAimMaxDistance;
+
+	// Whether or not the player is aiming. [10/12/2015 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack" )
+	bool bIsAiming;
+
+	// The speed of which the Character sprints at. [10/12/2015 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Movement" )
+	float CharacterSprintSpeed;
+
+	// The speed that the Character quick-turns at. [10/12/2015 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Movement" )
+	float QuickTurnSpeed;
+
+	// The time it takes for the user to regain control from the quick-turn. [10/12/2015 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Movement" )
+	float QuickTurnWaitTime;
+
+	// The sensitivity of the turning input. [10/12/2015 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Movement" )
+	float TurnSensitivity;
+
+	// The speed the Character walks at. [11/12/2015 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Movement" )
+	float BaseMovementSpeed;
 protected:
 	// Moves the Character in the X axis. [10/12/2015 Matthew Woolley]
 	UFUNCTION( BlueprintCallable, Category = "Movement" )
 	void MoveForward( float InInputVal );
+	
+	// Called when the player wishes to turn. [10/12/2015 Matthew Woolley]
+	UFUNCTION( BlueprintCallable, Category = "Attack" )
+	void Turn( float InInputVal );
 
-	// Moves the Character in the Y axis. [10/12/2015 Matthew Woolley]
+	// Used to detect items when interacting. [10/12/2015 Matthew Woolley]
+	UPROPERTY( BlueprintReadWrite, Category = "Interact" )
+	class UBoxComponent* CollectionArea;
+
+	// Called when the player attempts to interact. [10/12/2015 Matthew Woolley]
+	UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Interact" )
+	void OnCharacterInteract();
+	virtual void OnCharacterInteract_Implementation();
+
+	// Called when the player wishes to sprint. [10/12/2015 Matthew Woolley]
 	UFUNCTION( BlueprintCallable, Category = "Movement" )
-	void MoveRight( float InInputVal );
+	void OnBeginSprint();
+
+	// Called when the player stops sprinting. [10/12/2015 Matthew Woolley]
+	UFUNCTION( BlueprintCallable, Category = "Movement" )
+	void OnEndSprint();
+
+	// Called when the player wishes to do a quick-turn. [10/12/2015 Matthew Woolley]
+	UFUNCTION( BlueprintCallable, Category = "Movement" )
+	void OnBeginQuickTurn();
+
+	// Whether or not the player is performing a quick-turn. [10/12/2015 Matthew Woolley]
+	UPROPERTY( BlueprintReadWrite, Category = "Movement" )
+	bool bIsDoingQuickTurn;
+
+	// Called when the player begins aiming. [10/12/2015 Matthew Woolley]
+	UFUNCTION( BlueprintCallable, Category = "Attack" )
+	void OnBeginAim();
+
+	// Called when the player stops aiming. [10/12/2015 Matthew Woolley]
+	UFUNCTION( BlueprintCallable, Category = "Attack" )
+	void OnEndAim();
+
+	// The sphere used for enemy detection and aiming. [11/12/2015 Matthew Woolley]
+	UPROPERTY( BlueprintReadWrite, Category = "Attack" )
+	class USphereComponent* AutoAimSphere;
 
 private:
 	// Called to preform generic movement function. [10/12/2015 Matthew Woolley]
