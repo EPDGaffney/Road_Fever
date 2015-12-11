@@ -4,3 +4,4 @@
 
 #include "Engine.h"
 
+#define WEAPON_TRACE ECC_GameTraceChannel1
