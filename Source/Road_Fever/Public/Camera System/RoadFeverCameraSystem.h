@@ -36,7 +36,7 @@ public:
 	
 	// Called when something enters this camera's trigger area. [11/12/2015 Matthew Woolley]
 	UFUNCTION( BlueprintCallable, Category = "Detection" )
-		void OnActorEnter( class AActor* InOtherActor, class UPrimitiveComponent* InOtherComp, int32 InOtherBodyIndex, bool bInFromSweep, const FHitResult& InSweepResult );
+	void OnActorEnter( class AActor* InOtherActor, class UPrimitiveComponent* InOtherComp, int32 InOtherBodyIndex, bool bInFromSweep, const FHitResult& InSweepResult );
 
 	// The area that, when entered, triggers the Character's camera location. [11/12/2015 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Detection" )
