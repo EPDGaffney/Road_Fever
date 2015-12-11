@@ -1,8 +1,8 @@
 // Copyright Square Crank Games. All Rights Reserved.
 
 #include "Road_Fever.h"
-#include "Public/Inventory.h"
-#include "Runtime/UMG/Public/UMG.h"
+#include "Public/Inventory/Inventory.h"
+#include "Public/UMG.h"
 #include "SlateBasics.h"
 #include "SlateExtras.h"
 #include "Characters/RoadFeverCharacterNed.h"
@@ -14,7 +14,7 @@ UInventory::UInventory()
 	bIsOpen = false;
 }
 
-// Toggles the inventory [11/22/2015 Matthew Woolley]
+// Toggles the inventory. [22/11/2015 Matthew Woolley]
 void UInventory::ToggleInventory()
 {
 	bIsOpen = !bIsOpen;
@@ -22,23 +22,23 @@ void UInventory::ToggleInventory()
 	bIsOpen ? OpenInv() : CloseInv();
 }
 
-// Open inventory [11/20/2015 Andreas Gustavsen]
+// Open inventory [20/11/2015 Andreas Gustavsen]
 void UInventory::OpenInv()
 {
-	// Spawn the InventoryUIWidget if a valid template was provided [11/30/2015 Matthew Woolley]
+	// Spawn the InventoryUIWidget if a valid template was provided. [30/11/2015 Matthew Woolley]
 	if (InventoryUIWidgetTemplate)
 	{
 		UWorld* const World = GetWorld();
 		InventoryUIWidgetInstance = CreateWidget<UUserWidget>(World, InventoryUIWidgetTemplate);
 	}
 
-	// If the widget was created without any errors [11/30/2015 Matthew Woolley]
+	// If the widget was created without any errors. [30/11/2015 Matthew Woolley]
 	if (InventoryUIWidgetInstance && !InventoryUIWidgetInstance->GetIsVisible())
 	{
-		// add it to the view port [11/30/2015 Matthew Woolley]
+		// add it to the view port. [30/11/2015 Matthew Woolley]
 		InventoryUIWidgetInstance->AddToViewport();
 
-		// Allow the widget to accept input [11/30/2015 Matthew Woolley]
+		// Allow the widget to accept input. [30/11/2015 Matthew Woolley]
 		APlayerController* const Controller = GetWorld()->GetFirstPlayerController();
 
 		FInputModeGameAndUI Mode;
@@ -50,16 +50,16 @@ void UInventory::OpenInv()
 
 }
 
-// Close inventory [11/20/2015 Andreas Gustavsen]
+// Close inventory [20/11/2015 Andreas Gustavsen]
 void UInventory::CloseInv()
 {
-	// If there is a widget [11/30/2015 Matthew Woolley]
+	// If there is a widget. [30/11/2015 Matthew Woolley]
 	if (InventoryUIWidgetInstance && InventoryUIWidgetInstance->GetIsVisible())
 	{
-		// Remove it from sight [11/30/2015 Matthew Woolley]
+		// Remove it from sight. [30/11/2015 Matthew Woolley]
 		InventoryUIWidgetInstance->RemoveFromParent();
 
-		// Make the input return to the game [11/30/2015 Matthew Woolley]
+		// Make the input return to the game. [30/11/2015 Matthew Woolley]
 		APlayerController* const Controller = GetWorld()->GetFirstPlayerController();
 
 		FInputModeGameOnly Mode;
@@ -67,26 +67,26 @@ void UInventory::CloseInv()
 		FSlateApplication::Get().SetFocusToGameViewport();
 		Controller->bShowMouseCursor = false;
 
-		// Delete the pointer [11/30/2015 Matthew Woolley]
+		// Delete the pointer. [30/11/2015 Matthew Woolley]
 		InventoryUIWidgetInstance = nullptr;
 
 		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString("Inventory Closed"));
 	}
 }
 
-// Use an item in the inventory [11/20/2015 Andreas Gustavsen]
+// Use an item in the inventory [20/11/2015 Andreas Gustavsen]
 void UInventory::OnUse()
 {
 
 }
 
-// Examine an item in the inventory [11/20/2015 Andreas Gustavsen]
+// Examine an item in the inventory [20/11/2015 Andreas Gustavsen]
 void UInventory::OnExamine()
 {
 
 }
 
-// Combine an item in the inventory [11/20/2015 Andreas Gustavsen]
+// Combine an item in the inventory [20/11/2015 Andreas Gustavsen]
 void UInventory::OnCombine()
 {
 
