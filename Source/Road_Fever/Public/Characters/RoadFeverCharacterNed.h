@@ -58,6 +58,11 @@ public:
 	// The speed the Character walks at. [11/12/2015 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Movement" )
 	float BaseMovementSpeed;
+
+	// The camera that will render the scene. [11/12/2015 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Rendering" )
+	class UCameraComponent* CharactersCamera;
+
 protected:
 	// Moves the Character in the X axis. [10/12/2015 Matthew Woolley]
 	UFUNCTION( BlueprintCallable, Category = "Movement" )

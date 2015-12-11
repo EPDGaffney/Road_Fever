@@ -31,6 +31,11 @@ ARoadFeverCharacterNed::ARoadFeverCharacterNed()
 	AutoAimSphere->AttachParent = GetCapsuleComponent();
 	AutoAimSphere->SetSphereRadius( AutoAimMaxDistance );
 
+	// Character's camera component. [11/12/2015 Matthew Woolley]
+	CharactersCamera = CreateDefaultSubobject<UCameraComponent>( TEXT( "NedCamera" ) );
+	CharactersCamera->bAbsoluteLocation = true;
+	CharactersCamera->bAbsoluteRotation = true;
+
 	// Allow Actor ticking. [11/12/2015 Matthew Woolley]
 	PrimaryActorTick.bCanEverTick = true;
 }
@@ -39,7 +44,7 @@ ARoadFeverCharacterNed::ARoadFeverCharacterNed()
 void ARoadFeverCharacterNed::BeginPlay()
 {
 	// Create the ARoadFeverCameraDummy class for the camera-system. [11/12/2015 Matthew Woolley]
-	CameraDummy = Cast<class ARoadFeverCameraDummy>( GetWorld()->SpawnActor( ARoadFeverCameraDummy::StaticClass() ) );
+	CameraDummy = Cast<ARoadFeverCameraDummy>( GetWorld()->SpawnActor( ARoadFeverCameraDummy::StaticClass() ) );
 	CameraDummy->AttachRootComponentToActor( this, NAME_None, EAttachLocation::SnapToTarget );
 }
 
