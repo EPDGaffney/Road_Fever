@@ -15,27 +15,27 @@ struct FInventoryItem
 	GENERATED_USTRUCT_BODY()
 
 public:
-	// Pointers for usage [11/24/2015 Matthew Woolley]
+	// Pointers for usage [24/11/2015 Matthew Woolley]
 	typedef void(*OnUsePointer) (void);
 	typedef void(*OnExaminePointer) (void);
 	typedef void(*OnCombinePointer) (void);
 
-	// Function pointers for inventory usage [11/24/2015 Matthew Woolley]
+	// Function pointers for inventory usage [24/11/2015 Matthew Woolley]
 	OnUsePointer OnUse;
 	OnExaminePointer OnExamine;
 	OnCombinePointer OnCombine;
 
 	TSubclassOf<class AItem> ItemClass;
 
-	// The texture that gets shown in the inventory [11/26/2015 Matthew Woolley]
+	// The texture that gets shown in the inventory [26/11/2015 Matthew Woolley]
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	UTexture2D* DisplayIcon;
 
-	// The name that the item has [11/26/2015 Matthew Woolley]
+	// The name that the item has [26/11/2015 Matthew Woolley]
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	FString DisplayName;
 
-	// Called when we want to fill out this struct's details [11/24/2015 Matthew Woolley]
+	// Called when we want to fill out this struct's details [24/11/2015 Matthew Woolley]
 	void SetItem(TSubclassOf<class AItem> NewItemClass, OnUsePointer NewOnUsePointer
 		, OnExaminePointer NewOnExaminePointer, OnCombinePointer NewOnCombinePointer
 		, UTexture2D* NewDisplayIcon, FString NewDisplayName)
