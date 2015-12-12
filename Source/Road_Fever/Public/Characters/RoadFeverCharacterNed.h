@@ -63,6 +63,10 @@ public:
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Rendering" )
 	class UCameraComponent* CharactersCamera;
 
+	// The inventory that the player has. [12/12/2015 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Stats" )
+	class UInventory* CharactersInventory;
+
 	// Gets the camera dummy. [11/12/2015 Matthew Woolley]
 	class ARoadFeverCameraDummy* GetCameraDummy() { return CameraDummy; }
 

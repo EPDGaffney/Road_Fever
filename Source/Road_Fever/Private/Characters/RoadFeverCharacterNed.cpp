@@ -4,6 +4,7 @@
 #include "RoadFeverCharacterNed.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Dummy Classes/RoadFeverCameraDummy.h"
+#include "Public/Inventory/Inventory.h"
 
 
 
@@ -35,6 +36,9 @@ ARoadFeverCharacterNed::ARoadFeverCharacterNed()
 	CharactersCamera = CreateDefaultSubobject<UCameraComponent>( TEXT( "NedCamera" ) );
 	CharactersCamera->bAbsoluteLocation = true;
 	CharactersCamera->bAbsoluteRotation = true;
+
+	// Character's inventory component. [12/12/2015 Matthew Woolley]
+	CharactersInventory = CreateDefaultSubobject<UInventory>( TEXT( "Character's Inventory" ) );
 
 	// Allow Actor ticking. [11/12/2015 Matthew Woolley]
 	PrimaryActorTick.bCanEverTick = true;
@@ -102,6 +106,8 @@ void ARoadFeverCharacterNed::SetupPlayerInputComponent( class UInputComponent* I
 
 		InInputComponent->BindAction( "Aim", IE_Pressed, this, &ARoadFeverCharacterNed::OnBeginAim );
 		InInputComponent->BindAction( "Aim", IE_Released, this, &ARoadFeverCharacterNed::OnEndAim );
+
+		InInputComponent->BindAction( "ToggleInventory", IE_Pressed, CharactersInventory, &UInventory::ToggleInventory );
 	}
 }
 
