@@ -24,11 +24,11 @@ public:
 	virtual void SetupPlayerInputComponent( class UInputComponent* InInputComponent ) override;
 
 	// The current input from the player for forwards-movement. [10/12/2015 Matthew Woolley]
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Movement" )
+	UPROPERTY( VisibleAnywhere, BlueprintReadWrite, Category = "Movement" )
 	float MoveForwardAxis;
 
 	// Whether or not the Character is sprinting. [10/12/2015 Matthew Woolley]
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Movement" )
+	UPROPERTY( VisibleAnywhere, BlueprintReadWrite, Category = "Movement" )
 	bool bIsSprinting;
 
 	// The maximum distance the player can be from an enemy and still auto-aim. [10/12/2015 Matthew Woolley]
@@ -36,7 +36,7 @@ public:
 	float AutoAimMaxDistance;
 
 	// Whether or not the player is aiming. [10/12/2015 Matthew Woolley]
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack" )
+	UPROPERTY( VisibleAnywhere, BlueprintReadWrite, Category = "Attack" )
 	bool bIsAiming;
 
 	// The speed of which the Character sprints at. [10/12/2015 Matthew Woolley]
