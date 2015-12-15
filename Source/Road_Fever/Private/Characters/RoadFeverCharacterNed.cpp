@@ -5,6 +5,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Dummy Classes/RoadFeverCameraDummy.h"
 #include "Public/Inventory/Inventory.h"
+#include "Public/Items/InteractionComponent.h"
 
 
 
@@ -126,7 +127,46 @@ void ARoadFeverCharacterNed::Turn( float InInputVal )
 // Called when the player attempts to interact. [10/12/2015 Matthew Woolley]
 void ARoadFeverCharacterNed::OnCharacterInteract_Implementation()
 {
+	// Make sure the collection area exists. [15/12/2015 Matthew Woolley]
+	if ( CollectionArea )
+	{
+		// Get all actors that are overlapping the collection area. [15/12/2015 Matthew Woolley]
+		TArray<AActor*> NearbyActors;
+		CollectionArea->GetOverlappingActors( NearbyActors );
 
+		// Get each actor. [15/12/2015 Matthew Woolley]
+		for ( AActor* iActorIterator : NearbyActors )
+		{
+			// See if it has a UInteractionComponent. [15/12/2015 Matthew Woolley]
+			UInteractionComponent* Item = ( UInteractionComponent* ) iActorIterator->GetComponentByClass( UInputComponent::StaticClass() );
+			if ( Item )
+			{
+				// Get the world. [15/12/2015 Matthew Woolley]
+				UWorld* const World = GetWorld();
+
+				// Collision parameters for line-trace. [15/12/2015 Matthew Woolley]
+				FHitResult Hit;
+				FCollisionQueryParams Line( FName( "CollisionParam" ), true );
+				TArray<AActor*> IgnoredActors;
+				IgnoredActors.Add( this );
+				IgnoredActors.Add( CameraDummy );
+				Line.AddIgnoredActors( IgnoredActors );
+
+				// Find if there is anything blocking the pickup. [15/12/2015 Matthew Woolley]
+				bool bHasBlockingHit = World->LineTraceSingleByChannel( Hit, this->GetActorLocation(), Item->GetOwner()->GetActorLocation(), COLLISION_TRACE, Line );
+
+				// If we hit something and it is the item. [15/12/2015 Matthew Woolley]
+				if ( bHasBlockingHit && Hit.GetActor() == Item->GetOwner() )
+				{
+					// Call its interaction function. [15/12/2015 Matthew Woolley]
+					Item->OnInteract();
+
+					// Stop iterating over actors. [15/12/2015 Matthew Woolley]
+					return;
+				}
+			}
+		}
+	}
 }
 
 // Called when the player wishes to sprint. [10/12/2015 Matthew Woolley]
