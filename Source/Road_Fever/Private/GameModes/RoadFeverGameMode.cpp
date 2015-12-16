@@ -9,5 +9,9 @@
 // Called when this GameMode enters memory. [11/12/2015 Matthew Woolley]
 ARoadFeverGameMode::ARoadFeverGameMode()
 {
-	DefaultPawnClass = ARoadFeverCharacterNed::StaticClass();
+	// Get the Pawn class from the content browser. [16/12/2015 Matthew Woolley]
+	static ConstructorHelpers::FClassFinder<APawn> PawnClassObj( TEXT( "Blueprint'/Game/Ned/Ned.Ned_C'" ) );
+
+	// Implement it into the game. [16/12/2015 Matthew Woolley]
+	DefaultPawnClass = PawnClassObj.Class;
 }
