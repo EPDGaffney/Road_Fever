@@ -14,16 +14,6 @@ struct FInventoryItem
 	GENERATED_USTRUCT_BODY()
 
 public:
-	// Pointers for later usage [24/11/2015 Matthew Woolley]
-	typedef void(*OnUsePointer) (void);
-	typedef void(*OnExaminePointer) (void);
-	typedef void(*OnCombinePointer) (void);
-
-	// Function pointers for inventory usage [24/11/2015 Matthew Woolley]
-	OnUsePointer OnUse;
-	OnExaminePointer OnExamine;
-	OnCombinePointer OnCombine;
-
 	// The class that gets spawned when "Use", or some other variant, has been clicked. [21/12/2015 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Item" )
 	TSubclassOf<class AItem> ItemClass;
@@ -53,4 +43,17 @@ UCLASS()
 class ROAD_FEVER_API AItem : public AActor
 {
 	GENERATED_BODY()
+
+public:
+	// Called when the user wishes to use an item. [21/12/2015 Matthew Woolley]
+	UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Item" )
+	void OnUse();
+
+	// Called when the user wishes to combine an item. [21/12/2015 Matthew Woolley]
+	UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Item" )
+	void OnCombine();
+
+	// Called when the user wishes to examine an item. [21/12/2015 Matthew Woolley]
+	UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Item" )
+	void OnExamine();
 };
