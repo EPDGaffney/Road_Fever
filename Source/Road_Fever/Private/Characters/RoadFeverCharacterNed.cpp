@@ -18,6 +18,9 @@ ARoadFeverCharacterNed::ARoadFeverCharacterNed()
 	CollectionArea->RelativeScale3D = FVector( 2, 2, 2 );
 	CollectionArea->RelativeLocation = FVector( 50, 0, 0 );
 
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> NedsMesh(TEXT("Location"));
+	GetMesh()->SetSkeletalMesh(NedsMesh.Object);
+
 	// Setup the Character's movement. [11/12/2015 Matthew Woolley]
 	BaseMovementSpeed = GetCharacterMovement()->MaxWalkSpeed;
 	CharacterSprintSpeed = 1000;
