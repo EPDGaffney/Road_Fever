@@ -74,21 +74,3 @@ void UInventory::CloseInv()
 		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString("Inventory Closed"));
 	}
 }
-
-// Use an item in the inventory [20/11/2015 Andreas Gustavsen]
-void UInventory::OnUse()
-{
-
-}
-
-// Examine an item in the inventory [20/11/2015 Andreas Gustavsen]
-void UInventory::OnExamine()
-{
-
-}
-
-// Combine an item in the inventory [20/11/2015 Andreas Gustavsen]
-void UInventory::OnCombine()
-{
-
-}
