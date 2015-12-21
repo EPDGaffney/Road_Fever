@@ -48,12 +48,15 @@ public:
 	// Called when the user wishes to use an item. [21/12/2015 Matthew Woolley]
 	UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Item" )
 	void OnUse();
+	virtual void OnUse_Implementation() { return; };
 
 	// Called when the user wishes to combine an item. [21/12/2015 Matthew Woolley]
 	UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Item" )
 	void OnCombine();
+	virtual void OnCombine_Implementation() { return; };
 
 	// Called when the user wishes to examine an item. [21/12/2015 Matthew Woolley]
 	UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Item" )
 	void OnExamine();
+	virtual void OnExamine_Implementation() { return; };
 };
