@@ -8,14 +8,13 @@
 /*
  * The struct that controls default info for elements of the inventory (inventory slots)
  */
-
 USTRUCT()
 struct FInventoryItem
 {
 	GENERATED_USTRUCT_BODY()
 
 public:
-	// Pointers for usage [24/11/2015 Matthew Woolley]
+	// Pointers for later usage [24/11/2015 Matthew Woolley]
 	typedef void(*OnUsePointer) (void);
 	typedef void(*OnExaminePointer) (void);
 	typedef void(*OnCombinePointer) (void);
@@ -25,6 +24,8 @@ public:
 	OnExaminePointer OnExamine;
 	OnCombinePointer OnCombine;
 
+	// The class that gets spawned when "Use", or some other variant, has been clicked. [21/12/2015 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Item" )
 	TSubclassOf<class AItem> ItemClass;
 
 	// The texture that gets shown in the inventory [26/11/2015 Matthew Woolley]
@@ -35,17 +36,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	FString DisplayName;
 
-	// Called when we want to fill out this struct's details [24/11/2015 Matthew Woolley]
-	void SetItem(TSubclassOf<class AItem> NewItemClass, OnUsePointer NewOnUsePointer
-		, OnExaminePointer NewOnExaminePointer, OnCombinePointer NewOnCombinePointer
-		, UTexture2D* NewDisplayIcon, FString NewDisplayName)
-	{
-		ItemClass = NewItemClass;
-		OnUse = NewOnUsePointer;
-		OnCombine = NewOnCombinePointer;
-		DisplayIcon = NewDisplayIcon;
-		DisplayName = NewDisplayName;
-	}
+	// The text that accompanies this item, once it has been clicked. [21/12/2015 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Item" )
+	FString ItemToolTip;
 };
 
 

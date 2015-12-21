@@ -55,4 +55,8 @@ public:
 	// The slots within the inventory. [21/12/2015 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Inventory" )
 	TArray<FInventoryItem> ItemSlots;
+
+	// The current tool-tip for the most recently clicked slot. [21/12/2015 Matthew Woolley]
+	UPROPERTY( VisibleAnywhere, BlueprintReadWrite, Category = "Inventory" )
+	FString CurrentToolTip;
 };
