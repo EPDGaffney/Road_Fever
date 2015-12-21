@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
+#include "Items/Item.h"
 #include "Inventory.generated.h"
 
 class UUserWidget;
@@ -50,4 +51,8 @@ public:
 	// The current instance of the widget in game. [30/11/2015 Matthew Woolley]
 	UPROPERTY(BlueprintReadWrite, Category = "Inventory")
 	UUserWidget* InventoryUIWidgetInstance;
+
+	// The slots within the inventory. [21/12/2015 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Inventory" )
+	TArray<FInventoryItem> ItemSlots;
 };
