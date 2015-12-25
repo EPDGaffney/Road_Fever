@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
+#include "Items/Item.h"
 #include "Inventory.generated.h"
 
 class UUserWidget;
@@ -28,17 +29,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void CloseInv();
 
-	// Called when the player wants to use an item in the inventory [20/11/2015 Andreas Gustavsen]
-	void OnUse();
-
-	// Called when the player wants to examine an item in the inventory [20/11/2015 Andreas Gustavsen]
-	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	void OnExamine();
-
-	// Called when the player wants to combine an item in the inventory [11/20/2015 Andreas Gustavsen]
-	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	void OnCombine();
-
 	// Whether or not the inventory is open. [21/11/2015 Matthew Woolley]
 	UPROPERTY(BlueprintReadWrite, Category = "Inventory")
 	bool bIsOpen;
@@ -50,4 +40,16 @@ public:
 	// The current instance of the widget in game. [30/11/2015 Matthew Woolley]
 	UPROPERTY(BlueprintReadWrite, Category = "Inventory")
 	UUserWidget* InventoryUIWidgetInstance;
+
+	// The slots within the inventory. [21/12/2015 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Inventory" )
+	TArray<FInventoryItem> ItemSlots;
+
+	// The current tool-tip for the most recently clicked slot. [21/12/2015 Matthew Woolley]
+	UPROPERTY( VisibleAnywhere, BlueprintReadWrite, Category = "Inventory" )
+	FString CurrentToolTip;
+
+	// The slot that is currently being used. [21/12/2015 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Item" )
+	int32 CurrentActiveSlot;
 };
