@@ -43,6 +43,7 @@ ARoadFeverCharacterNed::ARoadFeverCharacterNed()
 
 	// Setup the player's stats. [25/12/2015 Matthew Woolley]
 	Health = 1000;
+	BloodLoss = 1000;
 
 	// Allow Actor ticking. [11/12/2015 Matthew Woolley]
 	PrimaryActorTick.bCanEverTick = true;
@@ -126,6 +127,25 @@ FString ARoadFeverCharacterNed::UpdateHealthMessage()
 	{
 		return FString( "Compromised" );
 	} else if ( Health > 250 ) // If they have less than 50% and more than 25%. [25/12/2015 Matthew Woolley]
+	{
+		return FString( "Caution" );
+	} else // If they have less than 25%. [25/12/2015 Matthew Woolley]
+	{
+		return FString( "Danger" );
+	}
+}
+
+// Returns the text that the inventory screen should display for the blood loss value. [25/12/2015 Matthew Woolley]
+FString ARoadFeverCharacterNed::UpdateBloodMessage()
+{
+	// If the player has more than 75% of blood loss. [25/12/2015 Matthew Woolley]
+	if ( BloodLoss > 750 )
+	{
+		return FString( "Minor" );
+	} else if ( BloodLoss > 500 ) // If they have less than 75% and more than 50%. [25/12/2015 Matthew Woolley]
+	{
+		return FString( "Moderate" );
+	} else if ( BloodLoss > 250 ) // If they have less than 50% and more than 25%. [25/12/2015 Matthew Woolley]
 	{
 		return FString( "Caution" );
 	} else // If they have less than 25%. [25/12/2015 Matthew Woolley]

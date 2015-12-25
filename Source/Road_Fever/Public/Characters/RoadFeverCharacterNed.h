@@ -78,6 +78,14 @@ public:
 	UFUNCTION( BlueprintCallable, Category = "Stats" )
 	FString UpdateHealthMessage();
 
+	// The current level of the blood loss for the player. [25/12/2015 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Stats" )
+	int32 BloodLoss;
+
+	// Returns the text that the inventory screen should display for the blood loss value. [25/12/2015 Matthew Woolley]
+	UFUNCTION( BlueprintCallable, Category = "Stats" )
+	FString UpdateBloodMessage();
+
 protected:
 	// Moves the Character in the X axis. [10/12/2015 Matthew Woolley]
 	UFUNCTION( BlueprintCallable, Category = "Movement" )
