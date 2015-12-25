@@ -41,6 +41,9 @@ ARoadFeverCharacterNed::ARoadFeverCharacterNed()
 	// Character's inventory component. [12/12/2015 Matthew Woolley]
 	CharactersInventory = CreateDefaultSubobject<UInventory>( TEXT( "Character's Inventory" ) );
 
+	// Setup the player's stats. [25/12/2015 Matthew Woolley]
+	Health = 1000;
+
 	// Allow Actor ticking. [11/12/2015 Matthew Woolley]
 	PrimaryActorTick.bCanEverTick = true;
 }
@@ -109,6 +112,25 @@ void ARoadFeverCharacterNed::SetupPlayerInputComponent( class UInputComponent* I
 		InInputComponent->BindAction( "Aim", IE_Released, this, &ARoadFeverCharacterNed::OnEndAim );
 
 		InInputComponent->BindAction( "ToggleInventory", IE_Pressed, CharactersInventory, &UInventory::ToggleInventory );
+	}
+}
+
+// Returns the text that the inventory screen should display for the health value. [25/12/2015 Matthew Woolley]
+FString ARoadFeverCharacterNed::UpdateHealthMessage()
+{
+	// If the player has more than 75% of their health. [25/12/2015 Matthew Woolley]
+	if ( Health > 750 )
+	{
+		return FString( "Strong" );
+	} else if ( Health > 500 ) // If they have less than 75% and more than 50%. [25/12/2015 Matthew Woolley]
+	{
+		return FString( "Compromised" );
+	} else if ( Health > 250 ) // If they have less than 50% and more than 25%. [25/12/2015 Matthew Woolley]
+	{
+		return FString( "Caution" );
+	} else // If they have less than 25%. [25/12/2015 Matthew Woolley]
+	{
+		return FString( "Danger" );
 	}
 }
 

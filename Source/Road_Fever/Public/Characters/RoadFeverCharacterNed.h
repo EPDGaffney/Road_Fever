@@ -70,6 +70,14 @@ public:
 	// Gets the camera dummy. [11/12/2015 Matthew Woolley]
 	class ARoadFeverCameraDummy* GetCameraDummy() { return CameraDummy; }
 
+	// The current level of health that the player has. [25/12/2015 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Stats" )
+	int32 Health;
+
+	// Returns the text that the inventory screen should display for the health value. [25/12/2015 Matthew Woolley]
+	UFUNCTION( BlueprintCallable, Category = "Stats" )
+	FString UpdateHealthMessage();
+
 protected:
 	// Moves the Character in the X axis. [10/12/2015 Matthew Woolley]
 	UFUNCTION( BlueprintCallable, Category = "Movement" )
