@@ -86,6 +86,9 @@ public:
 	UFUNCTION( BlueprintCallable, Category = "Stats" )
 	FString UpdateBloodMessage();
 
+	// The camera that is currently active. [20/1/2016 Matthew Woolley]
+	class ARoadFeverCameraSystem* CurrentCamera;
+
 protected:
 	// Moves the Character in the X axis. [10/12/2015 Matthew Woolley]
 	UFUNCTION( BlueprintCallable, Category = "Movement" )

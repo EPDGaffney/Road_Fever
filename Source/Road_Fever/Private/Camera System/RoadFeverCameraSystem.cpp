@@ -17,10 +17,14 @@ ARoadFeverCameraSystem::ARoadFeverCameraSystem()
 	TriggerArea->AttachParent = RootComponent;
 	TriggerArea->bAbsoluteRotation = true;
 	TriggerArea->OnComponentBeginOverlap.AddDynamic( this, &ARoadFeverCameraSystem::OnActorEnter );
+	TriggerArea->OnComponentEndOverlap.AddDynamic( this, &ARoadFeverCameraSystem::OnActorLeave );
 
 	// Create the editor's camera. [11/12/2015 Matthew Woolley]
 	EditorCameraReference = CreateDefaultSubobject<UCameraComponent>( TEXT( "EditorCameraReference" ) );
 	EditorCameraReference->AttachParent = RootComponent;
+
+	// Ticking setup. [20/1/2016 Matthew Woolley]
+	PrimaryActorTick.bCanEverTick = true;
 }
 
 
@@ -40,6 +44,44 @@ void ARoadFeverCameraSystem::BeginPlay()
 	{
 		ARoadFeverCharacterNed* PlayerCharacter = Cast<ARoadFeverCharacterNed>( GetWorld()->GetFirstPlayerController()->GetPawn() );
 		OnActorEnter( PlayerCharacter->GetCameraDummy(), nullptr, 0, false, FHitResult() );
+
+		// Set the camera's position. [11/12/2015 Matthew Woolley]
+		PlayerCharacter->CharactersCamera->SetWorldLocation( CameraPosition.Location );
+		PlayerCharacter->CharactersCamera->SetWorldRotation( CameraPosition.Rotation );
+	} else
+	{
+		SetActorTickEnabled( false );
+	}
+}
+
+// Called every frame. [20/1/2016 Matthew Woolley]
+void ARoadFeverCameraSystem::Tick( float DeltaTime )
+{
+
+	TArray<AActor*> CollectedActors;
+
+	TriggerArea->GetOverlappingActors( CollectedActors );
+
+	if ( CollectedActors.Num() != 0 )
+	{
+		for ( auto iIteratedActors : CollectedActors )
+		{
+			// If it is the player's camera dummy. [11/12/2015 Matthew Woolley]
+			if ( iIteratedActors->IsA( ARoadFeverCameraDummy::StaticClass() ) )
+			{
+				// Get the player's Character. [11/12/2015 Matthew Woolley]
+				ARoadFeverCharacterNed* PlayerCharacter = Cast<ARoadFeverCharacterNed>( GetWorld()->GetFirstPlayerController()->GetPawn() );
+
+				// If there isn't a Camera in use. [20/1/2016 Matthew Woolley]
+				if ( PlayerCharacter->CurrentCamera == nullptr )
+				{
+					// Set the camera's position. [11/12/2015 Matthew Woolley]
+					PlayerCharacter->CharactersCamera->SetWorldLocation( CameraPosition.Location );
+					PlayerCharacter->CharactersCamera->SetWorldRotation( CameraPosition.Rotation );
+					PlayerCharacter->CurrentCamera = this;
+				}
+			}
+		}
 	}
 }
 
@@ -48,11 +90,22 @@ void ARoadFeverCameraSystem::OnActorEnter( class AActor* InOtherActor, class UPr
 	// If it is the player's camera dummy. [11/12/2015 Matthew Woolley]
 	if ( InOtherActor->IsA( ARoadFeverCameraDummy::StaticClass() ) )
 	{
-		// Get the player's Character. [11/12/2015 Matthew Woolley]
+		SetActorTickEnabled( true );
+	}
+}
+
+void ARoadFeverCameraSystem::OnActorLeave( class AActor* InOtherActor, class UPrimitiveComponent* InOtherComp, int32 InOtherBodyIndex )
+{
+	// If it is the player's camera dummy. [11/12/2015 Matthew Woolley]
+	if ( InOtherActor->IsA( ARoadFeverCameraDummy::StaticClass() ) )
+	{
 		ARoadFeverCharacterNed* PlayerCharacter = Cast<ARoadFeverCharacterNed>( GetWorld()->GetFirstPlayerController()->GetPawn() );
 
-		// Set the camera's position. [11/12/2015 Matthew Woolley]
-		PlayerCharacter->CharactersCamera->SetWorldLocation( CameraPosition.Location );
-		PlayerCharacter->CharactersCamera->SetWorldRotation( CameraPosition.Rotation );
+		if ( PlayerCharacter->CurrentCamera == this )
+		{
+			PlayerCharacter->CurrentCamera = nullptr;
+		}
+
+		SetActorTickEnabled( false );
 	}
 }
