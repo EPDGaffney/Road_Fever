@@ -59,4 +59,10 @@ public:
 	UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Item" )
 	void OnExamine();
 	virtual void OnExamine_Implementation() { return; };
+
+
+	// Called when the user wishes to interact with an item. [21/12/2015 Matthew Woolley]
+	UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Item" )
+	void OnInteract();
+	virtual void OnInteract_Implementation() { return; };
 };

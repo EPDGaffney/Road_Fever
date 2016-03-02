@@ -5,7 +5,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Dummy Classes/RoadFeverCameraDummy.h"
 #include "Public/Inventory/Inventory.h"
-#include "Public/Items/InteractionComponent.h"
+#include "Public/Items/Item.h"
 
 
 
@@ -180,7 +180,7 @@ void ARoadFeverCharacterNed::OnCharacterInteract_Implementation()
 		for ( AActor* iActorIterator : NearbyActors )
 		{
 			// See if it has a UInteractionComponent. [15/12/2015 Matthew Woolley]
-			UInteractionComponent* Item = ( UInteractionComponent* ) iActorIterator->GetComponentByClass( UInputComponent::StaticClass() );
+			AItem* Item = ( AItem* ) iActorIterator;
 			if ( Item )
 			{
 				// Get the world. [15/12/2015 Matthew Woolley]
@@ -195,10 +195,10 @@ void ARoadFeverCharacterNed::OnCharacterInteract_Implementation()
 				Line.AddIgnoredActors( IgnoredActors );
 
 				// Find if there is anything blocking the pickup. [15/12/2015 Matthew Woolley]
-				bool bHasBlockingHit = World->LineTraceSingleByChannel( Hit, this->GetActorLocation(), Item->GetOwner()->GetActorLocation(), COLLISION_TRACE, Line );
+				bool bHasBlockingHit = World->LineTraceSingleByChannel( Hit, this->GetActorLocation(), Item->GetActorLocation(), COLLISION_TRACE, Line );
 
 				// If we hit something and it is the item. [15/12/2015 Matthew Woolley]
-				if ( bHasBlockingHit && Hit.GetActor() == Item->GetOwner() )
+				if ( bHasBlockingHit && Hit.GetActor() == Item )
 				{
 					// Call its interaction function. [15/12/2015 Matthew Woolley]
 					Item->OnInteract();
