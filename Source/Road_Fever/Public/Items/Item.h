@@ -19,16 +19,24 @@ public:
 	TSubclassOf<class AItem> ItemClass;
 
 	// The texture that gets shown in the inventory [26/11/2015 Matthew Woolley]
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Item")
 	UTexture2D* DisplayIcon;
 
 	// The name that the item has [26/11/2015 Matthew Woolley]
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Item")
 	FString DisplayName;
 
 	// The text that accompanies this item, once it has been clicked. [21/12/2015 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Item" )
 	FString ItemToolTip;
+
+	// The maximum amount of this item that can fit in one slot. [4/3/2016 Matthew Woolley]
+	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Item" )
+	int32 MaxItemStack;
+
+	// The amount of this item that is currently in this slot. [4/3/2016 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Item" )
+	int32 CurrentItemStack;
 };
 
 
@@ -65,4 +73,8 @@ public:
 	UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Item" )
 	void OnInteract();
 	virtual void OnInteract_Implementation() { return; };
+
+	// The info that will get passed to the inventory to find out what item has been picked up. [4/3/2016 Matthew Woolley]
+	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Item" )
+	FInventoryItem ItemInfo;
 };
