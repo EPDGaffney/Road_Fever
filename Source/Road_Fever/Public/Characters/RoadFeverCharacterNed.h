@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GameFramework/Character.h"
+#include "Items/Item.h"
 #include "RoadFeverCharacterNed.generated.h"
 
 UCLASS()
@@ -88,6 +89,10 @@ public:
 
 	// The camera that is currently active. [20/1/2016 Matthew Woolley]
 	class ARoadFeverCameraSystem* CurrentCamera;
+
+	// Called when an item is to be added to the inventory. [5/3/2016 Matthew Woolley]
+	UFUNCTION( BlueprintCallable, Category = "Item" )
+	bool AddItemToInventory( struct FInventoryItem ItemToAdd );
 
 protected:
 	// Moves the Character in the X axis. [10/12/2015 Matthew Woolley]

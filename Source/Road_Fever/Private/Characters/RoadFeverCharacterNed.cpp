@@ -5,7 +5,6 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Dummy Classes/RoadFeverCameraDummy.h"
 #include "Public/Inventory/Inventory.h"
-#include "Public/Items/Item.h"
 
 
 
@@ -152,6 +151,47 @@ FString ARoadFeverCharacterNed::UpdateBloodMessage()
 	{
 		return FString( "Danger" );
 	}
+}
+
+bool ARoadFeverCharacterNed::AddItemToInventory( struct FInventoryItem ItemToAdd )
+{
+	// For each inventory slot. [5/3/2016 Matthew Woolley]
+	for ( int32 iSlotIterator = 0; iSlotIterator < CharactersInventory->ItemSlots.Num(); iSlotIterator++ )
+	{
+		// If the item that is trying to be added is the same one that is already in this slot. [5/3/2016 Matthew Woolley]
+		if ( CharactersInventory->ItemSlots[iSlotIterator].DisplayName == ItemToAdd.DisplayName )
+		{
+			// And there is enough room to add more to the stack. [5/3/2016 Matthew Woolley]
+			if ( CharactersInventory->ItemSlots[ iSlotIterator ].CurrentItemStack < ItemToAdd.MaxItemStack )
+			{
+				// Add an item to the slot. [5/3/2016 Matthew Woolley]
+				CharactersInventory->ItemSlots[ iSlotIterator ].CurrentItemStack++;
+
+				// Tell the code that this item was added successfully. [5/3/2016 Matthew Woolley]
+				return true;
+			} else
+			{
+				continue;
+			}
+		}
+		// If it isn't the same item but is instead empty. [5/3/2016 Matthew Woolley]
+		else if ( CharactersInventory->ItemSlots[ iSlotIterator ].DisplayName == "" )
+		{
+			// Set this item up inside this slot. [5/3/2016 Matthew Woolley]
+			CharactersInventory->ItemSlots[ iSlotIterator ].CurrentItemStack = 1;
+			CharactersInventory->ItemSlots[ iSlotIterator ].DisplayIcon = ItemToAdd.DisplayIcon;
+			CharactersInventory->ItemSlots[ iSlotIterator ].DisplayName = ItemToAdd.DisplayName;
+			CharactersInventory->ItemSlots[ iSlotIterator ].ItemClass = ItemToAdd.ItemClass;
+			CharactersInventory->ItemSlots[ iSlotIterator ].ItemToolTip = ItemToAdd.ItemToolTip;
+			CharactersInventory->ItemSlots[ iSlotIterator ].MaxItemStack = ItemToAdd.MaxItemStack;
+
+			// Tell the code that this item was added successfully. [5/3/2016 Matthew Woolley]
+			return true;
+		}
+	}
+
+	// If the item wasn't added, tell the code that it failed. [5/3/2016 Matthew Woolley]
+	return false;
 }
 
 // Moves the Character in the X axis. [10/12/2015 Matthew Woolley]
