@@ -94,6 +94,10 @@ public:
 	UFUNCTION( BlueprintCallable, Category = "Item" )
 	bool AddItemToInventory( struct FInventoryItem ItemToAdd );
 
+	// Returns true if the game has focus (no menu is open, no dialog etc.). [5/4/2016 Matthew Woolley]
+	UFUNCTION( BlueprintCallable, Category = "Misc" )
+	bool GameHasFocus( );
+
 protected:
 	// Moves the Character in the X axis. [10/12/2015 Matthew Woolley]
 	UFUNCTION( BlueprintCallable, Category = "Movement" )

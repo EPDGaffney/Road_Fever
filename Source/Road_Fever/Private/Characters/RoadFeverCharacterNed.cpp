@@ -64,7 +64,7 @@ void ARoadFeverCharacterNed::Tick( float InDeltaSeconds )
 
 	// The amount of time since the quick-turn started. [10/12/2015 Matthew Woolley]
 	static float QuickTurn_CurrentWaitTime = 0;
-	
+
 	// The Character's current yaw. [10/12/2015 Matthew Woolley]
 	static float CharacterYaw = GetControlRotation().Yaw;
 
@@ -159,7 +159,7 @@ bool ARoadFeverCharacterNed::AddItemToInventory( struct FInventoryItem ItemToAdd
 	for ( int32 iSlotIterator = 0; iSlotIterator < CharactersInventory->ItemSlots.Num(); iSlotIterator++ )
 	{
 		// If the item that is trying to be added is the same one that is already in this slot. [5/3/2016 Matthew Woolley]
-		if ( CharactersInventory->ItemSlots[iSlotIterator].DisplayName == ItemToAdd.DisplayName )
+		if ( CharactersInventory->ItemSlots[ iSlotIterator ].DisplayName == ItemToAdd.DisplayName )
 		{
 			// And there is enough room to add more to the stack. [5/3/2016 Matthew Woolley]
 			if ( CharactersInventory->ItemSlots[ iSlotIterator ].CurrentItemStack < ItemToAdd.MaxItemStack )
@@ -194,21 +194,32 @@ bool ARoadFeverCharacterNed::AddItemToInventory( struct FInventoryItem ItemToAdd
 	return false;
 }
 
+// Returns true if the game has focus (no menu is open, no dialog etc.). [5/4/2016 Matthew Woolley]
+bool ARoadFeverCharacterNed::GameHasFocus()
+{
+	return ( !CharactersInventory->bIsOpen );
+}
+
 // Moves the Character in the X axis. [10/12/2015 Matthew Woolley]
 void ARoadFeverCharacterNed::MoveForward( float InInputVal )
 {
-	_move( InInputVal, EAxis::X );
+	_move( ( GameHasFocus() ? InInputVal : 0 ), EAxis::X );
 }
 
 // Called when the player wishes to turn. [10/12/2015 Matthew Woolley]
 void ARoadFeverCharacterNed::Turn( float InInputVal )
 {
-	AddControllerYawInput( InInputVal );
+	AddControllerYawInput( ( GameHasFocus() ? InInputVal : 0 ) );
 }
 
 // Called when the player attempts to interact. [10/12/2015 Matthew Woolley]
 void ARoadFeverCharacterNed::OnCharacterInteract_Implementation()
 {
+	if ( !GameHasFocus() )
+	{
+		return;
+	}
+
 	// Make sure the collection area exists. [15/12/2015 Matthew Woolley]
 	if ( CollectionArea )
 	{
@@ -268,6 +279,8 @@ void ARoadFeverCharacterNed::OnEndSprint()
 // Called when the player wishes to do a quick-turn. [10/12/2015 Matthew Woolley]
 void ARoadFeverCharacterNed::OnBeginQuickTurn()
 {
+	if ( !GameHasFocus() )
+		return;
 	if ( !bIsDoingQuickTurn && MoveForwardAxis < 0 )
 	{
 		bIsDoingQuickTurn = true;
