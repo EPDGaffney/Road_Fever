@@ -301,6 +301,13 @@ void ARoadFeverCharacterNed::OnEndAim()
 
 void ARoadFeverCharacterNed::_move( float InInputVal, EAxis::Type InMoveAxis )
 {
+	if ( InInputVal <= 0 )
+	{
+		MoveForwardAxis = InInputVal * -1;
+	} else
+	{
+		MoveForwardAxis = InInputVal;
+	}
 	// Get the current rotation of the controller. [10/12/2015 Matthew Woolley]
 	FRotator Rotation = GetControlRotation();
 
