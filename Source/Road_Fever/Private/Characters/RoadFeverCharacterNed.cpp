@@ -230,7 +230,7 @@ void ARoadFeverCharacterNed::OnCharacterInteract_Implementation()
 		// Get each actor. [15/12/2015 Matthew Woolley]
 		for ( AActor* iActorIterator : NearbyActors )
 		{
-			// See if it has a UInteractionComponent. [15/12/2015 Matthew Woolley]
+			// See if it is an Item Component. [15/12/2015 Matthew Woolley]
 			AItem* Item = ( AItem* ) iActorIterator;
 			if ( Item )
 			{
