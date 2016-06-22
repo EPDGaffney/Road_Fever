@@ -230,13 +230,12 @@ void ARoadFeverCharacterNed::OnCharacterInteract_Implementation()
 		// Get each actor. [15/12/2015 Matthew Woolley]
 		for ( AActor* iActorIterator : NearbyActors )
 		{
-			if ( (ARoadFeverCameraSystem*) iActorIterator  )
-				continue;
-
-			// See if it is an Item Component. [15/12/2015 Matthew Woolley]
-			AItem* Item = ( AItem* ) iActorIterator;
-			if ( Item )
+			// If the actor we found is an AItem. [22/6/2016 Matthew Woolley]
+			if ( iActorIterator->IsA( AItem::StaticClass() ))
 			{
+				// Get reference to AItem found. [22/6/2016 Matthew Woolley]
+				AItem* Item = ( AItem* ) iActorIterator;
+
 				// Get the world. [15/12/2015 Matthew Woolley]
 				UWorld* const World = GetWorld();
 
