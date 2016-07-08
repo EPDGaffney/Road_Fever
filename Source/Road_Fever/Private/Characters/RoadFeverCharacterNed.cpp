@@ -110,6 +110,7 @@ void ARoadFeverCharacterNed::SetupPlayerInputComponent( class UInputComponent* I
 
 		InInputComponent->BindAction( "Aim", IE_Pressed, this, &ARoadFeverCharacterNed::OnBeginAim );
 		InInputComponent->BindAction( "Aim", IE_Released, this, &ARoadFeverCharacterNed::OnEndAim );
+		InInputComponent->BindAxis( "Aim", this, &ARoadFeverCharacterNed::AimUp_Down );
 
 		InInputComponent->BindAction( "ToggleInventory", IE_Pressed, CharactersInventory, &UInventory::ToggleInventory );
 	}
@@ -203,7 +204,13 @@ bool ARoadFeverCharacterNed::GameHasFocus()
 // Moves the Character in the X axis. [10/12/2015 Matthew Woolley]
 void ARoadFeverCharacterNed::MoveForward( float InInputVal )
 {
-	_move( ( GameHasFocus() ? InInputVal : 0 ), EAxis::X );
+	if ( !GameHasFocus() || bIsAiming )
+	{
+		_move( 0, EAxis::X );
+	} else
+	{
+		_move( InInputVal, EAxis::X );
+	}
 }
 
 // Called when the player wishes to turn. [10/12/2015 Matthew Woolley]
@@ -215,7 +222,7 @@ void ARoadFeverCharacterNed::Turn( float InInputVal )
 // Called when the player attempts to interact. [10/12/2015 Matthew Woolley]
 void ARoadFeverCharacterNed::OnCharacterInteract_Implementation()
 {
-	if ( !GameHasFocus() )
+	if ( !GameHasFocus() || bIsAiming )
 	{
 		return;
 	}
@@ -281,8 +288,9 @@ void ARoadFeverCharacterNed::OnEndSprint()
 // Called when the player wishes to do a quick-turn. [10/12/2015 Matthew Woolley]
 void ARoadFeverCharacterNed::OnBeginQuickTurn()
 {
-	if ( !GameHasFocus() )
+	if ( !GameHasFocus() || bIsAiming)
 		return;
+
 	if ( !bIsDoingQuickTurn && MoveForwardAxis < 0 )
 	{
 		bIsDoingQuickTurn = true;
@@ -292,24 +300,35 @@ void ARoadFeverCharacterNed::OnBeginQuickTurn()
 // Called when the player begins aiming. [10/12/2015 Matthew Woolley]
 void ARoadFeverCharacterNed::OnBeginAim()
 {
-
+	if ( GameHasFocus() )
+	{
+		bIsAiming = true;
+	}
 }
 
 // Called when the player stops aiming. [10/12/2015 Matthew Woolley]
 void ARoadFeverCharacterNed::OnEndAim()
 {
+	bIsAiming = false;
+}
 
+// Controls the character's up and down aiming. [8/7/2016 Matthew Woolley]
+void ARoadFeverCharacterNed::AimUp_Down( float InInputVal )
+{
+	if ( bIsAiming )
+	{
+		AimValue = InInputVal;
+	} else
+	{
+		AimValue = 0;
+	}
 }
 
 void ARoadFeverCharacterNed::_move( float InInputVal, EAxis::Type InMoveAxis )
 {
-	if ( InInputVal <= 0 )
-	{
-		MoveForwardAxis = InInputVal * -1;
-	} else
-	{
-		MoveForwardAxis = InInputVal;
-	}
+	// Update the Axis Input so the animations can respond. [8/7/2016 Matthew Woolley]
+	MoveForwardAxis = InInputVal;
+	
 	// Get the current rotation of the controller. [10/12/2015 Matthew Woolley]
 	FRotator Rotation = GetControlRotation();
 

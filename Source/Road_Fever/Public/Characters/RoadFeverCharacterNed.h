@@ -98,13 +98,17 @@ public:
 	UFUNCTION( BlueprintCallable, Category = "Misc" )
 	bool GameHasFocus( );
 
+	// The value of which the character is looking up or down. [8/7/2016 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack" )
+	float AimValue;
+
 protected:
 	// Moves the Character in the X axis. [10/12/2015 Matthew Woolley]
 	UFUNCTION( BlueprintCallable, Category = "Movement" )
 	void MoveForward( float InInputVal );
 	
 	// Called when the player wishes to turn. [10/12/2015 Matthew Woolley]
-	UFUNCTION( BlueprintCallable, Category = "Attack" )
+	UFUNCTION( BlueprintCallable, Category = "Movement" )
 	void Turn( float InInputVal );
 
 	// Used to detect items when interacting. [10/12/2015 Matthew Woolley]
@@ -143,6 +147,10 @@ protected:
 	// The sphere used for enemy detection and aiming. [11/12/2015 Matthew Woolley]
 	UPROPERTY( BlueprintReadWrite, Category = "Attack" )
 	class USphereComponent* AutoAimSphere;
+
+	// Controls the character's up and down aiming. [8/7/2016 Matthew Woolley]
+	UFUNCTION( BlueprintCallable, Category = "Attack" )
+	void AimUp_Down( float InInputVal );
 
 private:
 	// Called to preform generic movement function. [10/12/2015 Matthew Woolley]
