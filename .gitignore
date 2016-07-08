@@ -233,6 +233,7 @@ pip-log.txt
 #UE4 Files
 *.sdf
 *.suo
+*.sln
 
 /Binaries
 /DerivedDataCache
