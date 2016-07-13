@@ -185,6 +185,7 @@ bool ARoadFeverCharacterNed::AddItemToInventory( struct FInventoryItem ItemToAdd
 			CharactersInventory->ItemSlots[ iSlotIterator ].ItemClass = ItemToAdd.ItemClass;
 			CharactersInventory->ItemSlots[ iSlotIterator ].ItemToolTip = ItemToAdd.ItemToolTip;
 			CharactersInventory->ItemSlots[ iSlotIterator ].MaxItemStack = ItemToAdd.MaxItemStack;
+			CharactersInventory->ItemSlots[ iSlotIterator ].bIsEquipable = ItemToAdd.bIsEquipable;
 
 			// Tell the code that this item was added successfully. [5/3/2016 Matthew Woolley]
 			return true;

@@ -37,6 +37,14 @@ public:
 	// The amount of this item that is currently in this slot. [4/3/2016 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Item" )
 	int32 CurrentItemStack;
+
+	// Whether or not the item in this slot can be equipped. [13/7/2016 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Equipping" )
+	bool bIsEquipable;
+
+	// Whether or not this item is equipped. [13/7/2016 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Equipping" )
+	bool bIsEquipped;
 };
 
 
@@ -73,6 +81,10 @@ public:
 	UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Item" )
 	void OnInteract();
 	virtual void OnInteract_Implementation() { return; };
+
+	// Attaches the item to Ned's hand. [13/7/2016 Matthew Woolley]
+	UFUNCTION( BlueprintCallable, Category = "Item" )
+	void AttachItemToNed_Hand();
 
 	// The info that will get passed to the inventory to find out what item has been picked up. [4/3/2016 Matthew Woolley]
 	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Item" )

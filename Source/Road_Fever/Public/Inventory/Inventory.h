@@ -52,4 +52,12 @@ public:
 	// The slot that is currently being used. [21/12/2015 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Item" )
 	int32 CurrentActiveSlot;
+
+	// The slot that the currently equipped item is owned by. [13/7/2016 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Equipping" )
+	int32 EquippedItemsSlot;
+
+	// The currently equipped item (spawned in-game). [13/7/2016 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Equipping" )
+	AItem* EquippedItem;
 };
