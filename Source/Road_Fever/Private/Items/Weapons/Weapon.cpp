@@ -2,7 +2,8 @@
 
 #include "Road_Fever.h"
 #include "Public/Items/Weapons/Weapon.h"
-#include "Components/ArrowComponent.h"
+
+
 
 AWeapon::AWeapon()
 {
@@ -11,9 +12,6 @@ AWeapon::AWeapon()
 	WeaponProperties.CoolDownTime = 1;
 	WeaponProperties.Damage = 25;
 	WeaponProperties.Range = 50;
-
-	DirectionArrow = CreateDefaultSubobject<UArrowComponent>( TEXT( "Direction Arrow" ) );
-	RootComponent = DirectionArrow;
 
 	// Allow Actor ticking [20/11/2015 Matthew Woolley]
 	PrimaryActorTick.bCanEverTick = true;

@@ -241,7 +241,7 @@ void ARoadFeverCharacterNed::OnCharacterInteract_Implementation()
 		for ( AActor* iActorIterator : NearbyActors )
 		{
 			// If the actor we found is an AItem. [22/6/2016 Matthew Woolley]
-			if ( iActorIterator->IsA( AItem::StaticClass() ))
+			if ( iActorIterator->IsA( AItem::StaticClass() ) )
 			{
 				// Get reference to AItem found. [22/6/2016 Matthew Woolley]
 				AItem* Item = ( AItem* ) iActorIterator;
@@ -325,14 +325,14 @@ void ARoadFeverCharacterNed::OnEndAim()
 // Calls the attack function on the currently equipped weapon. [14/7/2016 Matthew Woolley]
 void ARoadFeverCharacterNed::OnAttack()
 {
-	if ( !GameHasFocus() || !bIsAiming || !CharactersInventory->EquippedItem )
+	if ( !GameHasFocus() || !bIsAiming || !CharactersInventory->EquippedItem && !( AWeapon* ) CharactersInventory->EquippedItem )
 	{
 		return;
 	}
 
 	if ( CharactersInventory->EquippedItem->IsA( AWeapon::StaticClass() ) )
 	{
-		AWeapon* CurrentlyEquippedWeapon = (AWeapon*)CharactersInventory->EquippedItem;
+		AWeapon* CurrentlyEquippedWeapon = ( AWeapon* ) CharactersInventory->EquippedItem;
 		CurrentlyEquippedWeapon->OnAttack();
 	}
 }
@@ -353,7 +353,7 @@ void ARoadFeverCharacterNed::_move( float InInputVal, EAxis::Type InMoveAxis )
 {
 	// Update the Axis Input so the animations can respond. [8/7/2016 Matthew Woolley]
 	MoveForwardAxis = InInputVal;
-	
+
 	// Get the current rotation of the controller. [10/12/2015 Matthew Woolley]
 	FRotator Rotation = GetControlRotation();
 

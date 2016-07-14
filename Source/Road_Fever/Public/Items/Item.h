@@ -61,6 +61,9 @@ class ROAD_FEVER_API AItem : public AActor
 	GENERATED_BODY()
 
 public:
+	// Called when this Item is created. [14/7/2016 Matthew Woolley]
+	AItem();
+
 	// Called when the user wishes to use an item. [21/12/2015 Matthew Woolley]
 	UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Item" )
 	void OnUse();
@@ -76,7 +79,6 @@ public:
 	void OnExamine();
 	virtual void OnExamine_Implementation() { return; };
 
-
 	// Called when the user wishes to interact with an item. [21/12/2015 Matthew Woolley]
 	UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Item" )
 	void OnInteract();
@@ -89,4 +91,17 @@ public:
 	// The info that will get passed to the inventory to find out what item has been picked up. [4/3/2016 Matthew Woolley]
 	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Item" )
 	FInventoryItem ItemInfo;
+
+	// The mesh that is used to represent this Item. [14/7/2016 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Item" )
+	UStaticMeshComponent* ItemsMesh;
+
+protected:
+	// The box that the Character uses to detect this item on the ground. [14/7/2016 Matthew Woolley]
+	UPROPERTY( BlueprintReadWrite, Category = "Item" )
+	UBoxComponent* DetectionBox;
+
+private:
+	// Used to point the forward direction of the item. [14/7/2016 Matthew Woolley]
+	UArrowComponent* DirectionArrow;
 };
