@@ -5,6 +5,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Dummy Classes/RoadFeverCameraDummy.h"
 #include "Public/Inventory/Inventory.h"
+#include "Public/Items/Weapons/Weapon.h"
 
 
 
@@ -111,6 +112,7 @@ void ARoadFeverCharacterNed::SetupPlayerInputComponent( class UInputComponent* I
 		InInputComponent->BindAction( "Aim", IE_Pressed, this, &ARoadFeverCharacterNed::OnBeginAim );
 		InInputComponent->BindAction( "Aim", IE_Released, this, &ARoadFeverCharacterNed::OnEndAim );
 		InInputComponent->BindAxis( "Aim", this, &ARoadFeverCharacterNed::AimUp_Down );
+		InInputComponent->BindAction( "Attack", IE_Pressed, this, &ARoadFeverCharacterNed::OnAttack );
 
 		InInputComponent->BindAction( "ToggleInventory", IE_Pressed, CharactersInventory, &UInventory::ToggleInventory );
 	}
@@ -275,6 +277,11 @@ void ARoadFeverCharacterNed::OnCharacterInteract_Implementation()
 // Called when the player wishes to sprint. [10/12/2015 Matthew Woolley]
 void ARoadFeverCharacterNed::OnBeginSprint()
 {
+	if ( !GameHasFocus() || bIsAiming )
+	{
+		return;
+	}
+
 	GetCharacterMovement()->MaxWalkSpeed = CharacterSprintSpeed;
 	bIsSprinting = true;
 }
@@ -289,8 +296,10 @@ void ARoadFeverCharacterNed::OnEndSprint()
 // Called when the player wishes to do a quick-turn. [10/12/2015 Matthew Woolley]
 void ARoadFeverCharacterNed::OnBeginQuickTurn()
 {
-	if ( !GameHasFocus() || bIsAiming)
+	if ( !GameHasFocus() || bIsAiming )
+	{
 		return;
+	}
 
 	if ( !bIsDoingQuickTurn && MoveForwardAxis < 0 )
 	{
@@ -311,6 +320,21 @@ void ARoadFeverCharacterNed::OnBeginAim()
 void ARoadFeverCharacterNed::OnEndAim()
 {
 	bIsAiming = false;
+}
+
+// Calls the attack function on the currently equipped weapon. [14/7/2016 Matthew Woolley]
+void ARoadFeverCharacterNed::OnAttack()
+{
+	if ( !GameHasFocus() || !bIsAiming || !CharactersInventory->EquippedItem )
+	{
+		return;
+	}
+
+	if ( CharactersInventory->EquippedItem->IsA( AWeapon::StaticClass() ) )
+	{
+		AWeapon* CurrentlyEquippedWeapon = (AWeapon*)CharactersInventory->EquippedItem;
+		CurrentlyEquippedWeapon->OnAttack();
+	}
 }
 
 // Controls the character's up and down aiming. [8/7/2016 Matthew Woolley]

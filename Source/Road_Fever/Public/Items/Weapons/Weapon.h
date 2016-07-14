@@ -50,12 +50,17 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	// Called when the player wishes to attack with this weapon [20/11/2015 Matthew Woolley]
-	UFUNCTION(BlueprintCallable, Category = "Attack")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Attack")
 	void OnAttack();
+	virtual void OnAttack_Implementation();
 
 	// The properties for customizing this weapon [20/11/2015 Matthew Woolley]
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Attack")
 	FWeaponProperties WeaponProperties;
+
+	// The arrow which shows which direction the line traces will be preformed. [14/7/2016 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack|Extra" )
+	class UArrowComponent* DirectionArrow;
 
 	
 	

@@ -2,6 +2,7 @@
 
 #include "Road_Fever.h"
 #include "Public/Items/Weapons/Weapon.h"
+#include "Components/ArrowComponent.h"
 
 AWeapon::AWeapon()
 {
@@ -10,6 +11,9 @@ AWeapon::AWeapon()
 	WeaponProperties.CoolDownTime = 1;
 	WeaponProperties.Damage = 25;
 	WeaponProperties.Range = 50;
+
+	DirectionArrow = CreateDefaultSubobject<UArrowComponent>( TEXT( "Direction Arrow" ) );
+	RootComponent = DirectionArrow;
 
 	// Allow Actor ticking [20/11/2015 Matthew Woolley]
 	PrimaryActorTick.bCanEverTick = true;
@@ -44,10 +48,12 @@ void AWeapon::Tick(float DeltaTime)
 	}
 }
 
-void AWeapon::OnAttack()
+
+// Called when the player wishes to attack with this weapon [20/11/2015 Matthew Woolley]
+void AWeapon::OnAttack_Implementation()
 {
 	// Make sure the weapon isn't currently cooling down [20/11/2015 Matthew Woolley]
-	if (WeaponProperties.bIsCoolingDown)
+	if ( WeaponProperties.bIsCoolingDown )
 	{
 		return;
 	}
@@ -59,7 +65,7 @@ void AWeapon::OnAttack()
 	FVector Start = GetActorLocation();
 
 	// Get the furthest this weapon can attack [20/11/2015 Matthew Woolley]
-	FVector End = Start + (GetActorRotation().Vector() * WeaponProperties.Range);
+	FVector End = Start + ( GetActorRotation().Vector() * WeaponProperties.Range );
 
 	// The rotation [20/11/2015 Matthew Woolley]
 	FQuat Rot;
@@ -67,28 +73,32 @@ void AWeapon::OnAttack()
 	// The trace's shape [20/11/2015 Matthew Woolley]
 	FCollisionShape Shape;
 	Shape.ShapeType = ECollisionShape::Capsule;
-	Shape.MakeCapsule(20, 1); 
+	Shape.MakeCapsule( 20, 1 );
 
 	// The parameters for the collision [20/11/2015 Matthew Woolley]
 	FCollisionQueryParams Params;
-	Params.AddIgnoredActor(this);
-	Params.TraceTag = FName("WeaponTrace");
+	Params.AddIgnoredActor( this );
+	Params.AddIgnoredActor( GetWorld()->GetFirstPlayerController()->GetPawn() );
+	Params.TraceTag = FName( "WeaponTrace" );
 
 	// The current UWorld object [20/11/2015 Matthew Woolley]
 	UWorld* const World = GetWorld();
 
-	if (World)
+	FCollisionResponseParams RespParams;
+	RespParams.CollisionResponse.Visibility;
+
+	if ( World )
 	{
 		// Trace to see if there are any Actors ahead [20/11/2015 Matthew Woolley]
-		World->DebugDrawTraceTag = FName("WeaponTrace");							
-		bool bHadBlockingHit = World->SweepSingleByChannel(OutHit, Start, End, Rot, WEAPON_TRACE, Shape, Params);
+		World->DebugDrawTraceTag = FName( "WeaponTrace" );
+		bool bHadBlockingHit = World->SweepSingleByChannel( OutHit, Start, End, Rot, WEAPON_TRACE, Shape, Params, RespParams );
 
 		// If there was one [20/11/2015 Matthew Woolley]
-		if (bHadBlockingHit)
+		if ( bHadBlockingHit )
 		{
 			// Make sure it's still valid and not being destroyed [20/11/2015 Matthew Woolley]
 			AActor* HitActor = OutHit.GetActor();
-			if (HitActor && !HitActor->IsPendingKill())
+			if ( HitActor && !HitActor->IsPendingKill() )
 			{
 				// Destroy it (WILL APPLY DAMAGE LATER ON) [20/11/2015 Matthew Woolley]
 				HitActor->Destroy();
@@ -99,5 +109,4 @@ void AWeapon::OnAttack()
 	// Make sure the weapon cools down before shooting again [20/11/2015 Matthew Woolley]
 	WeaponProperties.bIsCoolingDown = true;
 }
-
 

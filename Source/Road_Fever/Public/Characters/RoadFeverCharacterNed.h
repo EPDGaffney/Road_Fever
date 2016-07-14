@@ -148,6 +148,10 @@ protected:
 	UPROPERTY( BlueprintReadWrite, Category = "Attack" )
 	class USphereComponent* AutoAimSphere;
 
+	// Calls the attack function on the currently equipped weapon. [14/7/2016 Matthew Woolley]
+	UFUNCTION( BlueprintCallable, Category = "Attack" )
+	void OnAttack();
+
 	// Controls the character's up and down aiming. [8/7/2016 Matthew Woolley]
 	UFUNCTION( BlueprintCallable, Category = "Attack" )
 	void AimUp_Down( float InInputVal );
