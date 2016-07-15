@@ -2,6 +2,7 @@
 
 #include "Road_Fever.h"
 #include "Public/Items/Weapons/Weapon.h"
+#include "Public/AI/Enemey/RoadFeverEnemy.h"
 
 
 
@@ -23,19 +24,19 @@ AWeapon::~AWeapon()
 
 }
 
-void AWeapon::Tick(float DeltaTime)
+void AWeapon::Tick( float DeltaTime )
 {
 	// Time keeping variable [20/11/2015 Matthew Woolley]
 	static float CurrentCoolDownTime = 0.f;
 
 	// If the weapon needs to wait before being used again [20/11/2015 Matthew Woolley]
-	if (WeaponProperties.bIsCoolingDown)
+	if ( WeaponProperties.bIsCoolingDown )
 	{
 		// Add up how long we have been waiting [20/11/2015 Matthew Woolley]
 		CurrentCoolDownTime += DeltaTime;
 
 		// If the attack has cooled down (i.e. can be used again) [20/11/2015 Matthew Woolley]
-		if (CurrentCoolDownTime >= WeaponProperties.CoolDownTime)
+		if ( CurrentCoolDownTime >= WeaponProperties.CoolDownTime )
 		{
 			// Reset the cool down timer [20/11/2015 Matthew Woolley]
 			CurrentCoolDownTime = 0;
@@ -96,10 +97,12 @@ void AWeapon::OnAttack_Implementation()
 		{
 			// Make sure it's still valid and not being destroyed [20/11/2015 Matthew Woolley]
 			AActor* HitActor = OutHit.GetActor();
-			if ( HitActor && !HitActor->IsPendingKill() )
+			if ( HitActor && !HitActor->IsPendingKill() && HitActor->IsA( ARoadFeverEnemy::StaticClass() ) )
 			{
-				// Destroy it (WILL APPLY DAMAGE LATER ON) [20/11/2015 Matthew Woolley]
-				HitActor->Destroy();
+				// Cast the enemy from the hit Actor. [15/7/2016 Matthew Woolley]
+				ARoadFeverEnemy* HitEnemy = ( ARoadFeverEnemy* ) HitActor;
+
+				HitEnemy->TakeDamage( WeaponProperties.Damage );
 			}
 		}
 	}
