@@ -3,9 +3,10 @@
 #include "Road_Fever.h"
 #include "RoadFeverCharacterNed.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "Dummy Classes/RoadFeverCameraDummy.h"
+#include "Public/Dummy Classes/RoadFeverCameraDummy.h"
 #include "Public/Inventory/Inventory.h"
 #include "Public/Items/Weapons/Weapon.h"
+#include "Public/AI/Enemey/RoadFeverEnemy.h"
 
 
 
@@ -55,6 +56,7 @@ void ARoadFeverCharacterNed::BeginPlay()
 	// Create the ARoadFeverCameraDummy class for the camera-system. [11/12/2015 Matthew Woolley]
 	CameraDummy = Cast<ARoadFeverCameraDummy>( GetWorld()->SpawnActor( ARoadFeverCameraDummy::StaticClass() ) );
 	CameraDummy->AttachRootComponentToActor( this, NAME_None, EAttachLocation::SnapToTarget );
+	AutoAimSphere->SetSphereRadius( AutoAimMaxDistance );
 }
 
 // Called every frame. [10/12/2015 Matthew Woolley]
@@ -235,7 +237,7 @@ void ARoadFeverCharacterNed::OnCharacterInteract_Implementation()
 	{
 		// Get all actors that are overlapping the collection area. [15/12/2015 Matthew Woolley]
 		TArray<AActor*> NearbyActors;
-		CollectionArea->GetOverlappingActors( NearbyActors );
+		CollectionArea->GetOverlappingActors( NearbyActors, AItem::StaticClass() );
 
 		// Get each actor. [15/12/2015 Matthew Woolley]
 		for ( AActor* iActorIterator : NearbyActors )
@@ -313,6 +315,53 @@ void ARoadFeverCharacterNed::OnBeginAim()
 	if ( GameHasFocus() )
 	{
 		bIsAiming = true;
+
+		// Make sure the auto aim sphere has been created. [16/7/2016 Matthew Woolley]
+		if ( AutoAimSphere )
+		{
+			// Get all actors that are overlapping the auto aim sphere. [16/7/2016 Matthew Woolley]
+			TArray<AActor*> NearbyActors;
+			AutoAimSphere->GetOverlappingActors( NearbyActors, ARoadFeverEnemy::StaticClass() );
+			GEngine->AddOnScreenDebugMessage( -1, .5, FColor::Red, TEXT( "Debug 1" ) );
+
+			// Get each actor. [16/7/2016 Matthew Woolley]
+			for ( AActor* iActorIterator : NearbyActors )
+			{
+				GEngine->AddOnScreenDebugMessage( -1, .5, FColor::Red, TEXT( "Debug 2" ) );
+				// If the Actor we found is an ARoadFeverEnemy. [16/7/2016 Matthew Woolley]
+				if ( iActorIterator->IsA( ARoadFeverEnemy::StaticClass() ) )
+				{
+					// Get a reference to the found ARoadFeverEnemy. [16/7/2016 Matthew Woolley]
+					ARoadFeverEnemy* FoundEnemy = ( ARoadFeverEnemy* ) iActorIterator;
+
+					// Get the World object. [16/7/2016 Matthew Woolley]
+					UWorld* const World = GetWorld();
+
+					// Collision parameters for the line trace. [16/7/2016 Matthew Woolley]
+					FHitResult Hit;
+					FCollisionQueryParams Line( FName( "Enemy Line Trace" ), true );
+					TArray<AActor*> IgnoredActors;
+					IgnoredActors.Add( this );
+					IgnoredActors.Add( CameraDummy );
+					Line.AddIgnoredActors( IgnoredActors );
+
+					// Make sure there is nothing in the way of the enemy (I.E. a wall). [16/7/2016 Matthew Woolley]
+					bool bHasBlockingHit = World->LineTraceSingleByChannel( Hit, this->GetActorLocation(), FoundEnemy->GetActorLocation(), WEAPON_TRACE, Line );
+
+					// If there is nothing in the way of the enemy. [16/7/2016 Matthew Woolley]
+					if ( bHasBlockingHit && Hit.GetActor() == FoundEnemy )
+					{
+						GEngine->AddOnScreenDebugMessage( -1, .5, FColor::Red, TEXT( "Debug 3" ) );
+						// Make Ned look at the found enemy. [16/7/2016 Matthew Woolley]
+						FRotator LookAtRotation = ( GetActorLocation() - Hit.GetActor()->GetActorLocation() ).Rotation();
+						GetController()->SetControlRotation( FRotator( 0, LookAtRotation.Yaw - 180, 0 ) );
+
+						// Stop iterating over actors. [16/7/2016 Matthew Woolley]
+						return;
+					}
+				}
+			}
+		}
 	}
 }
 

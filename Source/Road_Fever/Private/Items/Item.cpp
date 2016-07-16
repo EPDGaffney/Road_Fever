@@ -19,7 +19,7 @@ AItem::AItem()
 	DetectionBox->SetBoxExtent( FVector( 32, 32, 32 ) );
 	DetectionBox->RelativeLocation = FVector( 0, 0, 32 );
 	DetectionBox->AttachParent = RootComponent;
-	DetectionBox->SetCollisionProfileName( "Item" );
+	DetectionBox->SetCollisionProfileName( "ItemPickup" );
 
 	// Setup this Item's mesh. [14/7/2016 Matthew Woolley]
 	ItemsMesh = CreateDefaultSubobject<UStaticMeshComponent>( TEXT( "Item's Mesh" ) );
