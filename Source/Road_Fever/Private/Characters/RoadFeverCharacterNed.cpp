@@ -324,6 +324,9 @@ void ARoadFeverCharacterNed::OnBeginAim()
 			AutoAimSphere->GetOverlappingActors( NearbyActors, ARoadFeverEnemy::StaticClass() );
 			GEngine->AddOnScreenDebugMessage( -1, .5, FColor::Red, TEXT( "Debug 1" ) );
 
+			// The enemies that can be aimed at. [17/7/2016 Matthew Woolley]
+			TArray<ARoadFeverEnemy*> Enemies;
+
 			// Get each actor. [16/7/2016 Matthew Woolley]
 			for ( AActor* iActorIterator : NearbyActors )
 			{
@@ -351,14 +354,38 @@ void ARoadFeverCharacterNed::OnBeginAim()
 					// If there is nothing in the way of the enemy. [16/7/2016 Matthew Woolley]
 					if ( bHasBlockingHit && Hit.GetActor() == FoundEnemy )
 					{
-						GEngine->AddOnScreenDebugMessage( -1, .5, FColor::Red, TEXT( "Debug 3" ) );
-						// Make Ned look at the found enemy. [16/7/2016 Matthew Woolley]
-						FRotator LookAtRotation = ( GetActorLocation() - Hit.GetActor()->GetActorLocation() ).Rotation();
-						GetController()->SetControlRotation( FRotator( 0, LookAtRotation.Yaw - 180, 0 ) );
+						Enemies.Add( FoundEnemy );
 
-						// Stop iterating over actors. [16/7/2016 Matthew Woolley]
-						return;
 					}
+				}
+			}
+
+			// If we have found an enemy. [17/7/2016 Matthew Woolley]
+			if ( Enemies.Num() != 0 )
+			{
+				// Get the distance to the closest enemy found. [17/7/2016 Matthew Woolley]
+				float SmallestDistance = AutoAimMaxDistance;
+				// Store the actual enemy so, if it is the closest one, we can look at it. [17/7/2016 Matthew Woolley]
+				ARoadFeverEnemy* ClosestEnemy = nullptr;
+
+				// For each enemy found. [17/7/2016 Matthew Woolley]
+				for ( ARoadFeverEnemy* iRoadFeverEnemyIterator : Enemies )
+				{
+					// If this enemy is closer than the last one. [17/7/2016 Matthew Woolley]
+					if ( iRoadFeverEnemyIterator->GetDistanceTo( this ) <= SmallestDistance )
+					{
+						// Store it so we can check its distance against the next enemy. [17/7/2016 Matthew Woolley]
+						SmallestDistance = iRoadFeverEnemyIterator->GetDistanceTo( this );
+						ClosestEnemy = iRoadFeverEnemyIterator;
+					}
+				}
+
+				// If we have a closest enemy. [17/7/2016 Matthew Woolley]
+				if ( ClosestEnemy )
+				{
+					// Make Ned look at the found enemy. [16/7/2016 Matthew Woolley]
+					FRotator LookAtRotation = ( GetActorLocation() - ClosestEnemy->GetActorLocation() ).Rotation();
+					GetController()->SetControlRotation( FRotator( 0, LookAtRotation.Yaw - 180, 0 ) );
 				}
 			}
 		}
