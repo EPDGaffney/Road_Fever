@@ -28,12 +28,6 @@ ARoadFeverCharacterNed::ARoadFeverCharacterNed()
 	QuickTurnWaitTime = 0.5f;
 	TurnSensitivity = 2;
 
-	// Character aiming. [11/12/2015 Matthew Woolley]
-	AutoAimMaxDistance = 500.f;
-	AutoAimSphere = CreateDefaultSubobject<USphereComponent>( TEXT( "AutoAimSphere" ) );
-	AutoAimSphere->AttachParent = GetCapsuleComponent();
-	AutoAimSphere->SetSphereRadius( AutoAimMaxDistance );
-
 	// Character's camera component. [11/12/2015 Matthew Woolley]
 	CharactersCamera = CreateDefaultSubobject<UCameraComponent>( TEXT( "NedCamera" ) );
 	CharactersCamera->bAbsoluteLocation = true;
@@ -56,7 +50,6 @@ void ARoadFeverCharacterNed::BeginPlay()
 	// Create the ARoadFeverCameraDummy class for the camera-system. [11/12/2015 Matthew Woolley]
 	CameraDummy = Cast<ARoadFeverCameraDummy>( GetWorld()->SpawnActor( ARoadFeverCameraDummy::StaticClass() ) );
 	CameraDummy->AttachRootComponentToActor( this, NAME_None, EAttachLocation::SnapToTarget );
-	AutoAimSphere->SetSphereRadius( AutoAimMaxDistance );
 }
 
 // Called every frame. [10/12/2015 Matthew Woolley]
@@ -316,77 +309,60 @@ void ARoadFeverCharacterNed::OnBeginAim()
 	{
 		bIsAiming = true;
 
-		// Make sure the auto aim sphere has been created. [16/7/2016 Matthew Woolley]
-		if ( AutoAimSphere )
+		// The enemies that can be aimed at. [17/7/2016 Matthew Woolley]
+		TArray<AActor*> Enemies;
+		UGameplayStatics::GetAllActorsOfClass( GetWorld(), ARoadFeverEnemy::StaticClass(), Enemies );
+
+		// Get all of the enemies in the level. [17/7/2016 Matthew Woolley]
+		for ( AActor* iActorIterator : Enemies )
 		{
-			// Get all actors that are overlapping the auto aim sphere. [16/7/2016 Matthew Woolley]
-			TArray<AActor*> NearbyActors;
-			AutoAimSphere->GetOverlappingActors( NearbyActors, ARoadFeverEnemy::StaticClass() );
-			GEngine->AddOnScreenDebugMessage( -1, .5, FColor::Red, TEXT( "Debug 1" ) );
+			// Get the World object. [16/7/2016 Matthew Woolley]
+			UWorld* const World = GetWorld();
 
-			// The enemies that can be aimed at. [17/7/2016 Matthew Woolley]
-			TArray<ARoadFeverEnemy*> Enemies;
+			// Collision parameters for the line trace. [16/7/2016 Matthew Woolley]
+			FHitResult Hit;
+			FCollisionQueryParams Line( FName( "Enemy Line Trace" ), true );
+			TArray<AActor*> IgnoredActors;
+			IgnoredActors.Add( this );
+			IgnoredActors.Add( CameraDummy );
+			Line.AddIgnoredActors( IgnoredActors );
 
-			// Get each actor. [16/7/2016 Matthew Woolley]
-			for ( AActor* iActorIterator : NearbyActors )
+			// Make sure there is nothing in the way of the enemy (I.E. a wall). [16/7/2016 Matthew Woolley]
+			bool bHasBlockingHit = World->LineTraceSingleByChannel( Hit, this->GetActorLocation(), iActorIterator->GetActorLocation(), WEAPON_TRACE, Line );
+
+			// If there is nothing in the way of the enemy. [16/7/2016 Matthew Woolley]
+			if ( bHasBlockingHit && Hit.GetActor() == iActorIterator )
 			{
-				GEngine->AddOnScreenDebugMessage( -1, .5, FColor::Red, TEXT( "Debug 2" ) );
-				// If the Actor we found is an ARoadFeverEnemy. [16/7/2016 Matthew Woolley]
-				if ( iActorIterator->IsA( ARoadFeverEnemy::StaticClass() ) )
+				Enemies.Add( iActorIterator );
+			}
+		}
+
+		// If we have found an enemy. [17/7/2016 Matthew Woolley]
+		if ( Enemies.Num() != 0 )
+		{
+			// Get the distance to the closest enemy found. [17/7/2016 Matthew Woolley]
+			float SmallestDistance = -0;
+			// Store the actual enemy so, if it is the closest one, we can look at it. [17/7/2016 Matthew Woolley]
+			AActor* ClosestEnemy = nullptr;
+
+			// For each enemy found. [17/7/2016 Matthew Woolley]
+			for ( AActor* iRoadFeverEnemyIterator : Enemies )
+			{
+				// If this enemy is closer than the last one. [17/7/2016 Matthew Woolley]
+				if ( iRoadFeverEnemyIterator->GetDistanceTo( this ) <= SmallestDistance || SmallestDistance == -0 )
 				{
-					// Get a reference to the found ARoadFeverEnemy. [16/7/2016 Matthew Woolley]
-					ARoadFeverEnemy* FoundEnemy = ( ARoadFeverEnemy* ) iActorIterator;
-
-					// Get the World object. [16/7/2016 Matthew Woolley]
-					UWorld* const World = GetWorld();
-
-					// Collision parameters for the line trace. [16/7/2016 Matthew Woolley]
-					FHitResult Hit;
-					FCollisionQueryParams Line( FName( "Enemy Line Trace" ), true );
-					TArray<AActor*> IgnoredActors;
-					IgnoredActors.Add( this );
-					IgnoredActors.Add( CameraDummy );
-					Line.AddIgnoredActors( IgnoredActors );
-
-					// Make sure there is nothing in the way of the enemy (I.E. a wall). [16/7/2016 Matthew Woolley]
-					bool bHasBlockingHit = World->LineTraceSingleByChannel( Hit, this->GetActorLocation(), FoundEnemy->GetActorLocation(), WEAPON_TRACE, Line );
-
-					// If there is nothing in the way of the enemy. [16/7/2016 Matthew Woolley]
-					if ( bHasBlockingHit && Hit.GetActor() == FoundEnemy )
-					{
-						Enemies.Add( FoundEnemy );
-
-					}
+					// Store it so we can check its distance against the next enemy. [17/7/2016 Matthew Woolley]
+					SmallestDistance = iRoadFeverEnemyIterator->GetDistanceTo( this );
+					ClosestEnemy = iRoadFeverEnemyIterator;
 				}
 			}
 
-			// If we have found an enemy. [17/7/2016 Matthew Woolley]
-			if ( Enemies.Num() != 0 )
+			// If we have a closest enemy. [17/7/2016 Matthew Woolley]
+			if ( ClosestEnemy )
 			{
-				// Get the distance to the closest enemy found. [17/7/2016 Matthew Woolley]
-				float SmallestDistance = AutoAimMaxDistance;
-				// Store the actual enemy so, if it is the closest one, we can look at it. [17/7/2016 Matthew Woolley]
-				ARoadFeverEnemy* ClosestEnemy = nullptr;
-
-				// For each enemy found. [17/7/2016 Matthew Woolley]
-				for ( ARoadFeverEnemy* iRoadFeverEnemyIterator : Enemies )
-				{
-					// If this enemy is closer than the last one. [17/7/2016 Matthew Woolley]
-					if ( iRoadFeverEnemyIterator->GetDistanceTo( this ) <= SmallestDistance )
-					{
-						// Store it so we can check its distance against the next enemy. [17/7/2016 Matthew Woolley]
-						SmallestDistance = iRoadFeverEnemyIterator->GetDistanceTo( this );
-						ClosestEnemy = iRoadFeverEnemyIterator;
-					}
-				}
-
-				// If we have a closest enemy. [17/7/2016 Matthew Woolley]
-				if ( ClosestEnemy )
-				{
-					// Make Ned look at the found enemy. [16/7/2016 Matthew Woolley]
-					FRotator LookAtRotation = ( GetActorLocation() - ClosestEnemy->GetActorLocation() ).Rotation();
-					GetController()->SetControlRotation( FRotator( 0, LookAtRotation.Yaw - 180, 0 ) );
-				}
+				// Make Ned look at the found enemy. [16/7/2016 Matthew Woolley]
+				FRotator LookAtRotation = ( GetActorLocation() - ClosestEnemy->GetActorLocation() ).Rotation();
+				GetController()->SetControlRotation( FRotator( 0, LookAtRotation.Yaw - 180, 0 ) );
 			}
 		}
 	}

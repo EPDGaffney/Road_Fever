@@ -32,10 +32,6 @@ public:
 	UPROPERTY( VisibleAnywhere, BlueprintReadWrite, Category = "Movement" )
 	bool bIsSprinting;
 
-	// The maximum distance the player can be from an enemy and still auto-aim. [10/12/2015 Matthew Woolley]
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack" )
-	float AutoAimMaxDistance;
-
 	// Whether or not the player is aiming. [10/12/2015 Matthew Woolley]
 	UPROPERTY( VisibleAnywhere, BlueprintReadWrite, Category = "Attack" )
 	bool bIsAiming;
@@ -143,10 +139,6 @@ protected:
 	// Called when the player stops aiming. [10/12/2015 Matthew Woolley]
 	UFUNCTION( BlueprintCallable, Category = "Attack" )
 	void OnEndAim();
-
-	// The sphere used for enemy detection and aiming. [11/12/2015 Matthew Woolley]
-	UPROPERTY( BlueprintReadWrite, Category = "Attack" )
-	class USphereComponent* AutoAimSphere;
 
 	// Calls the attack function on the currently equipped weapon. [14/7/2016 Matthew Woolley]
 	UFUNCTION( BlueprintCallable, Category = "Attack" )
