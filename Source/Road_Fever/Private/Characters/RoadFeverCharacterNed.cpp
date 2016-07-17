@@ -6,7 +6,7 @@
 #include "Public/Dummy Classes/RoadFeverCameraDummy.h"
 #include "Public/Inventory/Inventory.h"
 #include "Public/Items/Weapons/Weapon.h"
-#include "Public/AI/Enemey/RoadFeverEnemy.h"
+#include "Public/AI/Enemy/RoadFeverEnemy.h"
 
 
 
