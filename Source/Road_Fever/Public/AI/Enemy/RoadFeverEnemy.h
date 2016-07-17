@@ -30,4 +30,10 @@ public:
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Stats" )
 	UTextRenderComponent* HealthVisual;
 
+	// A visual representation of what this enemy's distance is to the player [FOR DEBUGGING]. [17/7/2016 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Stats" )
+	UTextRenderComponent* DistanceVisual;
+
+	virtual void Tick( float DeltaSeconds ) override;
+
 };

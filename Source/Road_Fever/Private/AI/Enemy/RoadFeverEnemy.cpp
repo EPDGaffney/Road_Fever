@@ -21,6 +21,13 @@ ARoadFeverEnemy::ARoadFeverEnemy()
 	HealthVisual->HorizontalAlignment = EHorizTextAligment::EHTA_Center;
 	HealthVisual->SetRelativeLocation( FVector( 0, 0, 100 ) );
 	HealthVisual->AttachParent = RootComponent;
+
+	DistanceVisual = CreateDefaultSubobject<UTextRenderComponent>( TEXT( "Distance Text Render" ) );
+	DistanceVisual->HorizontalAlignment = EHorizTextAligment::EHTA_Center;
+	DistanceVisual->SetRelativeLocation( FVector( 0, 0, 120 ) );
+	DistanceVisual->AttachParent = RootComponent;
+
+	PrimaryActorTick.bCanEverTick = true;
 }
 
 // Called when this enemy no longer has any health. [15/7/2016 Matthew Woolley]
@@ -44,4 +51,9 @@ void ARoadFeverEnemy::TakeDamage( int32 InDamage )
 	{
 		Die();
 	}
+}
+
+void ARoadFeverEnemy::Tick( float DeltaSeconds )
+{
+	DistanceVisual->SetText( FString::SanitizeFloat( GetDistanceTo( GetWorld()->GetFirstPlayerController()->GetPawn() ) ) );
 }

@@ -11,8 +11,10 @@ AWeapon::AWeapon()
 	// Default weapon properties [20/11/2015 Matthew Woolley]
 	WeaponProperties.bIsCoolingDown = false;
 	WeaponProperties.CoolDownTime = 1;
-	WeaponProperties.Damage = 25;
-	WeaponProperties.Range = 50;
+	WeaponProperties.MaxDamage = 25;
+	WeaponProperties.MinDamage = 10;
+	WeaponProperties.EffectiveRange = 50.f;
+	WeaponProperties.MaximumRange = 100.f;
 
 	// Allow Actor ticking [20/11/2015 Matthew Woolley]
 	PrimaryActorTick.bCanEverTick = true;
@@ -64,7 +66,7 @@ void AWeapon::OnAttack_Implementation()
 	FVector Start = GetActorLocation();
 
 	// Get the furthest this weapon can attack [20/11/2015 Matthew Woolley]
-	FVector End = Start + ( GetActorRotation().Vector() * WeaponProperties.Range );
+	FVector End = Start + ( GetActorRotation().Vector() * WeaponProperties.MaximumRange );
 
 	// The rotation [20/11/2015 Matthew Woolley]
 	FQuat Rot;
@@ -102,7 +104,23 @@ void AWeapon::OnAttack_Implementation()
 				// Cast the enemy from the hit Actor. [15/7/2016 Matthew Woolley]
 				ARoadFeverEnemy* HitEnemy = ( ARoadFeverEnemy* ) HitActor;
 
-				HitEnemy->TakeDamage( WeaponProperties.Damage );
+				// If the enemy is further away than this weapon can attack with full damage. [17/7/2016 Matthew Woolley]
+				if ( HitEnemy->GetDistanceTo( this ) > WeaponProperties.EffectiveRange )
+				{
+					// Get the distance to the enemy being attacked. [17/7/2016 Matthew Woolley]
+					float DistanceToEnemy = HitEnemy->GetDistanceTo( this );
+
+					// Get the damage we should deal (the closer to the maximum range distance, the more damage). [17/7/2016 Matthew Woolley]
+					int DamageToDeal = WeaponProperties.MinDamage * (1 - ((DistanceToEnemy - WeaponProperties.EffectiveRange) / WeaponProperties.MaximumRange));
+
+					// Deal damage to the enemy. [17/7/2016 Matthew Woolley]
+					HitEnemy->TakeDamage( DamageToDeal );
+	
+				} else
+				{
+					// Deal damage to the enemy. [17/7/2016 Matthew Woolley]
+					HitEnemy->TakeDamage( WeaponProperties.MaxDamage );
+				}
 			}
 		}
 	}
