@@ -2,7 +2,7 @@
 
 #include "Road_Fever.h"
 #include "Public/Items/Weapons/Weapon.h"
-#include "Public/AI/Enemey/RoadFeverEnemy.h"
+#include "Public/AI/Enemy/RoadFeverEnemy.h"
 
 
 
