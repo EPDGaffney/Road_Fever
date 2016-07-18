@@ -23,9 +23,7 @@ ARoadFeverCharacterNed::ARoadFeverCharacterNed()
 	BaseMovementSpeed = GetCharacterMovement()->MaxWalkSpeed;
 	CharacterSprintSpeed = 1000;
 
-	bIsDoingQuickTurn = false;
-	QuickTurnSpeed = 5;
-	QuickTurnWaitTime = 0.5f;
+	QuickTurnSpeed = 500;
 	TurnSensitivity = 2;
 
 	// Character's camera component. [11/12/2015 Matthew Woolley]
@@ -58,33 +56,23 @@ void ARoadFeverCharacterNed::Tick( float InDeltaSeconds )
 	// Call the initial implementation. [10/12/2015 Matthew Woolley]
 	Super::Tick( InDeltaSeconds );
 
-	// The amount of time since the quick-turn started. [10/12/2015 Matthew Woolley]
-	static float QuickTurn_CurrentWaitTime = 0;
-
-	// The Character's current yaw. [10/12/2015 Matthew Woolley]
-	static float CharacterYaw = GetControlRotation().Yaw;
-
-	// If we are quick-turning. [10/12/2015 Matthew Woolley]
-	if ( bIsDoingQuickTurn )
+	// If we are doing a quick turn. [18/7/2016 Matthew Woolley]
+	if ( DegreesToTurn > 0 )
 	{
-		// Add on the amount of time that has passed since the last time check. [10/12/2015 Matthew Woolley]
-		QuickTurn_CurrentWaitTime += InDeltaSeconds;
+		// Stop the character's movement. [18/7/2016 Matthew Woolley]
+		GetCharacterMovement()->SetMovementMode( EMovementMode::MOVE_None );
 
-		// Slowly rotate the character around. [10/12/2015 Matthew Woolley]
-		GetController()->SetControlRotation( FMath::Lerp( GetControlRotation(), FRotator( 0, CharacterYaw + 180, 0 ), QuickTurnSpeed * InDeltaSeconds ) );
+		// Take off how much we will turn. [18/7/2016 Matthew Woolley]
+		DegreesToTurn -= InDeltaSeconds * QuickTurnSpeed;
 
-		// If the turn has finished. [10/12/2015 Matthew Woolley]
-		if ( QuickTurn_CurrentWaitTime >= QuickTurnWaitTime )
-		{
-			// Tell the Character they are no longer quick-turning. [10/12/2015 Matthew Woolley]
-			bIsDoingQuickTurn = false;
-		}
+		FRotator RotationToChange = GetControlRotation();
+		RotationToChange.Yaw += InDeltaSeconds * QuickTurnSpeed;
+
+		GetController()->SetControlRotation( FMath::RInterpTo( GetControlRotation(), RotationToChange, 3, 0 ) );
 	} else
 	{
-		// Update the CharacterYaw variable so it can be used as a reference later. [10/12/2015 Matthew Woolley]
-		CharacterYaw = GetControlRotation().Yaw;
-		// Reset the timer for the next time it is used [8/9/2015 Matthew Woolley]
-		QuickTurn_CurrentWaitTime = 0;
+		// Re-enable the character's movement. [18/7/2016 Matthew Woolley]
+		GetCharacterMovement()->SetMovementMode( EMovementMode::MOVE_Walking );
 	}
 }
 
@@ -214,7 +202,10 @@ void ARoadFeverCharacterNed::MoveForward( float InInputVal )
 // Called when the player wishes to turn. [10/12/2015 Matthew Woolley]
 void ARoadFeverCharacterNed::Turn( float InInputVal )
 {
-	AddControllerYawInput( ( GameHasFocus() ? InInputVal : 0 ) );
+	if ( !GetCharacterMovement()->SetMovementMode( EMovementMode::MOVE_None ) )
+	{
+		AddControllerYawInput( ( GameHasFocus() ? InInputVal : 0 ) );
+	}
 }
 
 // Called when the player attempts to interact. [10/12/2015 Matthew Woolley]
@@ -296,9 +287,9 @@ void ARoadFeverCharacterNed::OnBeginQuickTurn()
 		return;
 	}
 
-	if ( !bIsDoingQuickTurn && MoveForwardAxis < 0 )
+	if ( DegreesToTurn <= 0 && MoveForwardAxis < 0 )
 	{
-		bIsDoingQuickTurn = true;
+		DegreesToTurn = 180;
 	}
 }
 
