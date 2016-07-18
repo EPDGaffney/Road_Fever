@@ -11,8 +11,15 @@ AWeapon::AWeapon()
 	// Default weapon properties [20/11/2015 Matthew Woolley]
 	WeaponProperties.bIsCoolingDown = false;
 	WeaponProperties.CoolDownTime = 1;
-	WeaponProperties.MaxDamage = 25;
-	WeaponProperties.MaximumRangeDamageDropoff = 10;
+
+
+	WeaponProperties.EffectiveRangeMaxDamage = 25;
+	WeaponProperties.EffectiveRangeMinDamage = 20;
+
+	WeaponProperties.MaximumRangeMaxDamage = 10;
+	WeaponProperties.MaximumRangeMinDamage = 5;
+
+
 	WeaponProperties.EffectiveRange = 50.f;
 	WeaponProperties.MaximumRange = 100.f;
 
@@ -111,7 +118,7 @@ void AWeapon::OnAttack_Implementation()
 					float DistanceToEnemy = HitEnemy->GetDistanceTo( this );
 
 					// Get the damage we should deal (the closer to the maximum range distance, the more damage). [17/7/2016 Matthew Woolley]
-					int DamageToDeal = WeaponProperties.MaxDamage - ( WeaponProperties.MaximumRangeDamageDropoff * ( ( DistanceToEnemy - WeaponProperties.EffectiveRange ) / WeaponProperties.MaximumRange ) );
+					int DamageToDeal = FMath::FRandRange( WeaponProperties.EffectiveRangeMinDamage, WeaponProperties.EffectiveRangeMaxDamage ) - ( WeaponProperties.MaximumRangeMaxDamage * ( ( DistanceToEnemy - WeaponProperties.EffectiveRange ) / WeaponProperties.MaximumRange ) );
 
 					// Deal damage to the enemy. [17/7/2016 Matthew Woolley]
 					HitEnemy->TakeDamage( DamageToDeal );
@@ -119,7 +126,7 @@ void AWeapon::OnAttack_Implementation()
 				} else
 				{
 					// Deal damage to the enemy. [17/7/2016 Matthew Woolley]
-					HitEnemy->TakeDamage( WeaponProperties.MaxDamage );
+					HitEnemy->TakeDamage( FMath::FRandRange( WeaponProperties.EffectiveRangeMinDamage, WeaponProperties.EffectiveRangeMaxDamage ) );
 				}
 			}
 		}

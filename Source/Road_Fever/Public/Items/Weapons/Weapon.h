@@ -12,13 +12,21 @@ struct FWeaponProperties
 	GENERATED_USTRUCT_BODY()
 
 public:
-	// The damage this weapon does between the weapon and the effective firing range. [17/7/2016 Matthew Woolley]
+	// The maximum amount of damage this weapon does at effective range. [17/7/2016 Matthew Woolley]
 	UPROPERTY( BlueprintReadWrite, EditDefaultsOnly, Category = "Attack" )
-	int32 MaxDamage;
+	int32 EffectiveRangeMaxDamage;
 
-	// The amount of damage this weapon does less than the maximum damage at the maximum range distance. [17/7/2016 Matthew Woolley]
+	// The minimum amount of damage this weapon does at effective range. [18/7/2016 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack" )
+	int32 EffectiveRangeMinDamage;
+
+	// The maximum amount of damage (taken away from the base damage) this weapon does at maximum range. [18/7/2016 Matthew Woolley]
 	UPROPERTY( BlueprintReadWrite, EditDefaultsOnly, Category = "Attack" )
-	int32 MaximumRangeDamageDropoff;
+	int32 MaximumRangeMaxDamage;
+
+	// The minimum amount of damage (taken away from the base damage) this weapon does at maximum range. [18/7/2016 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack" )
+	int32 MaximumRangeMinDamage;
 
 	// The range that does full damage (In CM). [17/7/2016 Matthew Woolley]
 	UPROPERTY( BlueprintReadWrite, EditDefaultsOnly, Category = "Attack" )
