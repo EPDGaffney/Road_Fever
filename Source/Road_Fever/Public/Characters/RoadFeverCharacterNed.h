@@ -44,10 +44,6 @@ public:
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Movement" )
 	float QuickTurnSpeed;
 
-	// The time it takes for the user to regain control from the quick-turn. [10/12/2015 Matthew Woolley]
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Movement" )
-	float QuickTurnWaitTime;
-
 	// The sensitivity of the turning input. [10/12/2015 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Movement" )
 	float TurnSensitivity;
@@ -128,10 +124,6 @@ protected:
 	UFUNCTION( BlueprintCallable, Category = "Movement" )
 	void OnBeginQuickTurn();
 
-	// Whether or not the player is performing a quick-turn. [10/12/2015 Matthew Woolley]
-	UPROPERTY( BlueprintReadWrite, Category = "Movement" )
-	bool bIsDoingQuickTurn;
-
 	// Called when the player begins aiming. [10/12/2015 Matthew Woolley]
 	UFUNCTION( BlueprintCallable, Category = "Attack" )
 	void OnBeginAim();
@@ -156,4 +148,8 @@ private:
 	// Used by the camera-system when detecting the Character. [11/12/2015 Matthew Woolley]
 	UPROPERTY()
 	class ARoadFeverCameraDummy* CameraDummy;
+
+	// Used to turn the character 180 degrees. [18/7/2016 Matthew Woolley]
+	UPROPERTY()
+	float DegreesToTurn;
 };
