@@ -12,7 +12,7 @@ AWeapon::AWeapon()
 	WeaponProperties.bIsCoolingDown = false;
 	WeaponProperties.CoolDownTime = 1;
 	WeaponProperties.MaxDamage = 25;
-	WeaponProperties.MinDamage = 10;
+	WeaponProperties.MaximumRangeDamageDropoff = 10;
 	WeaponProperties.EffectiveRange = 50.f;
 	WeaponProperties.MaximumRange = 100.f;
 
@@ -111,11 +111,11 @@ void AWeapon::OnAttack_Implementation()
 					float DistanceToEnemy = HitEnemy->GetDistanceTo( this );
 
 					// Get the damage we should deal (the closer to the maximum range distance, the more damage). [17/7/2016 Matthew Woolley]
-					int DamageToDeal = WeaponProperties.MinDamage * (1 - ((DistanceToEnemy - WeaponProperties.EffectiveRange) / WeaponProperties.MaximumRange));
+					int DamageToDeal = WeaponProperties.MaxDamage - ( WeaponProperties.MaximumRangeDamageDropoff * ( ( DistanceToEnemy - WeaponProperties.EffectiveRange ) / WeaponProperties.MaximumRange ) );
 
 					// Deal damage to the enemy. [17/7/2016 Matthew Woolley]
 					HitEnemy->TakeDamage( DamageToDeal );
-	
+
 				} else
 				{
 					// Deal damage to the enemy. [17/7/2016 Matthew Woolley]

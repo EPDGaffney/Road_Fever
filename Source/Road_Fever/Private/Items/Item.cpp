@@ -24,6 +24,7 @@ AItem::AItem()
 	// Setup this Item's mesh. [14/7/2016 Matthew Woolley]
 	ItemsMesh = CreateDefaultSubobject<UStaticMeshComponent>( TEXT( "Item's Mesh" ) );
 	ItemsMesh->AttachParent = RootComponent;
+	ItemsMesh->SetCollisionProfileName( "NoCollision" );
 }
 
 void AItem::AttachItemToNed_Hand()

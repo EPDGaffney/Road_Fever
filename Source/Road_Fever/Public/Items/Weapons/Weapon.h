@@ -16,9 +16,9 @@ public:
 	UPROPERTY( BlueprintReadWrite, EditDefaultsOnly, Category = "Attack" )
 	int32 MaxDamage;
 
-	// The damage this weapon does between the weapon and the maximum range. [17/7/2016 Matthew Woolley]
+	// The amount of damage this weapon does less than the maximum damage at the maximum range distance. [17/7/2016 Matthew Woolley]
 	UPROPERTY( BlueprintReadWrite, EditDefaultsOnly, Category = "Attack" )
-	int32 MinDamage;
+	int32 MaximumRangeDamageDropoff;
 
 	// The range that does full damage (In CM). [17/7/2016 Matthew Woolley]
 	UPROPERTY( BlueprintReadWrite, EditDefaultsOnly, Category = "Attack" )
