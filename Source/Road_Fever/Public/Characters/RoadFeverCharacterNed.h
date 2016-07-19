@@ -94,6 +94,10 @@ public:
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack" )
 	float AimValue;
 
+	// The Animation Blueprint to use when when no item is equipped (or when an item doesn't have its own). [18/7/2016 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Animation" )
+	TSubclassOf<UAnimInstance> DefaultAnimation;
+
 protected:
 	// Moves the Character in the X axis. [10/12/2015 Matthew Woolley]
 	UFUNCTION( BlueprintCallable, Category = "Movement" )

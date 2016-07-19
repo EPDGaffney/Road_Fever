@@ -96,6 +96,14 @@ public:
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Item" )
 	UStaticMeshComponent* ItemsMesh;
 
+	// The animations that should be used when the character is not aiming. [18/7/2016 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Animation" )
+	TSubclassOf<UAnimInstance> AnimationBlueprint_Default;
+
+	// The animations that should be used when the character is aiming. [18/7/2016 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Animation" )
+	TSubclassOf<UAnimInstance> AnimationBlueprint_Aiming;
+
 protected:
 	// The box that the Character uses to detect this item on the ground. [14/7/2016 Matthew Woolley]
 	UPROPERTY( BlueprintReadWrite, Category = "Item" )

@@ -56,6 +56,25 @@ void ARoadFeverCharacterNed::Tick( float InDeltaSeconds )
 	// Call the initial implementation. [10/12/2015 Matthew Woolley]
 	Super::Tick( InDeltaSeconds );
 
+	// If the player has an equipped item. [18/7/2016 Matthew Woolley]
+	if ( CharactersInventory->EquippedItem != nullptr )
+	{
+		// If the the player is aiming. [18/7/2016 Matthew Woolley]
+		if ( bIsAiming )
+		{
+			// Use the aiming Blueprint. [18/7/2016 Matthew Woolley]
+			GetMesh()->SetAnimInstanceClass( CharactersInventory->EquippedItem->AnimationBlueprint_Aiming );
+		} else
+		{
+			// If the player isn't aiming. [19/7/2016 Matthew Woolley]
+			GetMesh()->SetAnimInstanceClass( CharactersInventory->EquippedItem->AnimationBlueprint_Default );
+		}
+	} else
+	{
+		// If the player hasn't got a weapon equipped. [19/7/2016 Matthew Woolley]
+		GetMesh()->SetAnimInstanceClass( DefaultAnimation );
+	}
+
 	// If we are doing a quick turn. [18/7/2016 Matthew Woolley]
 	if ( DegreesToTurn > 0 )
 	{
@@ -202,7 +221,7 @@ void ARoadFeverCharacterNed::MoveForward( float InInputVal )
 // Called when the player wishes to turn. [10/12/2015 Matthew Woolley]
 void ARoadFeverCharacterNed::Turn( float InInputVal )
 {
-	if ( !GetCharacterMovement()->SetMovementMode( EMovementMode::MOVE_None ) )
+	if ( !GetCharacterMovement()->MovementMode == EMovementMode::MOVE_None )
 	{
 		AddControllerYawInput( ( GameHasFocus() ? InInputVal : 0 ) );
 	}
