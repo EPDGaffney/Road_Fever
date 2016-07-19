@@ -315,6 +315,7 @@ void ARoadFeverCharacterNed::OnBeginQuickTurn()
 // Called when the player begins aiming. [10/12/2015 Matthew Woolley]
 void ARoadFeverCharacterNed::OnBeginAim()
 {
+	if ( GameHasFocus() && CharactersInventory->EquippedItem )
 	{
 		bIsAiming = true;
 
