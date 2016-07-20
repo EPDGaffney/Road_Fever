@@ -104,6 +104,10 @@ public:
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Animation" )
 	TSubclassOf<UAnimInstance> AnimationBlueprint_Aiming;
 
+	// Whether or not this item can be picked up (if it is equipped, the response is false). [20/7/2016 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Item" )
+	bool bCanBePickedUp;
+
 protected:
 	// The box that the Character uses to detect this item on the ground. [14/7/2016 Matthew Woolley]
 	UPROPERTY( BlueprintReadWrite, Category = "Item" )

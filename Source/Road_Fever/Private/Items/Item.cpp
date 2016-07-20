@@ -25,12 +25,16 @@ AItem::AItem()
 	ItemsMesh = CreateDefaultSubobject<UStaticMeshComponent>( TEXT( "Item's Mesh" ) );
 	ItemsMesh->AttachParent = RootComponent;
 	ItemsMesh->SetCollisionProfileName( "NoCollision" );
+
+	// Setup some generic properties. [20/7/2016 Matthew Woolley]
+	bCanBePickedUp = true;
 }
 
 void AItem::AttachItemToNed_Hand()
 {
 	ARoadFeverCharacterNed* PlayerCharacter = Cast<ARoadFeverCharacterNed>( GetWorld()->GetFirstPlayerController()->GetPawn() );
 	USkeletalMeshComponent* NedsCharacterMesh = PlayerCharacter->GetMesh();
+	bCanBePickedUp = false;
 
 	if ( NedsCharacterMesh )
 	{

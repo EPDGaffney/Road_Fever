@@ -245,8 +245,8 @@ void ARoadFeverCharacterNed::OnCharacterInteract_Implementation()
 		// Get each actor. [15/12/2015 Matthew Woolley]
 		for ( AActor* iActorIterator : NearbyActors )
 		{
-			// If the actor we found is an AItem. [22/6/2016 Matthew Woolley]
-			if ( iActorIterator->IsA( AItem::StaticClass() ) )
+			// If the actor we found is an AItem AND it can be picked up. [22/6/2016 Matthew Woolley]
+			if ( iActorIterator->IsA( AItem::StaticClass() ) && ( ( AItem* ) iActorIterator )->bCanBePickedUp )
 			{
 				// Get reference to AItem found. [22/6/2016 Matthew Woolley]
 				AItem* Item = ( AItem* ) iActorIterator;
