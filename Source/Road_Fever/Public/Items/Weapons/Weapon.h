@@ -43,6 +43,14 @@ public:
 	// Whether the weapons is cooling down or not [20/11/2015 Matthew Woolley]
 	UPROPERTY( BlueprintReadWrite, Category = "Attack" )
 	bool bIsCoolingDown;
+
+	// The amount of traces this weapon does per shot. [21/7/2016 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack" )
+	int32 NumberOfTraces;
+
+	// How much each line trace should trail off from the center of the gun (first shot will be centered). [21/7/2016 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack" )
+	float MultiTraceSpread;
 };
 
 

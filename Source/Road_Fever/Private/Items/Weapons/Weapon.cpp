@@ -23,9 +23,11 @@ AWeapon::AWeapon()
 	WeaponProperties.EffectiveRange = 50.f;
 	WeaponProperties.MaximumRange = 100.f;
 
+	WeaponProperties.NumberOfTraces = 1;
+	WeaponProperties.MultiTraceSpread = 12.0f;
+
 	// Allow Actor ticking [20/11/2015 Matthew Woolley]
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
 AWeapon::~AWeapon()
@@ -66,70 +68,78 @@ void AWeapon::OnAttack_Implementation()
 		return;
 	}
 
-	// The object found during the trace [20/11/2015 Matthew Woolley]
-	FHitResult OutHit;
-
-	// The current location of this weapon [20/11/2015 Matthew Woolley]
-	FVector Start = GetActorLocation();
-
-	// Get the furthest this weapon can attack [20/11/2015 Matthew Woolley]
-	FVector End = Start + ( GetActorRotation().Vector() * WeaponProperties.MaximumRange );
-
-	// The rotation [20/11/2015 Matthew Woolley]
-	FQuat Rot;
-
-	// The trace's shape [20/11/2015 Matthew Woolley]
-	FCollisionShape Shape;
-	Shape.ShapeType = ECollisionShape::Capsule;
-	Shape.MakeCapsule( 20, 1 );
-
-	// The parameters for the collision [20/11/2015 Matthew Woolley]
-	FCollisionQueryParams Params;
-	Params.AddIgnoredActor( this );
-	Params.AddIgnoredActor( GetWorld()->GetFirstPlayerController()->GetPawn() );
-	Params.TraceTag = FName( "WeaponTrace" );
-
-	// The current UWorld object [20/11/2015 Matthew Woolley]
-	UWorld* const World = GetWorld();
-
-	FCollisionResponseParams RespParams;
-	RespParams.CollisionResponse.Visibility;
-
-	if ( World )
+	// For each trace to complete. [21/7/2016 Matthew Woolley]
+	for ( int iTraceIterator = 0; iTraceIterator < WeaponProperties.NumberOfTraces; iTraceIterator++ )
 	{
-		// Trace to see if there are any Actors ahead [20/11/2015 Matthew Woolley]
-		World->DebugDrawTraceTag = FName( "WeaponTrace" );
-		bool bHadBlockingHit = World->SweepSingleByChannel( OutHit, Start, End, Rot, WEAPON_TRACE, Shape, Params, RespParams );
+		// The object found during the trace [20/11/2015 Matthew Woolley]
+		FHitResult OutHit;
 
-		// If there was one [20/11/2015 Matthew Woolley]
-		if ( bHadBlockingHit )
+		// The current location of this weapon [20/11/2015 Matthew Woolley]
+		FVector Start = GetActorLocation();
+
+		// The . [21/7/2016 Matthew Woolley]
+		FRotator SpreadRotation = FRotator( FMath::FRandRange( WeaponProperties.MultiTraceSpread * -1, WeaponProperties.MultiTraceSpread ), FMath::FRandRange( WeaponProperties.MultiTraceSpread * -1, WeaponProperties.MultiTraceSpread ), 0 );
+
+		// Get the furthest this weapon can attack [20/11/2015 Matthew Woolley]
+		FVector End = Start + ( ( iTraceIterator == 0 ? GetActorRotation() : GetActorRotation() + SpreadRotation).Vector() * WeaponProperties.MaximumRange );
+
+		// The rotation [20/11/2015 Matthew Woolley]
+		FQuat Rot;
+
+		// The trace's shape [20/11/2015 Matthew Woolley]
+		FCollisionShape Shape;
+		Shape.ShapeType = ECollisionShape::Capsule;
+		Shape.MakeCapsule( 20, 1 );
+
+		// The parameters for the collision [20/11/2015 Matthew Woolley]
+		FCollisionQueryParams Params;
+		Params.AddIgnoredActor( this );
+		Params.AddIgnoredActor( GetWorld()->GetFirstPlayerController()->GetPawn() );
+		Params.TraceTag = FName( "WeaponTrace" );
+
+		// The current UWorld object [20/11/2015 Matthew Woolley]
+		UWorld* const World = GetWorld();
+
+		FCollisionResponseParams RespParams;
+		RespParams.CollisionResponse.Visibility;
+
+		if ( World )
 		{
-			// Make sure it's still valid and not being destroyed [20/11/2015 Matthew Woolley]
-			AActor* HitActor = OutHit.GetActor();
-			if ( HitActor && !HitActor->IsPendingKill() && HitActor->IsA( ARoadFeverEnemy::StaticClass() ) )
+			// Trace to see if there are any Actors ahead [20/11/2015 Matthew Woolley]
+			World->DebugDrawTraceTag = FName( "WeaponTrace" );
+			bool bHadBlockingHit = World->SweepSingleByChannel( OutHit, Start, End, Rot, WEAPON_TRACE, Shape, Params, RespParams );
+
+			// If there was one [20/11/2015 Matthew Woolley]
+			if ( bHadBlockingHit )
 			{
-				// Cast the enemy from the hit Actor. [15/7/2016 Matthew Woolley]
-				ARoadFeverEnemy* HitEnemy = ( ARoadFeverEnemy* ) HitActor;
-
-				// If the enemy is further away than this weapon can attack with full damage. [17/7/2016 Matthew Woolley]
-				if ( HitEnemy->GetDistanceTo( this ) > WeaponProperties.EffectiveRange )
+				// Make sure it's still valid and not being destroyed [20/11/2015 Matthew Woolley]
+				AActor* HitActor = OutHit.GetActor();
+				if ( HitActor && !HitActor->IsPendingKill() && HitActor->IsA( ARoadFeverEnemy::StaticClass() ) )
 				{
-					// Get the distance to the enemy being attacked. [17/7/2016 Matthew Woolley]
-					float DistanceToEnemy = HitEnemy->GetDistanceTo( this );
+					// Cast the enemy from the hit Actor. [15/7/2016 Matthew Woolley]
+					ARoadFeverEnemy* HitEnemy = ( ARoadFeverEnemy* ) HitActor;
 
-					// Get the damage we should deal (the closer to the maximum range distance, the more damage). [17/7/2016 Matthew Woolley]
-					int DamageToDeal = FMath::FRandRange( WeaponProperties.EffectiveRangeMinDamage, WeaponProperties.EffectiveRangeMaxDamage ) - ( WeaponProperties.MaximumRangeMaxDamage * ( ( DistanceToEnemy - WeaponProperties.EffectiveRange ) / WeaponProperties.MaximumRange ) );
+					// If the enemy is further away than this weapon can attack with full damage. [17/7/2016 Matthew Woolley]
+					if ( HitEnemy->GetDistanceTo( this ) > WeaponProperties.EffectiveRange )
+					{
+						// Get the distance to the enemy being attacked. [17/7/2016 Matthew Woolley]
+						float DistanceToEnemy = HitEnemy->GetDistanceTo( this );
 
-					// Deal damage to the enemy. [17/7/2016 Matthew Woolley]
-					HitEnemy->TakeDamage( DamageToDeal );
+						// Get the damage we should deal (the closer to the maximum range distance, the more damage). [17/7/2016 Matthew Woolley]
+						int DamageToDeal = FMath::FRandRange( WeaponProperties.EffectiveRangeMinDamage, WeaponProperties.EffectiveRangeMaxDamage ) - ( WeaponProperties.MaximumRangeMaxDamage * ( ( DistanceToEnemy - WeaponProperties.EffectiveRange ) / WeaponProperties.MaximumRange ) );
 
-				} else
-				{
-					// Deal damage to the enemy. [17/7/2016 Matthew Woolley]
-					HitEnemy->TakeDamage( FMath::FRandRange( WeaponProperties.EffectiveRangeMinDamage, WeaponProperties.EffectiveRangeMaxDamage ) );
+						// Deal damage to the enemy. [17/7/2016 Matthew Woolley]
+						HitEnemy->TakeDamage( DamageToDeal );
+
+					} else
+					{
+						// Deal damage to the enemy. [17/7/2016 Matthew Woolley]
+						HitEnemy->TakeDamage( FMath::FRandRange( WeaponProperties.EffectiveRangeMinDamage, WeaponProperties.EffectiveRangeMaxDamage ) );
+					}
 				}
 			}
 		}
+
 	}
 
 	// Make sure the weapon cools down before shooting again [20/11/2015 Matthew Woolley]
