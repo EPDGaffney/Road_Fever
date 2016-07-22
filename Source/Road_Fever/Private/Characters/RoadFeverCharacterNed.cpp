@@ -203,7 +203,7 @@ bool ARoadFeverCharacterNed::AddItemToInventory( struct FInventoryItem ItemToAdd
 // Returns true if the game has focus (no menu is open, no dialog etc.). [5/4/2016 Matthew Woolley]
 bool ARoadFeverCharacterNed::GameHasFocus()
 {
-	return ( !CharactersInventory->bIsOpen );
+	return ( !CharactersInventory->bIsOpen && !CharactersInventory->ItemPickupConfirmationInstance );
 }
 
 // Moves the Character in the X axis. [10/12/2015 Matthew Woolley]
