@@ -242,6 +242,9 @@ void ARoadFeverCharacterNed::OnCharacterInteract_Implementation()
 		TArray<AActor*> NearbyActors;
 		CollectionArea->GetOverlappingActors( NearbyActors, AItem::StaticClass() );
 
+		// Store all of th found AItems so their distance can be checked later on. [22/7/2016 Matthew Woolley]
+		TArray<AItem*> NearbyItems;
+
 		// Get each actor. [15/12/2015 Matthew Woolley]
 		for ( AActor* iActorIterator : NearbyActors )
 		{
@@ -268,13 +271,34 @@ void ARoadFeverCharacterNed::OnCharacterInteract_Implementation()
 				// If we hit something and it is the item. [15/12/2015 Matthew Woolley]
 				if ( bHasBlockingHit && Hit.GetActor() == Item )
 				{
-					// Call its interaction function. [15/12/2015 Matthew Woolley]
-					Item->OnInteract();
-
-					// Stop iterating over actors. [15/12/2015 Matthew Woolley]
-					return;
+					// Add it to the NearbyItem array so we can check its distance. [22/7/2016 Matthew Woolley]
+					NearbyItems.Add( Item );
 				}
 			}
+		}
+	
+		// The AItem and distance that are closest to this player. [22/7/2016 Matthew Woolley]
+		float ItemBeingChecked = 1000.f;
+		AItem* ClosestItem = nullptr;
+
+		// For each found item. [22/7/2016 Matthew Woolley]
+		for ( AItem* CurrentlyCheckedItem : NearbyItems )
+		{
+			// If it is closer than the last item. [22/7/2016 Matthew Woolley]
+			if ( GetDistanceTo( CurrentlyCheckedItem ) <= ItemBeingChecked )
+			{
+				// Set it as the closest item. [22/7/2016 Matthew Woolley]
+				ClosestItem = CurrentlyCheckedItem;
+				ItemBeingChecked = GetDistanceTo( CurrentlyCheckedItem );
+			}
+		}
+
+		// If we found an item. [22/7/2016 Matthew Woolley]
+		if ( ClosestItem )
+		{
+			// Set the closest item as the item being interacted with. [22/7/2016 Matthew Woolley]
+			ItemBeingInteractedWith = ClosestItem;
+			ItemBeingInteractedWith->OnInteract();
 		}
 	}
 }

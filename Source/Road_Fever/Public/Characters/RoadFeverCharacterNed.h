@@ -98,6 +98,10 @@ public:
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Animation" )
 	TSubclassOf<UAnimInstance> DefaultAnimation;
 
+	// THe item that is currently being interacted with. [22/7/2016 Matthew Woolley]
+	UPROPERTY( BlueprintReadWrite, Category = "Interaction" )
+	class AItem* ItemBeingInteractedWith;
+
 protected:
 	// Moves the Character in the X axis. [10/12/2015 Matthew Woolley]
 	UFUNCTION( BlueprintCallable, Category = "Movement" )
