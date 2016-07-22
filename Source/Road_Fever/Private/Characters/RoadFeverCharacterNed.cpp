@@ -276,7 +276,7 @@ void ARoadFeverCharacterNed::OnCharacterInteract_Implementation()
 				}
 			}
 		}
-	
+
 		// The AItem and distance that are closest to this player. [22/7/2016 Matthew Woolley]
 		float ItemBeingChecked = 1000.f;
 		AItem* ClosestItem = nullptr;
@@ -298,7 +298,7 @@ void ARoadFeverCharacterNed::OnCharacterInteract_Implementation()
 		{
 			// Set the closest item as the item being interacted with. [22/7/2016 Matthew Woolley]
 			ItemBeingInteractedWith = ClosestItem;
-			ItemBeingInteractedWith->OnInteract();
+			CharactersInventory->OpenPickupConfirmation();
 		}
 	}
 }

@@ -60,4 +60,20 @@ public:
 	// The currently equipped item (spawned in-game). [13/7/2016 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Equipping" )
 	AItem* EquippedItem;
+
+	// The widget that is spawned to ask for pickup confirmation. [22/7/2016 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Pickup" )
+	TSubclassOf<UUserWidget> ItemPickupConfirmationTemplate;
+
+	// The current instance of the confirmation screen that is in game. [22/7/2016 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Pickup" )
+	UUserWidget* ItemPickupConfirmationInstance;
+
+	// Called when to ask the player whether or not they wish to pick the item. [22/7/2016 Matthew Woolley]
+	UFUNCTION( BlueprintCallable, Category = "Pickup" )
+	void OpenPickupConfirmation();
+
+	// Called when the confirmation screen should be dismissed. [22/7/2016 Matthew Woolley]
+	UFUNCTION( BlueprintCallable, Category = "Pickup" )
+	void ClosePickupConfirmation();
 };
