@@ -148,6 +148,10 @@ protected:
 	UFUNCTION( BlueprintCallable, Category = "Attack" )
 	void AimUp_Down( float InInputVal );
 
+	// Auto-aims at the enemy that is the right of the currently-aimed at enemy. [24/7/2016 Matthew Woolley]
+	UFUNCTION( BlueprintCallable, Category = "Attack" )
+	void SwitchToNextEnemy();
+
 private:
 	// Called to preform generic movement function. [10/12/2015 Matthew Woolley]
 	UFUNCTION( Category = "Movement" )
@@ -160,4 +164,8 @@ private:
 	// Used to turn the character 180 degrees. [18/7/2016 Matthew Woolley]
 	UPROPERTY()
 	float DegreesToTurn;
+
+	// Gets all the enemies that aren't blocked by walls, etc.. [24/7/2016 Matthew Woolley]
+	UFUNCTION( Category = "Attack" )
+	TArray<class AActor*> GetEnemies();
 };
