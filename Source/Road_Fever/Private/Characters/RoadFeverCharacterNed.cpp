@@ -117,6 +117,8 @@ void ARoadFeverCharacterNed::SetupPlayerInputComponent( class UInputComponent* I
 		InInputComponent->BindAction( "Attack", IE_Pressed, this, &ARoadFeverCharacterNed::OnAttack );
 
 		InInputComponent->BindAction( "ToggleInventory", IE_Pressed, CharactersInventory, &UInventory::ToggleInventory );
+
+		InInputComponent->BindAction( "SwitchEnemy", IE_Pressed, this, &ARoadFeverCharacterNed::SwitchToNextEnemy );
 	}
 }
 
@@ -344,32 +346,7 @@ void ARoadFeverCharacterNed::OnBeginAim()
 		bIsAiming = true;
 
 		// The enemies that can be aimed at. [17/7/2016 Matthew Woolley]
-		TArray<AActor*> Enemies;
-		UGameplayStatics::GetAllActorsOfClass( GetWorld(), ARoadFeverEnemy::StaticClass(), Enemies );
-
-		// Get all of the enemies in the level. [17/7/2016 Matthew Woolley]
-		for ( AActor* iActorIterator : Enemies )
-		{
-			// Get the World object. [16/7/2016 Matthew Woolley]
-			UWorld* const World = GetWorld();
-
-			// Collision parameters for the line trace. [16/7/2016 Matthew Woolley]
-			FHitResult Hit;
-			FCollisionQueryParams Line( FName( "Enemy Line Trace" ), true );
-			TArray<AActor*> IgnoredActors;
-			IgnoredActors.Add( this );
-			IgnoredActors.Add( CameraDummy );
-			Line.AddIgnoredActors( IgnoredActors );
-
-			// Make sure there is nothing in the way of the enemy (I.E. a wall). [16/7/2016 Matthew Woolley]
-			bool bHasBlockingHit = World->LineTraceSingleByChannel( Hit, this->GetActorLocation(), iActorIterator->GetActorLocation(), WEAPON_TRACE, Line );
-
-			// If there is nothing in the way of the enemy. [16/7/2016 Matthew Woolley]
-			if ( bHasBlockingHit && Hit.GetActor() == iActorIterator )
-			{
-				Enemies.Add( iActorIterator );
-			}
-		}
+		TArray<AActor*> Enemies = GetEnemies();
 
 		// If we have found an enemy. [17/7/2016 Matthew Woolley]
 		if ( Enemies.Num() != 0 )
@@ -435,6 +412,69 @@ void ARoadFeverCharacterNed::AimUp_Down( float InInputVal )
 	}
 }
 
+// Auto-aims at the enemy that is the right of the currently-aimed at enemy. [24/7/2016 Matthew Woolley]
+void ARoadFeverCharacterNed::SwitchToNextEnemy()
+{
+	if ( GameHasFocus() && bIsAiming && CharactersInventory->EquippedItem )
+	{
+		// Get all the enemies in the level. [24/7/2016 Matthew Woolley]
+		TArray<AActor*> Enemies = GetEnemies();
+
+		// Store the enemy that is closest to the right. [24/7/2016 Matthew Woolley]
+		float ClosestToTheRight = -1;
+		AActor* ClosestEnemy = nullptr;
+
+		// Get the Character's rotation so we can compare it with the look-at rotation. [24/7/2016 Matthew Woolley]
+		float CurrentRotation = GetControlRotation().Yaw;
+
+		// For each enemy. [24/7/2016 Matthew Woolley]
+		for ( AActor* Enemy : Enemies )
+		{
+			// Get the yaw rotation needed to look at the current enemy. [24/7/2016 Matthew Woolley]
+			float LookAtRotation = ( ( GetActorLocation() - Enemy->GetActorLocation() ).Rotation().Yaw - 180 );
+
+			// If the rotation is closer than the last enemy AND is to the right. [24/7/2016 Matthew Woolley]
+			if ( ( LookAtRotation < ClosestToTheRight || ClosestToTheRight == -1 ) && LookAtRotation >( CurrentRotation ) )
+			{
+				// Set it as the closest enemy. [24/7/2016 Matthew Woolley]
+				ClosestToTheRight = LookAtRotation;
+				ClosestEnemy = Enemy;
+			}
+		}
+
+		// If there is an enemy. [24/7/2016 Matthew Woolley]
+		if ( ClosestEnemy )
+		{
+			// Make Ned look at the found enemy. [16/7/2016 Matthew Woolley]
+			FRotator LookAtRotation = ( GetActorLocation() - ClosestEnemy->GetActorLocation() ).Rotation();
+			GetController()->SetControlRotation( FRotator( 0, LookAtRotation.Yaw - 180, 0 ) );
+		} else // If we didn't find an enemy. [24/7/2016 Matthew Woolley]
+		{
+			// Redo the enemy check, however, allow the code to find an enemy that is also to the left. [24/7/2016 Matthew Woolley]
+			for ( AActor* Enemy : Enemies )
+			{
+				float LookAtRotation = ( ( GetActorLocation() - Enemy->GetActorLocation() ).Rotation().Yaw - 180 );
+
+				// If the rotation is closer to 0 than the last enemy. [24/7/2016 Matthew Woolley]
+				if ( ( LookAtRotation < ClosestToTheRight || ClosestToTheRight == -1 ) )
+				{
+					// Set it as the closest enemy. [24/7/2016 Matthew Woolley]
+					ClosestToTheRight = LookAtRotation;
+					ClosestEnemy = Enemy;
+				}
+			}
+		}
+
+		// If there is an enemy. [24/7/2016 Matthew Woolley]
+		if ( ClosestEnemy )
+		{
+			// Make Ned look at the found enemy. [16/7/2016 Matthew Woolley]
+			FRotator LookAtRotation = ( GetActorLocation() - ClosestEnemy->GetActorLocation() ).Rotation();
+			GetController()->SetControlRotation( FRotator( 0, LookAtRotation.Yaw - 180, 0 ) );
+		}
+	}
+}
+
 void ARoadFeverCharacterNed::_move( float InInputVal, EAxis::Type InMoveAxis )
 {
 	// Update the Axis Input so the animations can respond. [8/7/2016 Matthew Woolley]
@@ -454,4 +494,39 @@ void ARoadFeverCharacterNed::_move( float InInputVal, EAxis::Type InMoveAxis )
 	FVector MovementVector = FRotationMatrix( Rotation ).GetScaledAxis( InMoveAxis );
 	// Move the Character in the aforementioned direction. [10/12/2015 Matthew Woolley]
 	AddMovementInput( MovementVector, InInputVal );
+}
+
+// Gets all the enemies that aren't blocked by walls, etc.. [24/7/2016 Matthew Woolley]
+TArray<class AActor*> ARoadFeverCharacterNed::GetEnemies()
+{
+	// The enemies that can be aimed at. [17/7/2016 Matthew Woolley]
+	TArray<AActor*> Enemies;
+	UGameplayStatics::GetAllActorsOfClass( GetWorld(), ARoadFeverEnemy::StaticClass(), Enemies );
+
+	// Get all of the enemies in the level. [17/7/2016 Matthew Woolley]
+	for ( AActor* iActorIterator : Enemies )
+	{
+		// Get the World object. [16/7/2016 Matthew Woolley]
+		UWorld* const World = GetWorld();
+
+		// Collision parameters for the line trace. [16/7/2016 Matthew Woolley]
+		FHitResult Hit;
+		FCollisionQueryParams Line( FName( "Enemy Line Trace" ), true );
+		TArray<AActor*> IgnoredActors;
+		IgnoredActors.Add( this );
+		IgnoredActors.Add( CameraDummy );
+		Line.AddIgnoredActors( IgnoredActors );
+
+		// Make sure there is nothing in the way of the enemy (I.E. a wall). [16/7/2016 Matthew Woolley]
+		bool bHasBlockingHit = World->LineTraceSingleByChannel( Hit, this->GetActorLocation(), iActorIterator->GetActorLocation(), WEAPON_TRACE, Line );
+
+		// If there is nothing in the way of the enemy. [16/7/2016 Matthew Woolley]
+		if ( bHasBlockingHit && Hit.GetActor() == iActorIterator )
+		{
+			Enemies.Add( iActorIterator );
+		}
+	}
+
+	// Return the enemies found. [24/7/2016 Matthew Woolley]
+	return Enemies;
 }
