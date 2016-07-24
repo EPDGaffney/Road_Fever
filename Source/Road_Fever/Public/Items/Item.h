@@ -15,19 +15,19 @@ struct FInventoryItem
 
 public:
 	// The class that gets spawned when "Use", or some other variant, has been clicked. [21/12/2015 Matthew Woolley]
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Item" )
+	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Item" )
 	TSubclassOf<class AItem> ItemClass;
 
 	// The texture that gets shown in the inventory [26/11/2015 Matthew Woolley]
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Item")
+	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Item" )
 	UTexture2D* DisplayIcon;
 
 	// The name that the item has [26/11/2015 Matthew Woolley]
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Item")
+	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Item" )
 	FString DisplayName;
 
 	// The text that accompanies this item, once it has been clicked. [21/12/2015 Matthew Woolley]
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Item" )
+	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Item" )
 	FString ItemToolTip;
 
 	// The maximum amount of this item that can fit in one slot. [4/3/2016 Matthew Woolley]
@@ -39,12 +39,28 @@ public:
 	int32 CurrentItemStack;
 
 	// Whether or not the item in this slot can be equipped. [13/7/2016 Matthew Woolley]
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Equipping" )
+	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Equipping" )
 	bool bIsEquipable;
 
 	// Whether or not this item is equipped. [13/7/2016 Matthew Woolley]
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Equipping" )
+	UPROPERTY( BlueprintReadWrite, Category = "Equipping" )
 	bool bIsEquipped;
+
+	// Whether or not this item is a weapon. [24/7/2016 Matthew Woolley]
+	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Attack" )
+	bool bIsWeapon;
+
+	// The name of the ammo this item uses (if it is a weapon). [24/7/2016 Matthew Woolley]
+	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Attack" )
+	FString AmmoName;
+
+	// The maximum amount of times this weapon can be used before reloading (if it is a weapon). [24/7/2016 Matthew Woolley]
+	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Attack" )
+	int32 MaxAmmo;
+
+	// The current amount of ammo in this weapon. [24/7/2016 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack" )
+	int32 CurrentAmmo;
 };
 
 
@@ -89,7 +105,7 @@ public:
 	void AttachItemToNed_Hand();
 
 	// The info that will get passed to the inventory to find out what item has been picked up. [4/3/2016 Matthew Woolley]
-	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Item" )
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Item" )
 	FInventoryItem ItemInfo;
 
 	// The mesh that is used to represent this Item. [14/7/2016 Matthew Woolley]

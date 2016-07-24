@@ -63,7 +63,7 @@ void AWeapon::Tick( float DeltaTime )
 void AWeapon::OnAttack_Implementation()
 {
 	// Make sure the weapon isn't currently cooling down [20/11/2015 Matthew Woolley]
-	if ( WeaponProperties.bIsCoolingDown )
+	if ( WeaponProperties.bIsCoolingDown || ( ItemInfo.MaxAmmo != 0 && ItemInfo.CurrentAmmo == 0 ) )
 	{
 		return;
 	}
@@ -81,7 +81,7 @@ void AWeapon::OnAttack_Implementation()
 		FRotator SpreadRotation = FRotator( FMath::FRandRange( WeaponProperties.MultiTraceSpread * -1, WeaponProperties.MultiTraceSpread ), FMath::FRandRange( WeaponProperties.MultiTraceSpread * -1, WeaponProperties.MultiTraceSpread ), 0 );
 
 		// Get the furthest this weapon can attack [20/11/2015 Matthew Woolley]
-		FVector End = Start + ( ( iTraceIterator == 0 ? GetActorRotation() : GetActorRotation() + SpreadRotation).Vector() * WeaponProperties.MaximumRange );
+		FVector End = Start + ( ( iTraceIterator == 0 ? GetActorRotation() : GetActorRotation() + SpreadRotation ).Vector() * WeaponProperties.MaximumRange );
 
 		// The rotation [20/11/2015 Matthew Woolley]
 		FQuat Rot;
@@ -144,5 +144,8 @@ void AWeapon::OnAttack_Implementation()
 
 	// Make sure the weapon cools down before shooting again [20/11/2015 Matthew Woolley]
 	WeaponProperties.bIsCoolingDown = true;
+
+	// Remove ammo from the gun. [24/7/2016 Matthew Woolley]
+	ItemInfo.CurrentAmmo -= 1;
 }
 

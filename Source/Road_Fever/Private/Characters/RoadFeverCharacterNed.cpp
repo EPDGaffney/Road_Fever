@@ -168,30 +168,45 @@ bool ARoadFeverCharacterNed::AddItemToInventory( struct FInventoryItem ItemToAdd
 		// If the item that is trying to be added is the same one that is already in this slot. [5/3/2016 Matthew Woolley]
 		if ( CharactersInventory->ItemSlots[ iSlotIterator ].DisplayName == ItemToAdd.DisplayName )
 		{
-			// And there is enough room to add more to the stack. [5/3/2016 Matthew Woolley]
+			// If there is more of the item than you can carry in one slot. [24/7/2016 Matthew Woolley]
 			if ( CharactersInventory->ItemSlots[ iSlotIterator ].CurrentItemStack < ItemToAdd.MaxItemStack )
 			{
 				// Add an item to the slot. [5/3/2016 Matthew Woolley]
 				CharactersInventory->ItemSlots[ iSlotIterator ].CurrentItemStack++;
-
+					
 				// Tell the code that this item was added successfully. [5/3/2016 Matthew Woolley]
 				return true;
-			} else
+			}
+			else // If there isn't enough space. [24/7/2016 Matthew Woolley]
 			{
 				continue;
 			}
 		}
+	}
+
+	// For each inventory slot (when there is not an available slot). [24/7/2016 Matthew Woolley]
+	for ( int32 iSlotIterator = 0; iSlotIterator < CharactersInventory->ItemSlots.Num(); iSlotIterator++ )
+	{
 		// If it isn't the same item but is instead empty. [5/3/2016 Matthew Woolley]
-		else if ( CharactersInventory->ItemSlots[ iSlotIterator ].DisplayName == "" )
+		if ( CharactersInventory->ItemSlots[ iSlotIterator ].DisplayName == "" )
 		{
 			// Set this item up inside this slot. [5/3/2016 Matthew Woolley]
-			CharactersInventory->ItemSlots[ iSlotIterator ].CurrentItemStack = 1;
+			CharactersInventory->ItemSlots[ iSlotIterator ].CurrentItemStack++;
 			CharactersInventory->ItemSlots[ iSlotIterator ].DisplayIcon = ItemToAdd.DisplayIcon;
 			CharactersInventory->ItemSlots[ iSlotIterator ].DisplayName = ItemToAdd.DisplayName;
 			CharactersInventory->ItemSlots[ iSlotIterator ].ItemClass = ItemToAdd.ItemClass;
 			CharactersInventory->ItemSlots[ iSlotIterator ].ItemToolTip = ItemToAdd.ItemToolTip;
 			CharactersInventory->ItemSlots[ iSlotIterator ].MaxItemStack = ItemToAdd.MaxItemStack;
 			CharactersInventory->ItemSlots[ iSlotIterator ].bIsEquipable = ItemToAdd.bIsEquipable;
+
+			// If this item is a weapon. [24/7/2016 Matthew Woolley]
+			if ( ItemToAdd.bIsWeapon )
+			{
+				// Setup the weapon stats. [24/7/2016 Matthew Woolley]
+				CharactersInventory->ItemSlots[ iSlotIterator ].MaxAmmo = ItemToAdd.MaxAmmo;
+				CharactersInventory->ItemSlots[ iSlotIterator ].AmmoName = ItemToAdd.AmmoName;
+				CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo = ItemToAdd.CurrentAmmo;
+			}
 
 			// Tell the code that this item was added successfully. [5/3/2016 Matthew Woolley]
 			return true;
