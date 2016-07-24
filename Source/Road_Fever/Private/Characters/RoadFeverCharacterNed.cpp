@@ -502,6 +502,7 @@ TArray<class AActor*> ARoadFeverCharacterNed::GetEnemies()
 	// The enemies that can be aimed at. [17/7/2016 Matthew Woolley]
 	TArray<AActor*> Enemies;
 	UGameplayStatics::GetAllActorsOfClass( GetWorld(), ARoadFeverEnemy::StaticClass(), Enemies );
+	TArray<AActor*> NonBlockedEnemies;
 
 	// Get all of the enemies in the level. [17/7/2016 Matthew Woolley]
 	for ( AActor* iActorIterator : Enemies )
@@ -523,10 +524,10 @@ TArray<class AActor*> ARoadFeverCharacterNed::GetEnemies()
 		// If there is nothing in the way of the enemy. [16/7/2016 Matthew Woolley]
 		if ( bHasBlockingHit && Hit.GetActor() == iActorIterator )
 		{
-			Enemies.Add( iActorIterator );
+			NonBlockedEnemies.Add( iActorIterator );
 		}
 	}
 
 	// Return the enemies found. [24/7/2016 Matthew Woolley]
-	return Enemies;
+	return NonBlockedEnemies;
 }
