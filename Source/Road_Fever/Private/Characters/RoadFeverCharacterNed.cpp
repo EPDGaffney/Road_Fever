@@ -168,16 +168,19 @@ bool ARoadFeverCharacterNed::AddItemToInventory( struct FInventoryItem ItemToAdd
 		// If the item that is trying to be added is the same one that is already in this slot. [5/3/2016 Matthew Woolley]
 		if ( CharactersInventory->ItemSlots[ iSlotIterator ].DisplayName == ItemToAdd.DisplayName )
 		{
-			// If there is more of the item than you can carry in one slot. [24/7/2016 Matthew Woolley]
+			// If there is less of the item than you can carry in one slot. [24/7/2016 Matthew Woolley]
 			if ( CharactersInventory->ItemSlots[ iSlotIterator ].CurrentItemStack < ItemToAdd.MaxItemStack )
 			{
-				// Add an item to the slot. [5/3/2016 Matthew Woolley]
-				CharactersInventory->ItemSlots[ iSlotIterator ].CurrentItemStack++;
-					
-				// Tell the code that this item was added successfully. [5/3/2016 Matthew Woolley]
-				return true;
-			}
-			else // If there isn't enough space. [24/7/2016 Matthew Woolley]
+				// If this is a clip and it has found a clip of similar size OR it isn't a clip. [25/7/2016 Matthew Woolley]
+				if ( ( ItemToAdd.bIsClip && ItemToAdd.CurrentAmmo == CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo ) || !ItemToAdd.bIsClip )
+				{
+					// Add an item to the slot. [5/3/2016 Matthew Woolley]
+					CharactersInventory->ItemSlots[ iSlotIterator ].CurrentItemStack++;
+	
+					// Tell the code that this item was added successfully. [5/3/2016 Matthew Woolley]
+					return true;
+				}
+			} else // If there isn't enough space. [24/7/2016 Matthew Woolley]
 			{
 				continue;
 			}
@@ -204,7 +207,18 @@ bool ARoadFeverCharacterNed::AddItemToInventory( struct FInventoryItem ItemToAdd
 			{
 				// Setup the weapon stats. [24/7/2016 Matthew Woolley]
 				CharactersInventory->ItemSlots[ iSlotIterator ].MaxAmmo = ItemToAdd.MaxAmmo;
-				CharactersInventory->ItemSlots[ iSlotIterator ].AmmoName = ItemToAdd.AmmoName;
+				CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo = ItemToAdd.CurrentAmmo;
+			} else
+			{
+				// Setup the weapon stats. [24/7/2016 Matthew Woolley]
+				CharactersInventory->ItemSlots[ iSlotIterator ].MaxAmmo = 0;
+				CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo = 0;
+			}
+
+			// If this is a clip ammo type (other ammo types are added normally). [25/7/2016 Matthew Woolley]
+			if ( ItemToAdd.bIsClip )
+			{
+				CharactersInventory->ItemSlots[ iSlotIterator ].bIsClip = ItemToAdd.bIsClip;
 				CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo = ItemToAdd.CurrentAmmo;
 			}
 

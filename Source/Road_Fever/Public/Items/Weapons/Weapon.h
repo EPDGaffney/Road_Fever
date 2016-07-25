@@ -81,4 +81,8 @@ public:
 	// The properties for customizing this weapon [20/11/2015 Matthew Woolley]
 	UPROPERTY( BlueprintReadWrite, EditDefaultsOnly, Category = "Attack" )
 	FWeaponProperties WeaponProperties;
+
+	// Called when the user wishes to reload; bShouldUseFullClip will be true if they don't hold the reload key. [25/7/2016 Matthew Woolley]
+	UFUNCTION( BlueprintCallable, Category = "Attack" )
+	bool Reload( bool bShouldUseFullClip );
 };

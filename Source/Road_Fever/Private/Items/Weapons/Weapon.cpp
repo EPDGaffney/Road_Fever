@@ -3,6 +3,7 @@
 #include "Road_Fever.h"
 #include "Public/Items/Weapons/Weapon.h"
 #include "Public/AI/Enemy/RoadFeverEnemy.h"
+#include "Public/Characters/RoadFeverCharacterNed.h"
 
 
 
@@ -147,5 +148,52 @@ void AWeapon::OnAttack_Implementation()
 
 	// Remove ammo from the gun. [24/7/2016 Matthew Woolley]
 	ItemInfo.CurrentAmmo -= 1;
+}
+
+// Called when the user wishes to reload; bShouldUseFullClip will be true if they don't hold the reload key. [25/7/2016 Matthew Woolley]
+bool AWeapon::Reload( bool bShouldUseFullClip )
+{
+	// Get Ned so we can use his inventory later. [25/7/2016 Matthew Woolley]
+	ARoadFeverCharacterNed* PlayerCharacter = Cast<ARoadFeverCharacterNed>( GetWorld()->GetFirstPlayerController()->GetPawn() );
+
+	// If this weapon is fully out of ammo. [25/7/2016 Matthew Woolley]
+	if ( ItemInfo.CurrentAmmo == 0 )
+	{
+
+	} else // If this weapon still contain ammo. [25/7/2016 Matthew Woolley]
+	{
+		UWorld* const World = GetWorld();
+
+		if ( World )
+		{
+			// Try to add this as an item. [25/7/2016 Matthew Woolley]
+			AItem* TemporaryItemInfoHolder = ( AItem* ) World->SpawnActor<AItem>( ItemInfo.AmmoType );
+
+			FInventoryItem ClipToAdd;
+			ClipToAdd.bIsClip = true;
+			ClipToAdd.bIsEquipable = false;
+			ClipToAdd.CurrentAmmo = ItemInfo.CurrentAmmo;
+			ClipToAdd.DisplayIcon = TemporaryItemInfoHolder->ItemInfo.DisplayIcon;
+			ClipToAdd.DisplayName = TemporaryItemInfoHolder->ItemInfo.DisplayName;
+			ClipToAdd.ItemClass = ItemInfo.ItemClass;
+			ClipToAdd.ItemToolTip = TemporaryItemInfoHolder->ItemInfo.ItemToolTip;
+			ClipToAdd.MaxItemStack = TemporaryItemInfoHolder->ItemInfo.MaxItemStack;
+
+			bool bAddedItem = PlayerCharacter->AddItemToInventory( ClipToAdd );
+
+			// If the clip wasn't added to the inventory. [25/7/2016 Matthew Woolley]
+			if ( !bAddedItem )
+			{
+				// Throw the item onto the ground in front of Ned. [25/7/2016 Matthew Woolley]
+				FVector SpawnLocation = PlayerCharacter->GetActorRotation().Vector() * 20;
+				TemporaryItemInfoHolder->SetActorLocation( SpawnLocation );
+			} else // If the item was added. [25/7/2016 Matthew Woolley]
+			{
+				// Destroy it from the level. [25/7/2016 Matthew Woolley]
+				TemporaryItemInfoHolder->Destroy();
+			}
+		}
+	}
+	return true;
 }
 

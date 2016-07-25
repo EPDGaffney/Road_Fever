@@ -50,17 +50,21 @@ public:
 	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Attack" )
 	bool bIsWeapon;
 
-	// The name of the ammo this item uses (if it is a weapon). [24/7/2016 Matthew Woolley]
-	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Attack" )
-	FString AmmoName;
-
 	// The maximum amount of times this weapon can be used before reloading (if it is a weapon). [24/7/2016 Matthew Woolley]
 	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Attack" )
 	int32 MaxAmmo;
 
-	// The current amount of ammo in this weapon. [24/7/2016 Matthew Woolley]
+	// The current amount of ammo in this weapon (if it is a weapon) or contained in this pickup (if it is an ammo pickup). [24/7/2016 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack" )
 	int32 CurrentAmmo;
+
+	// If this ammo can only be added to ammo with a similar capacity. [25/7/2016 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack" )
+	bool bIsClip;
+
+	// The kind of ammo this weapon uses. [25/7/2016 Matthew Woolley]
+	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "" )
+	TSubclassOf<AItem> AmmoType;
 };
 
 
