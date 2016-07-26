@@ -119,6 +119,8 @@ void ARoadFeverCharacterNed::SetupPlayerInputComponent( class UInputComponent* I
 		InInputComponent->BindAction( "ToggleInventory", IE_Pressed, CharactersInventory, &UInventory::ToggleInventory );
 
 		InInputComponent->BindAction( "SwitchEnemy", IE_Pressed, this, &ARoadFeverCharacterNed::SwitchToNextEnemy );
+
+		InInputComponent->BindAxis( "Reload", this, &ARoadFeverCharacterNed::Reload );
 	}
 }
 
@@ -208,11 +210,13 @@ bool ARoadFeverCharacterNed::AddItemToInventory( struct FInventoryItem ItemToAdd
 				// Setup the weapon stats. [24/7/2016 Matthew Woolley]
 				CharactersInventory->ItemSlots[ iSlotIterator ].MaxAmmo = ItemToAdd.MaxAmmo;
 				CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo = ItemToAdd.CurrentAmmo;
+				CharactersInventory->ItemSlots[ iSlotIterator ].AmmoType = ItemToAdd.AmmoType;
 			} else
 			{
 				// Setup the weapon stats. [24/7/2016 Matthew Woolley]
 				CharactersInventory->ItemSlots[ iSlotIterator ].MaxAmmo = 0;
 				CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo = 0;
+				CharactersInventory->ItemSlots[ iSlotIterator ].AmmoType = NULL;
 			}
 
 			// If this is a clip ammo type (other ammo types are added normally). [25/7/2016 Matthew Woolley]
@@ -501,6 +505,58 @@ void ARoadFeverCharacterNed::SwitchToNextEnemy()
 			FRotator LookAtRotation = ( GetActorLocation() - ClosestEnemy->GetActorLocation() ).Rotation();
 			GetController()->SetControlRotation( FRotator( 0, LookAtRotation.Yaw - 180, 0 ) );
 		}
+	}
+}
+
+// Called when the player wishes to reload. [26/7/2016 Matthew Woolley]
+void ARoadFeverCharacterNed::Reload( float InInputVal )
+{
+	// The amount of time the button has been pressed down. [26/7/2016 Matthew Woolley]
+	static float TimeHeld = 0;
+	static bool bCanReload = true;
+
+	// If the user is pressing the reload button. [26/7/2016 Matthew Woolley]
+	if ( InInputVal != 0 && bCanReload )
+	{
+		TimeHeld += GetWorld()->GetDeltaSeconds();
+	}
+
+	// If the player has only held the key long enough to preform a full reload. [26/7/2016 Matthew Woolley]
+	if ( InInputVal == 0 && TimeHeld > .01f && bCanReload )
+	{
+		GEngine->AddOnScreenDebugMessage( -1, 1.f, FColor::Red, TEXT( "Resquested Full Reload" ) );
+		
+		// Check if the player has a weapon to reload. [26/7/2016 Matthew Woolley]
+		if ( ( AWeapon* ) CharactersInventory->EquippedItem )
+		{
+			// Request a full-reload. [26/7/2016 Matthew Woolley]
+			AWeapon* EquippedWeapon = ( AWeapon* ) CharactersInventory->EquippedItem;
+			EquippedWeapon->Reload( true );
+		}
+
+		// Reset the timer. [26/7/2016 Matthew Woolley]
+		TimeHeld = 0;
+	} else if ( InInputVal == 0 && !bCanReload ) // If the player preformed a secondary reload, and has stopped pressing the key, allow another reload. [26/7/2016 Matthew Woolley]
+	{
+		bCanReload = true;
+	}
+
+	// If the button has been held long enough for the partial reload. [26/7/2016 Matthew Woolley]
+	if ( InInputVal != 0 && TimeHeld >= 2 && bCanReload )
+	{
+		GEngine->AddOnScreenDebugMessage( -1, 1.f, FColor::Red, TEXT( "Requested Partial Reload" ) );
+
+		// Check if the player has a weapon to reload. [26/7/2016 Matthew Woolley]
+		if ( ( AWeapon* ) CharactersInventory->EquippedItem )
+		{
+			// Request a full-reload. [26/7/2016 Matthew Woolley]
+			AWeapon* EquippedWeapon = ( AWeapon* ) CharactersInventory->EquippedItem;
+			EquippedWeapon->Reload( false );
+			bCanReload = false;
+		}
+
+		// Reset the timer. [26/7/2016 Matthew Woolley]
+		TimeHeld = 0;
 	}
 }
 

@@ -174,30 +174,40 @@ bool AWeapon::Reload( bool bShouldUseFullClip )
 		if ( World )
 		{
 			// Try to add this as an item. [25/7/2016 Matthew Woolley]
-			AItem* TemporaryItemInfoHolder = ( AItem* ) World->SpawnActor<AItem>( ItemInfo.AmmoType );
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = this;
+			SpawnParams.Instigator = Instigator;
+			AItem* TemporaryItemInfoHolder = World->SpawnActor<AItem>( ItemInfo.AmmoType, FVector( 0, 0, 0 ), GetActorRotation(), SpawnParams );
 
-			FInventoryItem ClipToAdd;
-			ClipToAdd.bIsClip = true;
-			ClipToAdd.bIsEquipable = false;
-			ClipToAdd.CurrentAmmo = ItemInfo.CurrentAmmo;
-			ClipToAdd.DisplayIcon = TemporaryItemInfoHolder->ItemInfo.DisplayIcon;
-			ClipToAdd.DisplayName = TemporaryItemInfoHolder->ItemInfo.DisplayName;
-			ClipToAdd.ItemClass = ItemInfo.ItemClass;
-			ClipToAdd.ItemToolTip = TemporaryItemInfoHolder->ItemInfo.ItemToolTip;
-			ClipToAdd.MaxItemStack = TemporaryItemInfoHolder->ItemInfo.MaxItemStack;
-
-			bool bAddedItem = PlayerCharacter->AddItemToInventory( ClipToAdd );
-
-			// If the clip wasn't added to the inventory. [25/7/2016 Matthew Woolley]
-			if ( !bAddedItem )
+			if ( TemporaryItemInfoHolder )
 			{
-				// Throw the item onto the ground in front of Ned. [25/7/2016 Matthew Woolley]
-				FVector SpawnLocation = PlayerCharacter->GetActorRotation().Vector() * 20;
-				TemporaryItemInfoHolder->SetActorLocation( SpawnLocation );
-			} else // If the item was added. [25/7/2016 Matthew Woolley]
+				GEngine->AddOnScreenDebugMessage( -1, 5.f, FColor::Red, TEXT( "Spawned" ) );
+				FInventoryItem ClipToAdd;
+				ClipToAdd.bIsClip = true;
+				ClipToAdd.bIsEquipable = false;
+				ClipToAdd.CurrentAmmo = ItemInfo.CurrentAmmo;
+				ClipToAdd.DisplayIcon = TemporaryItemInfoHolder->ItemInfo.DisplayIcon;
+				ClipToAdd.DisplayName = TemporaryItemInfoHolder->ItemInfo.DisplayName;
+				ClipToAdd.ItemClass = ItemInfo.ItemClass;
+				ClipToAdd.ItemToolTip = TemporaryItemInfoHolder->ItemInfo.ItemToolTip;
+				ClipToAdd.MaxItemStack = TemporaryItemInfoHolder->ItemInfo.MaxItemStack;
+
+				bool bAddedItem = PlayerCharacter->AddItemToInventory( ClipToAdd );
+
+				// If the clip wasn't added to the inventory. [25/7/2016 Matthew Woolley]
+				if ( !bAddedItem )
+				{
+					// Throw the item onto the ground in front of Ned. [25/7/2016 Matthew Woolley]
+					FVector SpawnLocation = PlayerCharacter->GetActorRotation().Vector() * 20;
+					TemporaryItemInfoHolder->SetActorLocation( SpawnLocation );
+				} else // If the item was added. [25/7/2016 Matthew Woolley]
+				{
+					// Destroy it from the level. [25/7/2016 Matthew Woolley]
+					TemporaryItemInfoHolder->Destroy();
+				}
+			} else
 			{
-				// Destroy it from the level. [25/7/2016 Matthew Woolley]
-				TemporaryItemInfoHolder->Destroy();
+				GEngine->AddOnScreenDebugMessage( -1, 5.f, FColor::Red, TEXT( "Failed to spawn" ) );
 			}
 		}
 	}

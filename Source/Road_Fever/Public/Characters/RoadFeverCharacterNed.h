@@ -152,6 +152,10 @@ protected:
 	UFUNCTION( BlueprintCallable, Category = "Attack" )
 	void SwitchToNextEnemy();
 
+	// Called when the player wishes to reload. [26/7/2016 Matthew Woolley]
+	UFUNCTION( BlueprintCallable, Category = "Attack" )
+	void Reload( float InInputVal );
+
 private:
 	// Called to preform generic movement function. [10/12/2015 Matthew Woolley]
 	UFUNCTION( Category = "Movement" )
