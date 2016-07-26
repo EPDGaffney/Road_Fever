@@ -27,6 +27,9 @@ AWeapon::AWeapon()
 	WeaponProperties.NumberOfTraces = 1;
 	WeaponProperties.MultiTraceSpread = 12.0f;
 
+	// Make sure all weapons are treated as weapons. [26/7/2016 Matthew Woolley]
+	ItemInfo.bIsWeapon = true;
+
 	// Allow Actor ticking [20/11/2015 Matthew Woolley]
 	PrimaryActorTick.bCanEverTick = true;
 }
@@ -146,8 +149,12 @@ void AWeapon::OnAttack_Implementation()
 	// Make sure the weapon cools down before shooting again [20/11/2015 Matthew Woolley]
 	WeaponProperties.bIsCoolingDown = true;
 
-	// Remove ammo from the gun. [24/7/2016 Matthew Woolley]
-	ItemInfo.CurrentAmmo -= 1;
+	// If this weapon relies on ammo. [26/7/2016 Matthew Woolley]
+	if ( ItemInfo.MaxAmmo != 0 )
+	{
+		// Remove ammo from the gun. [24/7/2016 Matthew Woolley]
+		ItemInfo.CurrentAmmo -= 1;
+	}
 }
 
 // Called when the user wishes to reload; bShouldUseFullClip will be true if they don't hold the reload key. [25/7/2016 Matthew Woolley]
