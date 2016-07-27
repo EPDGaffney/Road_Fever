@@ -103,6 +103,9 @@ public:
 	// Whether or not the reload should attempt a full clip. [27/7/2016 Matthew Woolley]
 	bool bShouldUseFullClip;
 
+	// Whether or not the reloading is getting interrupted. [27/7/2016 Matthew Woolley]
+	bool bShouldInterrupt;
+
 private:
 	// The timer for cooling the weapon down. [27/7/2016 Matthew Woolley]
 	FTimerHandle WeaponCooldownHandle;

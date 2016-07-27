@@ -62,10 +62,6 @@ public:
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack" )
 	bool bIsClip;
 
-	// Whether this ammo is used one-by-one. [27/7/2016 Matthew Woolley]
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "" )
-	bool bIsRounds;
-
 	// The kind of ammo this weapon uses. [25/7/2016 Matthew Woolley]
 	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "" )
 	TSubclassOf<AItem> AmmoType;

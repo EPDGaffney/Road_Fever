@@ -49,6 +49,12 @@ void AWeapon::OnAttack_Implementation()
 	// Make sure the weapon isn't currently cooling down [20/11/2015 Matthew Woolley]
 	if ( WeaponProperties.bIsReloading || WeaponProperties.bIsCoolingDown || ( ItemInfo.MaxAmmo != 0 && ItemInfo.CurrentAmmo == 0 ) )
 	{
+		// If this weapon is reloading, but can be interrupted. [27/7/2016 Matthew Woolley]
+		if ( WeaponProperties.bIsReloading )
+		{
+			bShouldInterrupt = true;
+		}
+
 		return;
 	}
 
@@ -141,6 +147,9 @@ void AWeapon::OnAttack_Implementation()
 // Called when the user wishes to reload; bShouldUseFullClip will be true if they don't hold the reload key. [25/7/2016 Matthew Woolley]
 void AWeapon::Reload( bool bUseFullClip )
 {
+	if ( WeaponProperties.bIsReloading || WeaponProperties.bIsCoolingDown )
+		return;
+
 	// Get the UWorld object to spawn the ammo class. [27/7/2016 Matthew Woolley]
 	UWorld* const World = GetWorld();
 
@@ -269,6 +278,15 @@ void AWeapon::FullReload()
 // Called when the weapon used is loaded one-shot at a time. [27/7/2016 Matthew Woolley]
 void AWeapon::SingleRoundReload()
 {
+	// If the gun has full ammo. [27/7/2016 Matthew Woolley]
+	if ( ItemInfo.CurrentAmmo == ItemInfo.MaxAmmo )
+	{
+		// Stop the gun from reloading further. [27/7/2016 Matthew Woolley]
+		WeaponProperties.bIsReloading = false;
+		GetWorld()->GetTimerManager().ClearTimer( WeaponReloadHandle );
+		TemporaryItemInfoHolder->Destroy();
+	}
+
 	// Get Ned so we can use his inventory later. [25/7/2016 Matthew Woolley]
 	ARoadFeverCharacterNed* PlayerCharacter = Cast<ARoadFeverCharacterNed>( GetWorld()->GetFirstPlayerController()->GetPawn() );
 
@@ -280,7 +298,7 @@ void AWeapon::SingleRoundReload()
 		// If this slot contains the ammo this weapon uses. [27/7/2016 Matthew Woolley]
 		if ( TemporaryItemInfoHolder->ItemInfo.DisplayName == PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].DisplayName )
 		{
-			PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo--;
+			PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentItemStack--;
 			ItemInfo.CurrentAmmo++;
 			bFoundAmmo = true;
 		}
@@ -293,6 +311,14 @@ void AWeapon::SingleRoundReload()
 		WeaponProperties.bIsReloading = false;
 		GetWorld()->GetTimerManager().ClearTimer( WeaponReloadHandle );
 		TemporaryItemInfoHolder->Destroy();
+	}
+
+	if ( bShouldInterrupt )
+	{
+		WeaponProperties.bIsReloading = false;
+		GetWorld()->GetTimerManager().ClearTimer( WeaponReloadHandle );
+		TemporaryItemInfoHolder->Destroy();
+		bShouldInterrupt = false;
 	}
 }
 

@@ -227,12 +227,6 @@ bool ARoadFeverCharacterNed::AddItemToInventory( struct FInventoryItem ItemToAdd
 				CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo = ItemToAdd.CurrentAmmo;
 			}
 
-			if ( ItemToAdd.bIsRounds )
-			{
-				CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo = ItemToAdd.CurrentAmmo;
-				CharactersInventory->ItemSlots[ iSlotIterator ].bIsRounds = ItemToAdd.bIsRounds;
-			}
-
 			// Tell the code that this item was added successfully. [5/3/2016 Matthew Woolley]
 			return true;
 		}
