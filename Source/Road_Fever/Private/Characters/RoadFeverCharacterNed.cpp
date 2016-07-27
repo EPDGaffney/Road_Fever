@@ -203,6 +203,7 @@ bool ARoadFeverCharacterNed::AddItemToInventory( struct FInventoryItem ItemToAdd
 			CharactersInventory->ItemSlots[ iSlotIterator ].ItemToolTip = ItemToAdd.ItemToolTip;
 			CharactersInventory->ItemSlots[ iSlotIterator ].MaxItemStack = ItemToAdd.MaxItemStack;
 			CharactersInventory->ItemSlots[ iSlotIterator ].bIsEquipable = ItemToAdd.bIsEquipable;
+			CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo = ItemToAdd.CurrentAmmo;
 
 			// If this item is a weapon. [24/7/2016 Matthew Woolley]
 			if ( ItemToAdd.bIsWeapon )
@@ -224,6 +225,12 @@ bool ARoadFeverCharacterNed::AddItemToInventory( struct FInventoryItem ItemToAdd
 			{
 				CharactersInventory->ItemSlots[ iSlotIterator ].bIsClip = ItemToAdd.bIsClip;
 				CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo = ItemToAdd.CurrentAmmo;
+			}
+
+			if ( ItemToAdd.bIsRounds )
+			{
+				CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo = ItemToAdd.CurrentAmmo;
+				CharactersInventory->ItemSlots[ iSlotIterator ].bIsRounds = ItemToAdd.bIsRounds;
 			}
 
 			// Tell the code that this item was added successfully. [5/3/2016 Matthew Woolley]

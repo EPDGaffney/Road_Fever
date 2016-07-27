@@ -40,9 +40,17 @@ public:
 	UPROPERTY( BlueprintReadWrite, EditDefaultsOnly, Category = "Attack" )
 	float CoolDownTime;
 
+	// This time it takes to reload this weapon (per round for fed weapons, or per clip for clipped weapons). [27/7/2016 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "" )
+	float ReloadTime;
+
 	// Whether the weapons is cooling down or not [20/11/2015 Matthew Woolley]
 	UPROPERTY( BlueprintReadWrite, Category = "Attack" )
 	bool bIsCoolingDown;
+
+	// Whether this weapon is reloading or now. [27/7/2016 Matthew Woolley]
+	UPROPERTY( BlueprintReadWrite, Category = "Attack" )
+	bool bIsReloading;
 
 	// The amount of traces this weapon does per shot. [21/7/2016 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack" )
@@ -81,11 +89,27 @@ public:
 
 	// Called when the user wishes to reload; bShouldUseFullClip will be true if they don't hold the reload key. [25/7/2016 Matthew Woolley]
 	UFUNCTION( BlueprintCallable, Category = "Attack" )
-	bool Reload( bool bShouldUseFullClip );
+	void Reload( bool bUseFullClip );
 
 	// Called when the weapon has cooled down. [27/7/2016 Matthew Woolley]
 	void Cooldown();
 
+	// Called when the weapon used is using a clip and requires a "full-reload" each time. [27/7/2016 Matthew Woolley]
+	void FullReload();
+
+	// Called when the weapon used is loaded one-shot at a time. [27/7/2016 Matthew Woolley]
+	void SingleRoundReload();
+
+	// Whether or not the reload should attempt a full clip. [27/7/2016 Matthew Woolley]
+	bool bShouldUseFullClip;
+
+private:
 	// The timer for cooling the weapon down. [27/7/2016 Matthew Woolley]
 	FTimerHandle WeaponCooldownHandle;
+
+	// The timer for reloading the weapon. [27/7/2016 Matthew Woolley]
+	FTimerHandle WeaponReloadHandle;
+
+	// The item created when doing reload checks. [27/7/2016 Matthew Woolley]
+	class AItem* TemporaryItemInfoHolder;
 };

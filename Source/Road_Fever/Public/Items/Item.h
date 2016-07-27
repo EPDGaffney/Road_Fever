@@ -58,9 +58,13 @@ public:
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack" )
 	int32 CurrentAmmo;
 
-	// If this ammo can only be added to ammo with a similar capacity. [25/7/2016 Matthew Woolley]
+	// Whether this ammo type is a clip. [25/7/2016 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack" )
 	bool bIsClip;
+
+	// Whether this ammo is used one-by-one. [27/7/2016 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "" )
+	bool bIsRounds;
 
 	// The kind of ammo this weapon uses. [25/7/2016 Matthew Woolley]
 	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "" )

@@ -40,13 +40,14 @@ void AWeapon::EndPlay( const EEndPlayReason::Type InEndPlayReason )
 {
 	// Stop any weapon timers that may be going. [27/7/2016 Matthew Woolley]
 	GetWorld()->GetTimerManager().ClearTimer( WeaponCooldownHandle );
+	GetWorld()->GetTimerManager().ClearTimer( WeaponReloadHandle );
 }
 
 // Called when the player wishes to attack with this weapon [20/11/2015 Matthew Woolley]
 void AWeapon::OnAttack_Implementation()
 {
 	// Make sure the weapon isn't currently cooling down [20/11/2015 Matthew Woolley]
-	if ( WeaponProperties.bIsCoolingDown || ( ItemInfo.MaxAmmo != 0 && ItemInfo.CurrentAmmo == 0 ) )
+	if ( WeaponProperties.bIsReloading || WeaponProperties.bIsCoolingDown || ( ItemInfo.MaxAmmo != 0 && ItemInfo.CurrentAmmo == 0 ) )
 	{
 		return;
 	}
@@ -138,11 +139,8 @@ void AWeapon::OnAttack_Implementation()
 }
 
 // Called when the user wishes to reload; bShouldUseFullClip will be true if they don't hold the reload key. [25/7/2016 Matthew Woolley]
-bool AWeapon::Reload( bool bShouldUseFullClip )
+void AWeapon::Reload( bool bUseFullClip )
 {
-	// Get Ned so we can use his inventory later. [25/7/2016 Matthew Woolley]
-	ARoadFeverCharacterNed* PlayerCharacter = Cast<ARoadFeverCharacterNed>( GetWorld()->GetFirstPlayerController()->GetPawn() );
-
 	// Get the UWorld object to spawn the ammo class. [27/7/2016 Matthew Woolley]
 	UWorld* const World = GetWorld();
 
@@ -153,98 +151,148 @@ bool AWeapon::Reload( bool bShouldUseFullClip )
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = this;
 		SpawnParams.Instigator = Instigator;
-		AItem* TemporaryItemInfoHolder = World->SpawnActor<AItem>( ItemInfo.AmmoType, FVector( 0, 0, 0 ), GetActorRotation(), SpawnParams );
+		TemporaryItemInfoHolder = World->SpawnActor<AItem>( ItemInfo.AmmoType, FVector( 0, 0, 0 ), GetActorRotation(), SpawnParams );
 
 		// If the ammo was created successfully. [27/7/2016 Matthew Woolley]
 		if ( TemporaryItemInfoHolder )
 		{
+			// Tell the code whether the user requested a full clip or not. [27/7/2016 Matthew Woolley]
+			bShouldUseFullClip = bUseFullClip;
+
+			// Tell the code we are reloading. [27/7/2016 Matthew Woolley]
+			WeaponProperties.bIsReloading = true;
+
 			// If this weapon uses a clip. [27/7/2016 Matthew Woolley]
 			if ( TemporaryItemInfoHolder->ItemInfo.bIsClip )
 			{
-				// Setup its inventory properties. [27/7/2016 Matthew Woolley]
-				FInventoryItem ClipToAdd;
-				ClipToAdd.bIsClip = true;
-				ClipToAdd.bIsEquipable = false;
-				ClipToAdd.CurrentAmmo = ItemInfo.CurrentAmmo;
-				ClipToAdd.DisplayIcon = TemporaryItemInfoHolder->ItemInfo.DisplayIcon;
-				ClipToAdd.DisplayName = TemporaryItemInfoHolder->ItemInfo.DisplayName;
-				ClipToAdd.ItemClass = ItemInfo.ItemClass;
-				ClipToAdd.ItemToolTip = TemporaryItemInfoHolder->ItemInfo.ItemToolTip;
-				ClipToAdd.MaxItemStack = TemporaryItemInfoHolder->ItemInfo.MaxItemStack;
-
-				// Add it to the inventory. [27/7/2016 Matthew Woolley]
-				bool bAddedItem = PlayerCharacter->AddItemToInventory( ClipToAdd );
-
-				// Remove the current ammo from the gun. [27/7/2016 Matthew Woolley]
-				ItemInfo.CurrentAmmo = 0;
-
-				// Store the largest ammo count found. [27/7/2016 Matthew Woolley]
-				FInventoryItem LargestAmmoCount;
-				int32 LargestAmmoCountNumber = 0;
-				int32 LargestAmmoCountSlotNumber = 0;
-
-				// In case there was an issue with the partial reload, revert to this (if there is one). [27/7/2016 Matthew Woolley]
-				FInventoryItem FullClip;
-				int32 FullClipSlotNumber = 0;
-
-				// For each slot in the inventory, search for the ammo this weapon uses. [27/7/2016 Matthew Woolley]
-				for ( int32 iSlotIterator = 0; iSlotIterator < PlayerCharacter->CharactersInventory->ItemSlots.Num(); iSlotIterator++ )
-				{
-					// If the slot we have found has more ammo than the last one we found AND is the ammo this weapon uses. [27/7/2016 Matthew Woolley]
-					if ( LargestAmmoCountNumber <= PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo && TemporaryItemInfoHolder->ItemInfo.DisplayName == PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].DisplayName )
-					{
-						// If the user has requested a partial reload AND this is a full clip. [27/7/2016 Matthew Woolley]
-						if ( !bShouldUseFullClip && PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo == ItemInfo.MaxAmmo )
-						{
-							GEngine->AddOnScreenDebugMessage( -1, 1.f, FColor::Red, TEXT( "Found full clip" ) );
-							// Store the full clip in case there is an issue with the partial clip. [27/7/2016 Matthew Woolley]
-							FullClip = PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ];
-							FullClipSlotNumber = iSlotIterator;
-							continue;
-						} else
-						{
-							GEngine->AddOnScreenDebugMessage( -1, 1.f, FColor::Red, TEXT( "Found requested clip" ) );
-							// Store the clip for a reload. [27/7/2016 Matthew Woolley]
-							LargestAmmoCount = PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ];
-							LargestAmmoCountNumber = PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo;
-							LargestAmmoCountSlotNumber = iSlotIterator;
-						}
-					}
-				}
-
-				// If we found a clip (partial or full) that is of the type requested (partial or full). [27/7/2016 Matthew Woolley]
-				if ( LargestAmmoCount.CurrentAmmo != 0 )
-				{
-					// Reload this weapon with the amount of ammo in the clip. [27/7/2016 Matthew Woolley]
-					ItemInfo.CurrentAmmo = LargestAmmoCount.CurrentAmmo;
-					PlayerCharacter->CharactersInventory->ItemSlots[ LargestAmmoCountSlotNumber ].CurrentItemStack--;
-				} else if ( FullClip.CurrentAmmo != 0 ) // If we only found a full clip, but a partial was requested. [27/7/2016 Matthew Woolley]
-				{
-					// Reload the full clip. [27/7/2016 Matthew Woolley]
-					ItemInfo.CurrentAmmo = FullClip.CurrentAmmo;
-					PlayerCharacter->CharactersInventory->ItemSlots[ FullClipSlotNumber ].CurrentItemStack--;
-				}
-
-				// If the old clip wasn't added to the inventory. [25/7/2016 Matthew Woolley]
-				if ( !bAddedItem )
-				{
-					// Throw the item onto the ground in front of Ned. [25/7/2016 Matthew Woolley]
-					FVector SpawnLocation = PlayerCharacter->GetActorRotation().Vector() * 20;
-					TemporaryItemInfoHolder->SetActorLocation( SpawnLocation );
-				} else // If the item was added. [25/7/2016 Matthew Woolley]
-				{
-					// Destroy it from the level. [25/7/2016 Matthew Woolley]
-					TemporaryItemInfoHolder->Destroy();
-				}
+				GetWorld()->GetTimerManager().SetTimer( WeaponReloadHandle, this, &AWeapon::FullReload, 0, false, WeaponProperties.ReloadTime);
+			} else
+			{
+				GetWorld()->GetTimerManager().SetTimer( WeaponReloadHandle, this, &AWeapon::SingleRoundReload, WeaponProperties.ReloadTime, true );
 			}
 		}
 	}
-	return true;
 }
 
 // Called when the weapon has cooled down. [27/7/2016 Matthew Woolley]
 void AWeapon::Cooldown()
 {
 	WeaponProperties.bIsCoolingDown = false;
+}
+
+// Called when the weapon used is using a clip and requires a "full-reload" each time. [27/7/2016 Matthew Woolley]
+void AWeapon::FullReload()
+{
+	// Get Ned so we can use his inventory later. [25/7/2016 Matthew Woolley]
+	ARoadFeverCharacterNed* PlayerCharacter = Cast<ARoadFeverCharacterNed>( GetWorld()->GetFirstPlayerController()->GetPawn() );
+
+	// Setup its inventory properties. [27/7/2016 Matthew Woolley]
+	FInventoryItem ClipToAdd;
+	ClipToAdd.bIsClip = true;
+	ClipToAdd.bIsEquipable = false;
+	ClipToAdd.CurrentAmmo = ItemInfo.CurrentAmmo;
+	ClipToAdd.DisplayIcon = TemporaryItemInfoHolder->ItemInfo.DisplayIcon;
+	ClipToAdd.DisplayName = TemporaryItemInfoHolder->ItemInfo.DisplayName;
+	ClipToAdd.ItemClass = ItemInfo.ItemClass;
+	ClipToAdd.ItemToolTip = TemporaryItemInfoHolder->ItemInfo.ItemToolTip;
+	ClipToAdd.MaxItemStack = TemporaryItemInfoHolder->ItemInfo.MaxItemStack;
+
+	// Add it to the inventory. [27/7/2016 Matthew Woolley]
+	bool bAddedItem = PlayerCharacter->AddItemToInventory( ClipToAdd );
+
+	// Remove the current ammo from the gun. [27/7/2016 Matthew Woolley]
+	ItemInfo.CurrentAmmo = 0;
+
+	// Store the largest ammo count found. [27/7/2016 Matthew Woolley]
+	FInventoryItem LargestAmmoCount;
+	int32 LargestAmmoCountNumber = 0;
+	int32 LargestAmmoCountSlotNumber = 0;
+
+	// In case there was an issue with the partial reload, revert to this (if there is one). [27/7/2016 Matthew Woolley]
+	FInventoryItem FullClip;
+	int32 FullClipSlotNumber = 0;
+
+	// For each slot in the inventory, search for the ammo this weapon uses. [27/7/2016 Matthew Woolley]
+	for ( int32 iSlotIterator = 0; iSlotIterator < PlayerCharacter->CharactersInventory->ItemSlots.Num(); iSlotIterator++ )
+	{
+		// If the slot we have found has more ammo than the last one we found AND is the ammo this weapon uses. [27/7/2016 Matthew Woolley]
+		if ( LargestAmmoCountNumber <= PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo && TemporaryItemInfoHolder->ItemInfo.DisplayName == PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].DisplayName )
+		{
+			// If the user has requested a partial reload AND this is a full clip. [27/7/2016 Matthew Woolley]
+			if ( !bShouldUseFullClip && PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo == ItemInfo.MaxAmmo )
+			{
+				GEngine->AddOnScreenDebugMessage( -1, 1.f, FColor::Red, TEXT( "Found full clip" ) );
+				// Store the full clip in case there is an issue with the partial clip. [27/7/2016 Matthew Woolley]
+				FullClip = PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ];
+				FullClipSlotNumber = iSlotIterator;
+				continue;
+			} else
+			{
+				GEngine->AddOnScreenDebugMessage( -1, 1.f, FColor::Red, TEXT( "Found requested clip" ) );
+				// Store the clip for a reload. [27/7/2016 Matthew Woolley]
+				LargestAmmoCount = PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ];
+				LargestAmmoCountNumber = PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo;
+				LargestAmmoCountSlotNumber = iSlotIterator;
+			}
+		}
+	}
+
+	// If we found a clip (partial or full) that is of the type requested (partial or full). [27/7/2016 Matthew Woolley]
+	if ( LargestAmmoCount.CurrentAmmo != 0 )
+	{
+		// Reload this weapon with the amount of ammo in the clip. [27/7/2016 Matthew Woolley]
+		ItemInfo.CurrentAmmo = LargestAmmoCount.CurrentAmmo;
+		PlayerCharacter->CharactersInventory->ItemSlots[ LargestAmmoCountSlotNumber ].CurrentItemStack--;
+	} else if ( FullClip.CurrentAmmo != 0 ) // If we only found a full clip, but a partial was requested. [27/7/2016 Matthew Woolley]
+	{
+		// Reload the full clip. [27/7/2016 Matthew Woolley]
+		ItemInfo.CurrentAmmo = FullClip.CurrentAmmo;
+		PlayerCharacter->CharactersInventory->ItemSlots[ FullClipSlotNumber ].CurrentItemStack--;
+	}
+
+	// If the old clip wasn't added to the inventory. [25/7/2016 Matthew Woolley]
+	if ( !bAddedItem )
+	{
+		// Throw the item onto the ground in front of Ned. [25/7/2016 Matthew Woolley]
+		FVector SpawnLocation = PlayerCharacter->GetActorRotation().Vector() * 20;
+		TemporaryItemInfoHolder->SetActorLocation( SpawnLocation );
+	} else // If the item was added. [25/7/2016 Matthew Woolley]
+	{
+		// Destroy it from the level. [25/7/2016 Matthew Woolley]
+		TemporaryItemInfoHolder->Destroy();
+	}
+
+	// Tell the code the weapon is no longer reloading. [27/7/2016 Matthew Woolley]
+	WeaponProperties.bIsReloading = false;
+}
+
+// Called when the weapon used is loaded one-shot at a time. [27/7/2016 Matthew Woolley]
+void AWeapon::SingleRoundReload()
+{
+	// Get Ned so we can use his inventory later. [25/7/2016 Matthew Woolley]
+	ARoadFeverCharacterNed* PlayerCharacter = Cast<ARoadFeverCharacterNed>( GetWorld()->GetFirstPlayerController()->GetPawn() );
+
+	bool bFoundAmmo = false;
+
+	// For each slot in the inventory, search for the ammo this weapon uses. [27/7/2016 Matthew Woolley]
+	for ( int32 iSlotIterator = 0; iSlotIterator < PlayerCharacter->CharactersInventory->ItemSlots.Num(); iSlotIterator++ )
+	{
+		// If this slot contains the ammo this weapon uses. [27/7/2016 Matthew Woolley]
+		if ( TemporaryItemInfoHolder->ItemInfo.DisplayName == PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].DisplayName )
+		{
+			PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo--;
+			ItemInfo.CurrentAmmo++;
+			bFoundAmmo = true;
+		}
+	}
+
+	// If the gun is full, or there isn't any ammo. [27/7/2016 Matthew Woolley]
+	if ( !bFoundAmmo || ItemInfo.CurrentAmmo == ItemInfo.MaxAmmo )
+	{
+		// Stop the gun from reloading further. [27/7/2016 Matthew Woolley]
+		WeaponProperties.bIsReloading = false;
+		GetWorld()->GetTimerManager().ClearTimer( WeaponReloadHandle );
+		TemporaryItemInfoHolder->Destroy();
+	}
 }
 
