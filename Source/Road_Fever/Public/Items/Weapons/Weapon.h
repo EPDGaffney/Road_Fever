@@ -67,11 +67,8 @@ public:
 	// Called when this Weapon enters memory [20/11/2015 Matthew Woolley]
 	AWeapon();
 
-	// Called when this Weapon leaves memory [20/11/2015 Matthew Woolley]
-	~AWeapon();
-
-	// Called every frame [20/11/2015 Matthew Woolley]
-	virtual void Tick( float DeltaTime ) override;
+	// Called when this object is destroyed. [27/7/2016 Matthew Woolley]
+	virtual void EndPlay( const EEndPlayReason::Type InEndPlayReason ) override;
 
 	// Called when the player wishes to attack with this weapon [20/11/2015 Matthew Woolley]
 	UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Attack" )
@@ -85,4 +82,10 @@ public:
 	// Called when the user wishes to reload; bShouldUseFullClip will be true if they don't hold the reload key. [25/7/2016 Matthew Woolley]
 	UFUNCTION( BlueprintCallable, Category = "Attack" )
 	bool Reload( bool bShouldUseFullClip );
+
+	// Called when the weapon has cooled down. [27/7/2016 Matthew Woolley]
+	void Cooldown();
+
+	// The timer for cooling the weapon down. [27/7/2016 Matthew Woolley]
+	FTimerHandle WeaponCooldownHandle;
 };

@@ -35,34 +35,12 @@ AWeapon::AWeapon()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-AWeapon::~AWeapon()
+// Called when this object is destroyed. [27/7/2016 Matthew Woolley]
+void AWeapon::EndPlay( const EEndPlayReason::Type InEndPlayReason )
 {
-
+	// Stop any weapon timers that may be going. [27/7/2016 Matthew Woolley]
+	GetWorld()->GetTimerManager().ClearTimer( WeaponCooldownHandle );
 }
-
-void AWeapon::Tick( float DeltaTime )
-{
-	// Time keeping variable [20/11/2015 Matthew Woolley]
-	static float CurrentCoolDownTime = 0.f;
-
-	// If the weapon needs to wait before being used again [20/11/2015 Matthew Woolley]
-	if ( WeaponProperties.bIsCoolingDown )
-	{
-		// Add up how long we have been waiting [20/11/2015 Matthew Woolley]
-		CurrentCoolDownTime += DeltaTime;
-
-		// If the attack has cooled down (i.e. can be used again) [20/11/2015 Matthew Woolley]
-		if ( CurrentCoolDownTime >= WeaponProperties.CoolDownTime )
-		{
-			// Reset the cool down timer [20/11/2015 Matthew Woolley]
-			CurrentCoolDownTime = 0;
-
-			// Tell the weapon it can be used again [20/11/2015 Matthew Woolley]
-			WeaponProperties.bIsCoolingDown = false;
-		}
-	}
-}
-
 
 // Called when the player wishes to attack with this weapon [20/11/2015 Matthew Woolley]
 void AWeapon::OnAttack_Implementation()
@@ -149,6 +127,7 @@ void AWeapon::OnAttack_Implementation()
 
 	// Make sure the weapon cools down before shooting again [20/11/2015 Matthew Woolley]
 	WeaponProperties.bIsCoolingDown = true;
+	GetWorld()->GetTimerManager().SetTimer( WeaponCooldownHandle, this, &AWeapon::Cooldown, WeaponProperties.CoolDownTime );
 
 	// If this weapon relies on ammo. [26/7/2016 Matthew Woolley]
 	if ( ItemInfo.MaxAmmo != 0 )
@@ -175,7 +154,7 @@ bool AWeapon::Reload( bool bShouldUseFullClip )
 		SpawnParams.Owner = this;
 		SpawnParams.Instigator = Instigator;
 		AItem* TemporaryItemInfoHolder = World->SpawnActor<AItem>( ItemInfo.AmmoType, FVector( 0, 0, 0 ), GetActorRotation(), SpawnParams );
-		
+
 		// If the ammo was created successfully. [27/7/2016 Matthew Woolley]
 		if ( TemporaryItemInfoHolder )
 		{
@@ -261,5 +240,11 @@ bool AWeapon::Reload( bool bShouldUseFullClip )
 		}
 	}
 	return true;
+}
+
+// Called when the weapon has cooled down. [27/7/2016 Matthew Woolley]
+void AWeapon::Cooldown()
+{
+	WeaponProperties.bIsCoolingDown = false;
 }
 
