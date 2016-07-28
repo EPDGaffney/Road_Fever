@@ -147,7 +147,7 @@ void AWeapon::OnAttack_Implementation()
 // Called when the user wishes to reload; bShouldUseFullClip will be true if they don't hold the reload key. [25/7/2016 Matthew Woolley]
 void AWeapon::Reload( bool bUseFullClip )
 {
-	if ( WeaponProperties.bIsReloading || WeaponProperties.bIsCoolingDown )
+	if ( WeaponProperties.bIsReloading || WeaponProperties.bIsCoolingDown || ItemInfo.CurrentAmmo == ItemInfo.MaxAmmo )
 		return;
 
 	// Get the UWorld object to spawn the ammo class. [27/7/2016 Matthew Woolley]
@@ -165,6 +165,9 @@ void AWeapon::Reload( bool bUseFullClip )
 		// If the ammo was created successfully. [27/7/2016 Matthew Woolley]
 		if ( TemporaryItemInfoHolder )
 		{
+			// Hide the ammo class. [28/7/2016 Matthew Woolley]
+			TemporaryItemInfoHolder->SetActorHiddenInGame( true );
+
 			// Tell the code whether the user requested a full clip or not. [27/7/2016 Matthew Woolley]
 			bShouldUseFullClip = bUseFullClip;
 
@@ -265,6 +268,8 @@ void AWeapon::FullReload()
 		// Throw the item onto the ground in front of Ned. [25/7/2016 Matthew Woolley]
 		FVector SpawnLocation = PlayerCharacter->GetActorRotation().Vector() * 20;
 		TemporaryItemInfoHolder->SetActorLocation( SpawnLocation );
+		TemporaryItemInfoHolder->SetActorHiddenInGame( false );
+
 	} else // If the item was added. [25/7/2016 Matthew Woolley]
 	{
 		// Destroy it from the level. [25/7/2016 Matthew Woolley]
@@ -295,8 +300,8 @@ void AWeapon::SingleRoundReload()
 	// For each slot in the inventory, search for the ammo this weapon uses. [27/7/2016 Matthew Woolley]
 	for ( int32 iSlotIterator = 0; iSlotIterator < PlayerCharacter->CharactersInventory->ItemSlots.Num(); iSlotIterator++ )
 	{
-		// If this slot contains the ammo this weapon uses. [27/7/2016 Matthew Woolley]
-		if ( TemporaryItemInfoHolder->ItemInfo.DisplayName == PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].DisplayName )
+		// If this slot contains the ammo this weapon uses AND there is actually ammo in that slot. [27/7/2016 Matthew Woolley]
+		if ( TemporaryItemInfoHolder->ItemInfo.DisplayName == PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].DisplayName && PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentItemStack > 0 )
 		{
 			PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentItemStack--;
 			ItemInfo.CurrentAmmo++;
