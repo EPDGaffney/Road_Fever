@@ -178,7 +178,7 @@ bool ARoadFeverCharacterNed::AddItemToInventory( struct FInventoryItem ItemToAdd
 				{
 					// Add an item to the slot. [5/3/2016 Matthew Woolley]
 					CharactersInventory->ItemSlots[ iSlotIterator ].CurrentItemStack++;
-	
+
 					// Tell the code that this item was added successfully. [5/3/2016 Matthew Woolley]
 					return true;
 				}
@@ -332,8 +332,10 @@ void ARoadFeverCharacterNed::OnCharacterInteract_Implementation()
 		// If we found an item. [22/7/2016 Matthew Woolley]
 		if ( ClosestItem )
 		{
-			// Set the closest item as the item being interacted with. [22/7/2016 Matthew Woolley]
+			// Set the closest item as the item being interacted with AND pause the game. [22/7/2016 Matthew Woolley]
 			ItemBeingInteractedWith = ClosestItem;
+			APlayerController* const PlayerController = ( APlayerController* ) GEngine->GetFirstLocalPlayerController( GetWorld() );
+			PlayerController->SetPause( true );
 			CharactersInventory->OpenPickupConfirmation();
 		}
 	}
@@ -526,7 +528,7 @@ void ARoadFeverCharacterNed::Reload( float InInputVal )
 	if ( InInputVal == 0 && TimeHeld > .01f && bCanReload )
 	{
 		GEngine->AddOnScreenDebugMessage( -1, 1.f, FColor::Red, TEXT( "Resquested Full Reload" ) );
-		
+
 		// Check if the player has a weapon to reload. [26/7/2016 Matthew Woolley]
 		if ( ( AWeapon* ) CharactersInventory->EquippedItem )
 		{

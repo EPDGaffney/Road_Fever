@@ -18,9 +18,14 @@ UInventory::UInventory()
 // Toggles the inventory. [22/11/2015 Matthew Woolley]
 void UInventory::ToggleInventory()
 {
-	bIsOpen = !bIsOpen;
+	ARoadFeverCharacterNed* PlayerCharacter = ( ARoadFeverCharacterNed* ) GetWorld()->GetFirstPlayerController()->GetPawn();
 
-	bIsOpen ? OpenInv() : CloseInv();
+	// If the game should allow input. [29/7/2016 Matthew Woolley]
+	if ( PlayerCharacter->GameHasFocus() || bIsOpen )
+	{
+		bIsOpen = !bIsOpen;
+		bIsOpen ? OpenInv() : CloseInv();
+	}
 }
 
 // Open inventory [20/11/2015 Andreas Gustavsen]
@@ -46,7 +51,6 @@ void UInventory::OpenInv()
 		Mode.SetWidgetToFocus(InventoryUIWidgetInstance->GetCachedWidget());
 		Controller->SetInputMode(Mode);
 		Controller->bShowMouseCursor = true;
-		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString("Inventory Opened"));
 	}
 }
 
@@ -69,8 +73,6 @@ void UInventory::CloseInv()
 
 		// Delete the pointer. [30/11/2015 Matthew Woolley]
 		InventoryUIWidgetInstance = nullptr;
-
-		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString("Inventory Closed"));
 	}
 }
 

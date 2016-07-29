@@ -19,7 +19,6 @@ public:
 	// The rotation of this camera. [11/12/2015 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Rendering" )
 	FRotator Rotation;
-
 };
 
 UCLASS()

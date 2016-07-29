@@ -177,7 +177,7 @@ void AWeapon::Reload( bool bUseFullClip )
 			// If this weapon uses a clip. [27/7/2016 Matthew Woolley]
 			if ( TemporaryItemInfoHolder->ItemInfo.bIsClip )
 			{
-				GetWorld()->GetTimerManager().SetTimer( WeaponReloadHandle, this, &AWeapon::FullReload, 0, false, WeaponProperties.ReloadTime);
+				GetWorld()->GetTimerManager().SetTimer( WeaponReloadHandle, this, &AWeapon::FullReload, 0, false, WeaponProperties.ReloadTime );
 			} else
 			{
 				GetWorld()->GetTimerManager().SetTimer( WeaponReloadHandle, this, &AWeapon::SingleRoundReload, WeaponProperties.ReloadTime, true );
@@ -293,7 +293,7 @@ void AWeapon::SingleRoundReload()
 	}
 
 	// Get Ned so we can use his inventory later. [25/7/2016 Matthew Woolley]
-	ARoadFeverCharacterNed* PlayerCharacter = Cast<ARoadFeverCharacterNed>( GetWorld()->GetFirstPlayerController()->GetPawn() );
+	ARoadFeverCharacterNed* PlayerCharacter = ( ARoadFeverCharacterNed* ) GetWorld()->GetFirstPlayerController()->GetPawn();
 
 	bool bFoundAmmo = false;
 
