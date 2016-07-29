@@ -41,16 +41,17 @@ void UInventory::OpenInv()
 	// If the widget was created without any errors. [30/11/2015 Matthew Woolley]
 	if (InventoryUIWidgetInstance && !InventoryUIWidgetInstance->GetIsVisible())
 	{
-		// add it to the view port. [30/11/2015 Matthew Woolley]
+		// Add it to the view port. [30/11/2015 Matthew Woolley]
 		InventoryUIWidgetInstance->AddToViewport();
 
-		// Allow the widget to accept input. [30/11/2015 Matthew Woolley]
-		APlayerController* const Controller = GetWorld()->GetFirstPlayerController();
+		// Pause the game. [29/7/2016 Matthew Woolley]
+		APlayerController* PlayerController = ( APlayerController* ) GEngine->GetFirstLocalPlayerController( GetWorld() );
+		PlayerController->SetPause( true );
 
 		FInputModeGameAndUI Mode;
 		Mode.SetWidgetToFocus(InventoryUIWidgetInstance->GetCachedWidget());
-		Controller->SetInputMode(Mode);
-		Controller->bShowMouseCursor = true;
+		PlayerController->SetInputMode( Mode );
+		PlayerController->bShowMouseCursor = true;
 	}
 }
 
@@ -63,13 +64,14 @@ void UInventory::CloseInv()
 		// Remove it from sight. [30/11/2015 Matthew Woolley]
 		InventoryUIWidgetInstance->RemoveFromParent();
 
-		// Make the input return to the game. [30/11/2015 Matthew Woolley]
-		APlayerController* const Controller = GetWorld()->GetFirstPlayerController();
+		// Pause the game. [29/7/2016 Matthew Woolley]
+		APlayerController* PLayerController = ( APlayerController* ) GEngine->GetFirstLocalPlayerController( GetWorld() );
+		PLayerController->SetPause( false );
 
 		FInputModeGameOnly Mode;
-		Controller->SetInputMode(Mode);
+		PLayerController->SetInputMode( Mode );
 		FSlateApplication::Get().SetFocusToGameViewport();
-		Controller->bShowMouseCursor = false;
+		PLayerController->bShowMouseCursor = false;
 
 		// Delete the pointer. [30/11/2015 Matthew Woolley]
 		InventoryUIWidgetInstance = nullptr;
