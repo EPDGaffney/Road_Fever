@@ -21,7 +21,7 @@ void UInventory::ToggleInventory()
 	ARoadFeverCharacterNed* PlayerCharacter = ( ARoadFeverCharacterNed* ) GetWorld()->GetFirstPlayerController()->GetPawn();
 
 	// If the game should allow input. [29/7/2016 Matthew Woolley]
-	if ( PlayerCharacter->GameHasFocus() || bIsOpen )
+	if ( !PlayerCharacter->bIsAiming && ( PlayerCharacter->GameHasFocus() || bIsOpen ) )
 	{
 		bIsOpen = !bIsOpen;
 		bIsOpen ? OpenInv() : CloseInv();
@@ -32,14 +32,14 @@ void UInventory::ToggleInventory()
 void UInventory::OpenInv()
 {
 	// Spawn the InventoryUIWidget if a valid template was provided. [30/11/2015 Matthew Woolley]
-	if (InventoryUIWidgetTemplate)
+	if ( InventoryUIWidgetTemplate )
 	{
 		UWorld* const World = GetWorld();
-		InventoryUIWidgetInstance = CreateWidget<UUserWidget>(World, InventoryUIWidgetTemplate);
+		InventoryUIWidgetInstance = CreateWidget<UUserWidget>( World, InventoryUIWidgetTemplate );
 	}
 
 	// If the widget was created without any errors. [30/11/2015 Matthew Woolley]
-	if (InventoryUIWidgetInstance && !InventoryUIWidgetInstance->GetIsVisible())
+	if ( InventoryUIWidgetInstance && !InventoryUIWidgetInstance->GetIsVisible() )
 	{
 		// Add it to the view port. [30/11/2015 Matthew Woolley]
 		InventoryUIWidgetInstance->AddToViewport();
@@ -49,7 +49,7 @@ void UInventory::OpenInv()
 		PlayerController->SetPause( true );
 
 		FInputModeGameAndUI Mode;
-		Mode.SetWidgetToFocus(InventoryUIWidgetInstance->GetCachedWidget());
+		Mode.SetWidgetToFocus( InventoryUIWidgetInstance->GetCachedWidget() );
 		PlayerController->SetInputMode( Mode );
 		PlayerController->bShowMouseCursor = true;
 	}
@@ -59,7 +59,7 @@ void UInventory::OpenInv()
 void UInventory::CloseInv()
 {
 	// If there is a widget. [30/11/2015 Matthew Woolley]
-	if (InventoryUIWidgetInstance && InventoryUIWidgetInstance->GetIsVisible())
+	if ( InventoryUIWidgetInstance && InventoryUIWidgetInstance->GetIsVisible() )
 	{
 		// Remove it from sight. [30/11/2015 Matthew Woolley]
 		InventoryUIWidgetInstance->RemoveFromParent();
