@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Public/Items/Item.h"
+#include "Public/Items/Ammo/Ammo.h"
 #include "Weapon.generated.h"
 
 // The properties to customize how the weapon behaves [20/11/2015 Matthew Woolley]
@@ -59,6 +60,10 @@ public:
 	// How much each line trace should trail off from the center of the gun (first shot will be centered). [21/7/2016 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack" )
 	float MultiTraceSpread;
+
+	// The kind of ammo this weapon uses. [25/7/2016 Matthew Woolley]
+	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Attack" )
+	TSubclassOf<AAmmo> AmmoType;
 };
 
 

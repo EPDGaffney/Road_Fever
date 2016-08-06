@@ -5,6 +5,8 @@
 #include "GameFramework/Actor.h"
 #include "Item.generated.h"
 
+
+
 /*
  * The struct that controls default info for elements of the inventory (inventory slots)
  */
@@ -61,10 +63,6 @@ public:
 	// Whether this ammo type is a clip. [25/7/2016 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack" )
 	bool bIsClip;
-
-	// The kind of ammo this weapon uses. [25/7/2016 Matthew Woolley]
-	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "" )
-	TSubclassOf<AItem> AmmoType;
 };
 
 

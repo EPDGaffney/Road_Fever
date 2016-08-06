@@ -211,13 +211,11 @@ bool ARoadFeverCharacterNed::AddItemToInventory( struct FInventoryItem ItemToAdd
 				// Setup the weapon stats. [24/7/2016 Matthew Woolley]
 				CharactersInventory->ItemSlots[ iSlotIterator ].MaxAmmo = ItemToAdd.MaxAmmo;
 				CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo = ItemToAdd.CurrentAmmo;
-				CharactersInventory->ItemSlots[ iSlotIterator ].AmmoType = ItemToAdd.AmmoType;
 			} else
 			{
 				// Setup the weapon stats. [24/7/2016 Matthew Woolley]
 				CharactersInventory->ItemSlots[ iSlotIterator ].MaxAmmo = 0;
 				CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo = 0;
-				CharactersInventory->ItemSlots[ iSlotIterator ].AmmoType = NULL;
 			}
 
 			// If this is a clip ammo type (other ammo types are added normally). [25/7/2016 Matthew Woolley]
