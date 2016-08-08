@@ -512,6 +512,10 @@ void ARoadFeverCharacterNed::SwitchToNextEnemy()
 // Called when the player wishes to reload. [26/7/2016 Matthew Woolley]
 void ARoadFeverCharacterNed::Reload( float InInputVal )
 {
+	// Only allow reloading if the weapon is being aimed. [8/8/2016 Matthew Woolley]
+	if ( !bIsAiming )
+		return;
+
 	// The amount of time the button has been pressed down. [26/7/2016 Matthew Woolley]
 	static float TimeHeld = 0;
 	static bool bCanReload = true;
