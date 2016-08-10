@@ -2,6 +2,7 @@
 
 #include "Road_Fever.h"
 #include "Public/Inventory/Inventory.h"
+#include "Public/Items/Item.h"
 #include "Public/UMG.h"
 #include "SlateBasics.h"
 #include "SlateExtras.h"
@@ -13,6 +14,40 @@
 UInventory::UInventory()
 {
 	bIsOpen = false;
+	PrimaryComponentTick.bCanEverTick = true;
+}
+
+// Called every frame. [10/8/2016 Matthew Woolley]
+void UInventory::TickComponent( float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction )
+{
+	for ( int32 iItemSlotIterator = 0; iItemSlotIterator < ItemSlots.Num() ; iItemSlotIterator++)
+	{
+		FInventoryItem SlotItem = ItemSlots[ iItemSlotIterator ];
+
+		// True if there are items in this slot. [10/8/2016 Matthew Woolley]
+		bool bHasItems = ( SlotItem.CurrentItemStack > 0 );
+
+		// True if there is ammo in this/these clip(s). [10/8/2016 Matthew Woolley]
+		bool bHasAmmo =  SlotItem.bIsClip ? ( ( SlotItem.CurrentAmmo > 0 ) && ( !SlotItem.bIsWeapon ) ) : bHasItems;
+
+		// If there are no items, or no ammo. [10/8/2016 Matthew Woolley]
+		if ( !bHasItems || !bHasAmmo )
+		{
+			// Empty the slot. [10/8/2016 Matthew Woolley]
+			ItemSlots[ iItemSlotIterator ].bIsClip = false;
+			ItemSlots[ iItemSlotIterator ].bIsEquipable = false;
+			ItemSlots[ iItemSlotIterator ].bIsEquipped = false;
+			ItemSlots[ iItemSlotIterator ].bIsWeapon = false;
+			ItemSlots[ iItemSlotIterator ].CurrentAmmo = 0;
+			ItemSlots[ iItemSlotIterator ].CurrentItemStack = 0;
+			ItemSlots[ iItemSlotIterator ].DisplayIcon = nullptr;
+			ItemSlots[ iItemSlotIterator ].DisplayName = "";
+			ItemSlots[ iItemSlotIterator ].ItemClass = NULL;
+			ItemSlots[ iItemSlotIterator ].ItemToolTip = "";
+			ItemSlots[ iItemSlotIterator ].MaxAmmo = 0;
+			ItemSlots[ iItemSlotIterator ].MaxItemStack = 0;
+		}
+	}
 }
 
 // Toggles the inventory. [22/11/2015 Matthew Woolley]

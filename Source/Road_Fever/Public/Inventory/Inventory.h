@@ -17,6 +17,9 @@ public:
 	// Sets default values for this component's properties
 	UInventory();
 
+	// Called every frame. [10/8/2016 Matthew Woolley]
+	virtual void TickComponent( float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction ) override;
+
 	// Called when the player toggles the inventory. [21/11/2015 Matthew Woolley]
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void ToggleInventory();
