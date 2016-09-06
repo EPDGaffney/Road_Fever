@@ -63,6 +63,10 @@ public:
 	// Whether this ammo type is a clip. [25/7/2016 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack" )
 	bool bIsClip;
+
+	// Whether or not this is ammo. [6/9/2016 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "" )
+	bool bIsAmmo;
 };
 
 
