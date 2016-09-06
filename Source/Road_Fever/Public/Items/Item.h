@@ -72,7 +72,7 @@ public:
 	* Base class for all items
 	* Use this class for everything that the player can use and equip
 	* This class has no native functionality and, therefore, is a conduit for child classes
-*/
+	*/
 UCLASS()
 class ROAD_FEVER_API AItem : public AActor
 {
@@ -89,8 +89,8 @@ public:
 
 	// Called when the user wishes to combine an item. [21/12/2015 Matthew Woolley]
 	UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Item" )
-	void OnCombine();
-	virtual void OnCombine_Implementation() { return; };
+	void OnCombine( AItem* CombinedItem );
+	virtual void OnCombine_Implementation( AItem* CombinedItem ) { return; };
 
 	// Called when the user wishes to examine an item. [21/12/2015 Matthew Woolley]
 	UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Item" )
