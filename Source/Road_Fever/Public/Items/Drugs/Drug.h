@@ -38,5 +38,5 @@ public:
 	TArray<FCrafting> DrugCraftingRecipes;
 	
 	// Called when the user wishes to combine an item. [6/9/2016 Matthew Woolley]
-	virtual void OnCombine_Implementation( AItem* CombinedItem ) override;
+	virtual void OnCombine_Implementation( AItem* CombinedItem, int32 ItemASlot, int32 ItemBSlot ) override;
 };

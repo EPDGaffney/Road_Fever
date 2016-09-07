@@ -15,6 +15,7 @@ UInventory::UInventory()
 {
 	bIsOpen = false;
 	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bTickEvenWhenPaused = true;
 }
 
 // Called every frame. [10/8/2016 Matthew Woolley]

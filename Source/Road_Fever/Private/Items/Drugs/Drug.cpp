@@ -3,12 +3,16 @@
 #include "Road_Fever.h"
 #include "Drug.h"
 #include "Public/Characters/RoadFeverCharacterNed.h"
+#include "Public/Inventory/Inventory.h"
 
 
 
 // Called when the user wishes to combine an item. [6/9/2016 Matthew Woolley]
-void ADrug::OnCombine_Implementation( AItem* CombinedItem )
+void ADrug::OnCombine_Implementation( AItem* CombinedItem, int32 ItemASlot, int32 ItemBSlot )
 {
+	if ( CombinedItem == NULL )
+		return;
+
 	for ( FCrafting DrugCraftingRecipe : DrugCraftingRecipes )
 	{
 		// If the drugs being combined have a crafting recipe. [6/9/2016 Matthew Woolley]
@@ -23,7 +27,9 @@ void ADrug::OnCombine_Implementation( AItem* CombinedItem )
 
 			if ( PlayerCharacter )
 			{
-				PlayerCharacter->AddItemToInventory( ItemBeingAdded );
+				PlayerCharacter->CharactersInventory->ItemSlots[ ItemASlot ] = ItemBeingAdded;
+				PlayerCharacter->CharactersInventory->ItemSlots[ ItemASlot ].CurrentItemStack = 1;
+				PlayerCharacter->CharactersInventory->ItemSlots[ ItemBSlot ].CurrentItemStack--;
 				CreatedDrug->Destroy();
 			}
 

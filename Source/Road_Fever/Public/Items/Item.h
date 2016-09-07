@@ -93,8 +93,8 @@ public:
 
 	// Called when the user wishes to combine an item. [21/12/2015 Matthew Woolley]
 	UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Item" )
-	void OnCombine( AItem* CombinedItem );
-	virtual void OnCombine_Implementation( AItem* CombinedItem ) { return; };
+	void OnCombine( AItem* CombinedItem, int32 ItemASlot, int32 ItemBSlot );
+	virtual void OnCombine_Implementation( AItem* CombinedItem, int32 ItemASlot, int32 ItemBSlot ) { return; };
 
 	// Called when the user wishes to examine an item. [21/12/2015 Matthew Woolley]
 	UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Item" )
