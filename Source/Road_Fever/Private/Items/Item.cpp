@@ -5,6 +5,7 @@
 #include "Public/Characters/RoadFeverCharacterNed.h"
 #include "Components/ArrowComponent.h"
 #include "Public/Items/Ammo/Ammo.h"
+#include "Public/Items/Weapons/Weapon.h"
 
 
 

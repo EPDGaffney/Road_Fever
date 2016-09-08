@@ -63,6 +63,10 @@ public:
 	// Whether this ammo type is a clip. [25/7/2016 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack" )
 	bool bIsClip;
+
+	// Whether or not this is ammo. [6/9/2016 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "" )
+	bool bIsAmmo;
 };
 
 
@@ -72,7 +76,7 @@ public:
 	* Base class for all items
 	* Use this class for everything that the player can use and equip
 	* This class has no native functionality and, therefore, is a conduit for child classes
-*/
+	*/
 UCLASS()
 class ROAD_FEVER_API AItem : public AActor
 {
@@ -89,8 +93,8 @@ public:
 
 	// Called when the user wishes to combine an item. [21/12/2015 Matthew Woolley]
 	UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Item" )
-	void OnCombine();
-	virtual void OnCombine_Implementation() { return; };
+	void OnCombine( AItem* CombinedItem, int32 ItemASlot, int32 ItemBSlot );
+	virtual void OnCombine_Implementation( AItem* CombinedItem, int32 ItemASlot, int32 ItemBSlot ) { return; };
 
 	// Called when the user wishes to examine an item. [21/12/2015 Matthew Woolley]
 	UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Item" )
