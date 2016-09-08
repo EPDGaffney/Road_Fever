@@ -27,10 +27,20 @@ void ADrug::OnCombine_Implementation( AItem* CombinedItem, int32 ItemASlot, int3
 
 			if ( PlayerCharacter )
 			{
+				// Make the initial item become the crafted item. [8/9/2016 Matthew Woolley]
 				PlayerCharacter->CharactersInventory->ItemSlots[ ItemASlot ] = ItemBeingAdded;
 				PlayerCharacter->CharactersInventory->ItemSlots[ ItemASlot ].CurrentItemStack = 1;
+
+				// Select the initial item's item slot. [8/9/2016 Matthew Woolley]
+				PlayerCharacter->CharactersInventory->CurrentActiveSlot = ItemASlot;
+
+				// Remove the item combined with it. [8/9/2016 Matthew Woolley]
 				PlayerCharacter->CharactersInventory->ItemSlots[ ItemBSlot ].CurrentItemStack--;
+
+				// Destroy all the drugs' placeholder objects. [8/9/2016 Matthew Woolley]
 				CreatedDrug->Destroy();
+				CombinedItem->Destroy();
+				this->Destroy();
 			}
 
 			return;
