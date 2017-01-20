@@ -20,7 +20,7 @@ ARoadFeverCharacterNed::ARoadFeverCharacterNed()
 	CollectionArea->RelativeLocation = FVector( 50, 0, 0 );
 
 	// Setup the Character's movement. [11/12/2015 Matthew Woolley]
-	BaseMovementSpeed = GetCharacterMovement()->MaxWalkSpeed;
+	BaseMovementSpeed = 600;
 	CharacterSprintSpeed = 1000;
 
 	QuickTurnSpeed = 500;
@@ -48,6 +48,9 @@ void ARoadFeverCharacterNed::BeginPlay()
 	// Create the ARoadFeverCameraDummy class for the camera-system. [11/12/2015 Matthew Woolley]
 	CameraDummy = Cast<ARoadFeverCameraDummy>( GetWorld()->SpawnActor( ARoadFeverCameraDummy::StaticClass() ) );
 	CameraDummy->AttachRootComponentToActor( this, NAME_None, EAttachLocation::SnapToTarget );
+
+	// Setup walking speed of character. [20/1/2017 Matthew Woolley]
+	GetCharacterMovement()->MaxWalkSpeed = BaseMovementSpeed;
 }
 
 // Called every frame. [10/12/2015 Matthew Woolley]
@@ -257,7 +260,7 @@ void ARoadFeverCharacterNed::Turn( float InInputVal )
 {
 	if ( !GetCharacterMovement()->MovementMode == EMovementMode::MOVE_None )
 	{
-		AddControllerYawInput( ( GameHasFocus() ? InInputVal : 0 ) );
+		AddControllerYawInput( ( GameHasFocus() ? InInputVal * TurnSensitivity : 0 ) );
 	}
 }
 
