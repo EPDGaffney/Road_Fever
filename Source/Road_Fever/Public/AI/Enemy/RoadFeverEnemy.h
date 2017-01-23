@@ -14,6 +14,8 @@ public:
 	// Setup default values for this enemy. [15/7/2016 Matthew Woolley]
 	ARoadFeverEnemy();
 
+	void BeginPlay() override;
+
 	// The health value of this enemy. [15/7/2016 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Stats" )
 	int32 EnemyHealth;
@@ -26,14 +28,18 @@ public:
 	UFUNCTION( BlueprintCallable, Category = "Attack" )
 	void TakeDamage( int32 InDamage );
 
-	// A visual representation of what this enemy's health is [FOR DEBUGGING]. [15/7/2016 Matthew Woolley]
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Stats" )
-	UTextRenderComponent* HealthVisual;
+	// The speed this enemy can move. [23/1/2017 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Movement" )
+	float MoveSpeed;
 
-	// A visual representation of what this enemy's distance is to the player [FOR DEBUGGING]. [17/7/2016 Matthew Woolley]
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Stats" )
-	UTextRenderComponent* DistanceVisual;
+protected:
+	// The slowest this enemy can move. [23/1/2017 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Movement" )
+	float MinMoveSpeed;
 
-	virtual void Tick( float DeltaSeconds ) override;
+	// The fastest this enemy can move. [23/1/2017 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Movement" )
+	float MaxMoveSpeed;
+
 
 };
