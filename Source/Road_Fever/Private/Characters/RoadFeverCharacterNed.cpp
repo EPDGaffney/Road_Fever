@@ -260,7 +260,7 @@ void ARoadFeverCharacterNed::Turn( float InInputVal )
 {
 	if ( !GetCharacterMovement()->MovementMode == EMovementMode::MOVE_None )
 	{
-		AddControllerYawInput( ( GameHasFocus() ? InInputVal * TurnSensitivity : 0 ) );
+		AddControllerYawInput( ( GameHasFocus() ? InInputVal * (TurnSensitivity * GetWorld()->GetDeltaSeconds()) : 0 ) );
 	}
 }
 
