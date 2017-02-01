@@ -22,6 +22,7 @@ ARoadFeverEnemy::ARoadFeverEnemy()
 void ARoadFeverEnemy::BeginPlay()
 {
 	MoveSpeed = FMath::FRandRange( MinMoveSpeed, MaxMoveSpeed );
+	Super::BeginPlay();
 }
 
 // Called when this enemy no longer has any health. [15/7/2016 Matthew Woolley]
