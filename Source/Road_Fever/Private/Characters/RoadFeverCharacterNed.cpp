@@ -21,7 +21,8 @@ ARoadFeverCharacterNed::ARoadFeverCharacterNed()
 
 	// Setup the Character's movement. [11/12/2015 Matthew Woolley]
 	BaseMovementSpeed = 600;
-	CharacterSprintSpeed = 1000;
+	BackwardsMovementSpeed = 300;
+	SprintMovementSpeed = 1000;
 
 	QuickTurnSpeed = 500;
 	TurnSensitivity = 2;
@@ -260,7 +261,7 @@ void ARoadFeverCharacterNed::Turn( float InInputVal )
 {
 	if ( !GetCharacterMovement()->MovementMode == EMovementMode::MOVE_None )
 	{
-		AddControllerYawInput( ( GameHasFocus() ? InInputVal * (TurnSensitivity * GetWorld()->GetDeltaSeconds()) : 0 ) );
+		AddControllerYawInput( ( GameHasFocus() ? InInputVal * ( TurnSensitivity * GetWorld()->GetDeltaSeconds() ) : 0 ) );
 	}
 }
 
@@ -350,14 +351,12 @@ void ARoadFeverCharacterNed::OnBeginSprint()
 		return;
 	}
 
-	GetCharacterMovement()->MaxWalkSpeed = CharacterSprintSpeed;
 	bIsSprinting = true;
 }
 
 // Called when the player stops sprinting. [10/12/2015 Matthew Woolley]
 void ARoadFeverCharacterNed::OnEndSprint()
 {
-	GetCharacterMovement()->MaxWalkSpeed = BaseMovementSpeed;
 	bIsSprinting = false;
 }
 
@@ -572,6 +571,28 @@ void ARoadFeverCharacterNed::_move( float InInputVal, EAxis::Type InMoveAxis )
 {
 	// Update the Axis Input so the animations can respond. [8/7/2016 Matthew Woolley]
 	MoveForwardAxis = InInputVal;
+
+	// If the player wishes to move backwards. [1/2/2017 Matthew Woolley]
+	if ( InInputVal < 0 )
+	{
+		// Change the max-speed to that of the max-backward-walking speed. [1/2/2017 Matthew Woolley]
+		GetCharacterMovement()->MaxWalkSpeed = BackwardsMovementSpeed;
+
+		// Update the Axis Input so the animations can respond. [8/7/2016 Matthew Woolley]
+		MoveForwardAxis = ( InInputVal / ( BackwardsMovementSpeed / BaseMovementSpeed ) );
+	}
+	// If the player is sprinting. [1/2/2017 Matthew Woolley]
+	else if ( bIsSprinting )
+	{
+		// Change the max-speed to that of the max-sprinting speed. [1/2/2017 Matthew Woolley]
+		GetCharacterMovement()->MaxWalkSpeed = SprintMovementSpeed;
+	}
+	// If the player is neither walking backward, nor sprinting. [1/2/2017 Matthew Woolley]
+	else
+	{
+		// Set the max-speed to that of the normal-walking speed. [1/2/2017 Matthew Woolley]
+		GetCharacterMovement()->MaxWalkSpeed = BaseMovementSpeed;
+	}
 
 	// Get the current rotation of the controller. [10/12/2015 Matthew Woolley]
 	FRotator Rotation = GetControlRotation();

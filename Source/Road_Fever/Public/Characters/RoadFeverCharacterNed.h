@@ -28,17 +28,9 @@ public:
 	UPROPERTY( VisibleAnywhere, BlueprintReadWrite, Category = "Movement" )
 	float MoveForwardAxis;
 
-	// Whether or not the Character is sprinting. [10/12/2015 Matthew Woolley]
-	UPROPERTY( VisibleAnywhere, BlueprintReadWrite, Category = "Movement" )
-	bool bIsSprinting;
-
 	// Whether or not the player is aiming. [10/12/2015 Matthew Woolley]
 	UPROPERTY( VisibleAnywhere, BlueprintReadWrite, Category = "Attack" )
 	bool bIsAiming;
-
-	// The speed of which the Character sprints at. [10/12/2015 Matthew Woolley]
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Movement" )
-	float CharacterSprintSpeed;
 
 	// The speed that the Character quick-turns at. [10/12/2015 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Movement" )
@@ -48,9 +40,21 @@ public:
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Movement" )
 	float TurnSensitivity;
 
-	// The speed the Character walks at. [11/12/2015 Matthew Woolley]
+	// Whether or not the Character is sprinting. [10/12/2015 Matthew Woolley]
+	UPROPERTY( VisibleAnywhere, BlueprintReadWrite, Category = "Movement" )
+	bool bIsSprinting;
+	
+	// The speed of which the Character sprints at. [10/12/2015 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Movement" )
+	float SprintMovementSpeed;
+
+	// The speed the Character walks forwards at. [11/12/2015 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Movement" )
 	float BaseMovementSpeed;
+
+	// The speed at which the Character can walk backwards. [1/2/2017 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Movement" )
+	float BackwardsMovementSpeed;
 
 	// The camera that will render the scene. [11/12/2015 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Rendering" )
