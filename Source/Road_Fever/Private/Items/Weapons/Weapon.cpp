@@ -31,6 +31,9 @@ AWeapon::AWeapon()
 	// Make sure all weapons are treated as weapons. [26/7/2016 Matthew Woolley]
 	ItemInfo.bIsWeapon = true;
 
+	// Make all weapons default to a box trace, rather than a line trace. [3/2/2017 Matthew Woolley]
+	WeaponProperties.bIsBoxTrace = true;
+
 	// Allow Actor ticking [20/11/2015 Matthew Woolley]
 	PrimaryActorTick.bCanEverTick = true;
 }
@@ -78,8 +81,11 @@ void AWeapon::OnAttack_Implementation()
 
 		// The trace's shape [20/11/2015 Matthew Woolley]
 		FCollisionShape Shape;
-		Shape.ShapeType = ECollisionShape::Capsule;
-		Shape.MakeCapsule( 20, 1 );
+		Shape.ShapeType = ECollisionShape::Box;
+		Shape.MakeBox( FVector( 20, 10, 20 ) );
+		Shape.Box.HalfExtentX = 20;
+		Shape.Box.HalfExtentY = 10;
+		Shape.Box.HalfExtentZ = 20;
 
 		// The parameters for the collision [20/11/2015 Matthew Woolley]
 		FCollisionQueryParams Params;
@@ -90,14 +96,23 @@ void AWeapon::OnAttack_Implementation()
 		// The current UWorld object [20/11/2015 Matthew Woolley]
 		UWorld* const World = GetWorld();
 
-		FCollisionResponseParams RespParams;
-		RespParams.CollisionResponse.Visibility;
-
 		if ( World )
 		{
 			// Trace to see if there are any Actors ahead [20/11/2015 Matthew Woolley]
 			World->DebugDrawTraceTag = FName( "WeaponTrace" );
-			bool bHadBlockingHit = World->SweepSingleByChannel( OutHit, Start, End, Rot, WEAPON_TRACE, Shape, Params, RespParams );
+
+			bool bHadBlockingHit = NULL;
+
+			// If we are using the box trace. [3/2/2017 Matthew Woolley]
+			if ( WeaponProperties.bIsBoxTrace )
+			{
+				// Use the box shape in the trace params. [3/2/2017 Matthew Woolley]
+				bHadBlockingHit = World->SweepSingleByChannel( OutHit, Start, End, Rot, WEAPON_TRACE, Shape, Params );
+			} else
+			{
+				// Do the trace without the box shape. [3/2/2017 Matthew Woolley]
+				bHadBlockingHit = World->LineTraceSingleByChannel( OutHit, Start, End, WEAPON_TRACE, Params );
+			}
 
 			// If there was one [20/11/2015 Matthew Woolley]
 			if ( bHadBlockingHit )

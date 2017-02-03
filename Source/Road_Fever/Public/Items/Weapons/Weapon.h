@@ -14,19 +14,19 @@ struct FWeaponProperties
 
 public:
 	// The maximum amount of damage this weapon does at effective range. [17/7/2016 Matthew Woolley]
-	UPROPERTY( BlueprintReadWrite, EditDefaultsOnly, Category = "Attack" )
+	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Attack" )
 	int32 EffectiveRangeMaxDamage;
 
 	// The minimum amount of damage this weapon does at effective range. [18/7/2016 Matthew Woolley]
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack" )
+	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Attack" )
 	int32 EffectiveRangeMinDamage;
 
 	// The maximum amount of damage (taken away from the base damage) this weapon does at maximum range. [18/7/2016 Matthew Woolley]
-	UPROPERTY( BlueprintReadWrite, EditDefaultsOnly, Category = "Attack" )
+	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Attack" )
 	int32 MaximumRangeMaxDamage;
 
 	// The minimum amount of damage (taken away from the base damage) this weapon does at maximum range. [18/7/2016 Matthew Woolley]
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack" )
+	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Attack" )
 	int32 MaximumRangeMinDamage;
 
 	// The range that does full damage (In CM). [17/7/2016 Matthew Woolley]
@@ -38,11 +38,11 @@ public:
 	float MaximumRange;
 
 	// The time between each attack [20/11/2015 Matthew Woolley]
-	UPROPERTY( BlueprintReadWrite, EditDefaultsOnly, Category = "Attack" )
+	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Attack" )
 	float CoolDownTime;
 
 	// This time it takes to reload this weapon (per round for fed weapons, or per clip for clipped weapons). [27/7/2016 Matthew Woolley]
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "" )
+	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Attack" )
 	float ReloadTime;
 
 	// Whether the weapons is cooling down or not [20/11/2015 Matthew Woolley]
@@ -64,6 +64,10 @@ public:
 	// The kind of ammo this weapon uses. [25/7/2016 Matthew Woolley]
 	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Attack" )
 	TSubclassOf<AAmmo> AmmoType;
+
+	// Whether this weapon uses a line trace, or a box trace. [3/2/2017 Matthew Woolley]
+	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Attack" )
+	bool bIsBoxTrace;
 };
 
 
