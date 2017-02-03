@@ -12,9 +12,6 @@ ARoadFeverEnemy::ARoadFeverEnemy()
 	MinMoveSpeed = 1;
 	MaxMoveSpeed = 1;
 
-	// Apply a placeholder mesh to the enemy. [15/7/2016 Matthew Woolley]
-	const static ConstructorHelpers::FObjectFinder<USkeletalMesh> EnemyMesh( TEXT( "SkeletalMesh'/Game/Ned/Mesh/ProtoCharacters/SK_PrototypeM.SK_PrototypeM'" ) );
-	GetMesh()->SetSkeletalMesh( EnemyMesh.Object );
 	GetMesh()->SetRelativeLocation( FVector( 0, 0, -90 ) );
 	GetMesh()->SetRelativeRotation( FRotator( 0, -90, 0 ) );
 }
@@ -22,6 +19,17 @@ ARoadFeverEnemy::ARoadFeverEnemy()
 void ARoadFeverEnemy::BeginPlay()
 {
 	MoveSpeed = FMath::FRandRange( MinMoveSpeed, MaxMoveSpeed );
+
+	// If there is an enemy in the random enemy pool. [3/2/2017 Matthew Woolley]
+	if ( EnemyMeshes.Num() != 0 )
+	{
+		// Pick a random enemy mesh. [3/2/2017 Matthew Woolley]
+		int EnemyMeshToUse = FMath::FRandRange( 0, EnemyMeshes.Num() );
+
+		// Set it as the mesh for this instance. [3/2/2017 Matthew Woolley]
+		GetMesh()->SetSkeletalMesh( EnemyMeshes[EnemyMeshToUse] );
+	}
+
 	Super::BeginPlay();
 }
 

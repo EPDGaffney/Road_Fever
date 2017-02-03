@@ -17,7 +17,7 @@ public:
 	void BeginPlay() override;
 
 	// The health value of this enemy. [15/7/2016 Matthew Woolley]
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Stats" )
+	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Stats" )
 	int32 EnemyHealth;
 
 	// Called when this enemy no longer has any health. [15/7/2016 Matthew Woolley]
@@ -29,16 +29,20 @@ public:
 	void TakeDamage( int32 InDamage );
 
 	// The speed this enemy can move. [23/1/2017 Matthew Woolley]
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Movement" )
+	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Movement" )
 	float MoveSpeed;
+
+	// The meshes that this enemy type can use. [3/2/2017 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Config" )
+	TArray<USkeletalMesh*> EnemyMeshes;
 
 protected:
 	// The slowest this enemy can move. [23/1/2017 Matthew Woolley]
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Movement" )
+	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Movement" )
 	float MinMoveSpeed;
 
 	// The fastest this enemy can move. [23/1/2017 Matthew Woolley]
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Movement" )
+	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Movement" )
 	float MaxMoveSpeed;
 
 
