@@ -34,7 +34,7 @@ void ARoadFeverEnemy::BeginPlay()
 }
 
 // Called when this enemy no longer has any health. [15/7/2016 Matthew Woolley]
-void ARoadFeverEnemy::Die()
+void ARoadFeverEnemy::Die_Implementation()
 {
 	// If this enemy isn't already being killed. [15/7/2016 Matthew Woolley]
 	if ( !IsPendingKill() && EnemyHealth <= 0 )
@@ -45,7 +45,7 @@ void ARoadFeverEnemy::Die()
 }
 
 // Takes away health from this enemy. [15/7/2016 Matthew Woolley]
-void ARoadFeverEnemy::TakeDamage( int32 InDamage )
+void ARoadFeverEnemy::TakeDamage_Implementation( int32 InDamage )
 {
 	EnemyHealth -= InDamage;
 
