@@ -38,6 +38,10 @@ public:
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Config" )
 	TArray<USkeletalMesh*> EnemyMeshes;
 
+	// The item that is dropped so that the player can loot this enemy. [8/2/2017 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Stats" )
+	TSubclassOf<class AItem> ItemsInInventory;
+
 protected:
 	// The slowest this enemy can move. [23/1/2017 Matthew Woolley]
 	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Movement" )
