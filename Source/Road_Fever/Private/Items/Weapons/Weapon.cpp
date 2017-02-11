@@ -52,6 +52,11 @@ void AWeapon::OnAttack_Implementation()
 	// Make sure the weapon isn't currently cooling down [20/11/2015 Matthew Woolley]
 	if ( WeaponProperties.bIsReloading || WeaponProperties.bIsCoolingDown || ( ItemInfo.MaxAmmo != 0 && ItemInfo.CurrentAmmo == 0 ) )
 	{
+		if ( ItemInfo.CurrentAmmo == 0 )
+		{
+			GetWorld()->GetFirstPlayerController()->GetCharacter()->GetMesh()->PlayAnimation( WeaponProperties.AttackAnimation_NoAmmo, false );
+		}
+
 		// If this weapon is reloading, but can be interrupted. [27/7/2016 Matthew Woolley]
 		if ( WeaponProperties.bIsReloading )
 		{
@@ -60,6 +65,8 @@ void AWeapon::OnAttack_Implementation()
 
 		return;
 	}
+
+	GetWorld()->GetFirstPlayerController()->GetCharacter()->GetMesh()->PlayAnimation( WeaponProperties.AttackAnimation, false );
 
 	// For each trace to complete. [21/7/2016 Matthew Woolley]
 	for ( int iTraceIterator = 0; iTraceIterator < WeaponProperties.NumberOfTraces; iTraceIterator++ )

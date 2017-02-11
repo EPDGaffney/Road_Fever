@@ -68,6 +68,19 @@ public:
 	// Whether this weapon uses a line trace, or a box trace. [3/2/2017 Matthew Woolley]
 	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Attack" )
 	bool bIsBoxTrace;
+
+	// Played when the player uses the attack function, with ammo in the weapon if required. [11/2/2017 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack|Animation" )
+	UAnimationAsset* AttackAnimation;
+
+	// Played when the player uses the attack function, without ammo in the weapon. [11/2/2017 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack|Animation" )
+	UAnimationAsset* AttackAnimation_NoAmmo;
+
+	// Played when the player uses the reload function. [11/2/2017 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack|Animation" )
+	UAnimationAsset* ReloadAnimation;
+
 };
 
 
