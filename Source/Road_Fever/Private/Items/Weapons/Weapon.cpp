@@ -49,12 +49,14 @@ void AWeapon::EndPlay( const EEndPlayReason::Type InEndPlayReason )
 // Called when the player wishes to attack with this weapon [20/11/2015 Matthew Woolley]
 void AWeapon::OnAttack_Implementation()
 {
+	ARoadFeverCharacterNed* PlayerCharacter = ( ARoadFeverCharacterNed* ) GetWorld()->GetFirstPlayerController()->GetCharacter();
+
 	// Make sure the weapon isn't currently cooling down [20/11/2015 Matthew Woolley]
 	if ( WeaponProperties.bIsReloading || WeaponProperties.bIsCoolingDown || ( ItemInfo.MaxAmmo != 0 && ItemInfo.CurrentAmmo == 0 ) )
 	{
 		if ( ItemInfo.CurrentAmmo == 0 )
 		{
-			GetWorld()->GetFirstPlayerController()->GetCharacter()->GetMesh()->PlayAnimation( WeaponProperties.AttackAnimation_NoAmmo, false );
+			PlayerCharacter->GetMesh()->PlayAnimation( WeaponProperties.AttackAnimation_NoAmmo, false );
 		}
 
 		// If this weapon is reloading, but can be interrupted. [27/7/2016 Matthew Woolley]
@@ -66,7 +68,7 @@ void AWeapon::OnAttack_Implementation()
 		return;
 	}
 
-	GetWorld()->GetFirstPlayerController()->GetCharacter()->GetMesh()->PlayAnimation( WeaponProperties.AttackAnimation, false );
+	PlayerCharacter->GetMesh()->PlayAnimation( WeaponProperties.AttackAnimation, false );
 
 	// For each trace to complete. [21/7/2016 Matthew Woolley]
 	for ( int iTraceIterator = 0; iTraceIterator < WeaponProperties.NumberOfTraces; iTraceIterator++ )
@@ -97,7 +99,7 @@ void AWeapon::OnAttack_Implementation()
 		// The parameters for the collision [20/11/2015 Matthew Woolley]
 		FCollisionQueryParams Params;
 		Params.AddIgnoredActor( this );
-		Params.AddIgnoredActor( GetWorld()->GetFirstPlayerController()->GetPawn() );
+		Params.AddIgnoredActor( PlayerCharacter );
 		Params.TraceTag = FName( "WeaponTrace" );
 
 		// The current UWorld object [20/11/2015 Matthew Woolley]
@@ -105,9 +107,7 @@ void AWeapon::OnAttack_Implementation()
 
 		if ( World )
 		{
-			// Trace to see if there are any Actors ahead [20/11/2015 Matthew Woolley]
-			World->DebugDrawTraceTag = FName( "WeaponTrace" );
-
+			// Whether this weapon hit something or not. [11/2/2017 Matthew Woolley]
 			bool bHadBlockingHit = NULL;
 
 			// If we are using the box trace. [3/2/2017 Matthew Woolley]
