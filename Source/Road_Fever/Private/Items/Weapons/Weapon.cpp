@@ -91,9 +91,9 @@ void AWeapon::OnAttack_Implementation()
 		// The trace's shape [20/11/2015 Matthew Woolley]
 		FCollisionShape Shape;
 		Shape.ShapeType = ECollisionShape::Box;
-		Shape.MakeBox( FVector( 20, 10, 20 ) );
-		Shape.Box.HalfExtentX = 20;
-		Shape.Box.HalfExtentY = 10;
+		Shape.MakeBox( FVector( 1, 20, 20 ) );
+		Shape.Box.HalfExtentX = 1;
+		Shape.Box.HalfExtentY = 20;
 		Shape.Box.HalfExtentZ = 20;
 
 		// The parameters for the collision [20/11/2015 Matthew Woolley]
@@ -107,6 +107,7 @@ void AWeapon::OnAttack_Implementation()
 
 		if ( World )
 		{
+			World->DebugDrawTraceTag = "WeaponTrace";
 			// Whether this weapon hit something or not. [11/2/2017 Matthew Woolley]
 			bool bHadBlockingHit = NULL;
 
