@@ -77,13 +77,13 @@ void AWeapon::OnAttack_Implementation()
 		FHitResult OutHit;
 
 		// The current location of this weapon [20/11/2015 Matthew Woolley]
-		FVector Start = GetActorLocation();
+		FVector Start = PlayerCharacter->ShootFromPoint->GetComponentLocation();
 
 		// The . [21/7/2016 Matthew Woolley]
 		FRotator SpreadRotation = FRotator( FMath::FRandRange( WeaponProperties.MultiTraceSpread * -1, WeaponProperties.MultiTraceSpread ), FMath::FRandRange( WeaponProperties.MultiTraceSpread * -1, WeaponProperties.MultiTraceSpread ), 0 );
 
 		// Get the furthest this weapon can attack [20/11/2015 Matthew Woolley]
-		FVector End = Start + ( ( iTraceIterator == 0 ? GetActorRotation() : GetActorRotation() + SpreadRotation ).Vector() * WeaponProperties.MaximumRange );
+		FVector End = Start + ( ( iTraceIterator == 0 ? PlayerCharacter->ShootFromPoint->GetComponentRotation() : PlayerCharacter->ShootFromPoint->GetComponentRotation() + SpreadRotation ).Vector() * WeaponProperties.MaximumRange );
 
 		// The rotation [20/11/2015 Matthew Woolley]
 		FQuat Rot;

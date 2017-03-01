@@ -106,6 +106,10 @@ public:
 	UPROPERTY( BlueprintReadWrite, Category = "Interaction" )
 	class AItem* ItemBeingInteractedWith;
 
+	// The transform and rotation that each weapon uses for attacking. [1/3/2017 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack" )
+	UArrowComponent* ShootFromPoint;
+
 protected:
 	// Moves the Character in the X axis. [10/12/2015 Matthew Woolley]
 	UFUNCTION( BlueprintCallable, Category = "Movement" )

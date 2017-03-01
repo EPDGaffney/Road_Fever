@@ -19,6 +19,11 @@ ARoadFeverCharacterNed::ARoadFeverCharacterNed()
 	CollectionArea->RelativeScale3D = FVector( 2, 2, 2 );
 	CollectionArea->RelativeLocation = FVector( 50, 0, 0 );
 
+	// Create the ShootFromPoint. [1/3/2017 Matthew Woolley]
+	ShootFromPoint = CreateDefaultSubobject<UArrowComponent>( TEXT( "ShootFromPoint" ) );
+	ShootFromPoint->AttachParent = RootComponent;
+	ShootFromPoint->RelativeLocation = FVector( 10, 10, 50 );
+
 	// Setup the Character's movement. [11/12/2015 Matthew Woolley]
 	BaseMovementSpeed = 600;
 	BackwardsMovementSpeed = 300;
