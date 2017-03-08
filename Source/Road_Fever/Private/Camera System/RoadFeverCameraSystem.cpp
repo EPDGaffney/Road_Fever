@@ -18,6 +18,7 @@ ARoadFeverCameraSystem::ARoadFeverCameraSystem()
 	TriggerArea = CreateDefaultSubobject<UBoxComponent>( TEXT( "TriggerArea" ) );
 	TriggerArea->AttachParent = RootComponent;
 	TriggerArea->bAbsoluteRotation = true;
+	TriggerArea->SetCollisionProfileName( TEXT( "PlayerDetection" ) );
 	TriggerArea->OnComponentBeginOverlap.AddDynamic( this, &ARoadFeverCameraSystem::OnActorEnter );
 	TriggerArea->OnComponentEndOverlap.AddDynamic( this, &ARoadFeverCameraSystem::OnActorLeave );
 
