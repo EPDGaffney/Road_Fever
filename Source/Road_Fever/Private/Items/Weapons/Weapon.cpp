@@ -86,7 +86,7 @@ void AWeapon::OnAttack_Implementation()
 		FVector End = Start + ( ( iTraceIterator == 0 ? PlayerCharacter->ShootFromPoint->GetComponentRotation() : PlayerCharacter->ShootFromPoint->GetComponentRotation() + SpreadRotation ).Vector() * WeaponProperties.MaximumRange );
 
 		// The rotation [20/11/2015 Matthew Woolley]
-		FQuat Rot;
+		FQuat Rot = GetActorRotation().Quaternion();
 
 		// The trace's shape [20/11/2015 Matthew Woolley]
 		FCollisionShape Shape;
