@@ -15,9 +15,6 @@ public:
 	// Called when this Character enters memory. [10/12/2015 Matthew Woolley]
 	ARoadFeverCharacterNed();
 
-	// Called at the beginning of game-play. [10/12/2015 Matthew Woolley]
-	virtual void BeginPlay() override;
-
 	// Called every frame. [10/12/2015 Matthew Woolley]
 	virtual void Tick( float InDeltaSeconds ) override;
 
@@ -43,18 +40,6 @@ public:
 	// Whether or not the Character is sprinting. [10/12/2015 Matthew Woolley]
 	UPROPERTY( VisibleAnywhere, BlueprintReadWrite, Category = "Movement" )
 	bool bIsSprinting;
-	
-	// The speed of which the Character sprints at. [10/12/2015 Matthew Woolley]
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Movement" )
-	float SprintMovementSpeed;
-
-	// The speed the Character walks forwards at. [11/12/2015 Matthew Woolley]
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Movement" )
-	float BaseMovementSpeed;
-
-	// The speed at which the Character can walk backwards. [1/2/2017 Matthew Woolley]
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Movement" )
-	float BackwardsMovementSpeed;
 
 	// The camera that will render the scene. [11/12/2015 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Rendering" )
@@ -63,9 +48,6 @@ public:
 	// The inventory that the player has. [12/12/2015 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Stats" )
 	class UInventory* CharactersInventory;
-
-	// Gets the camera dummy. [11/12/2015 Matthew Woolley]
-	class ARoadFeverCameraDummy* GetCameraDummy() { return CameraDummy; }
 
 	// The current level of health that the player has. [25/12/2015 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Stats" )
@@ -102,7 +84,7 @@ public:
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Animation" )
 	TSubclassOf<UAnimInstance> DefaultAnimation;
 
-	// THe item that is currently being interacted with. [22/7/2016 Matthew Woolley]
+	// The item that is currently being interacted with. [22/7/2016 Matthew Woolley]
 	UPROPERTY( BlueprintReadWrite, Category = "Interaction" )
 	class AItem* ItemBeingInteractedWith;
 
@@ -165,10 +147,6 @@ protected:
 	void Reload( float InInputVal );
 
 private:
-	// Used by the camera-system when detecting the Character. [11/12/2015 Matthew Woolley]
-	UPROPERTY()
-	class ARoadFeverCameraDummy* CameraDummy;
-
 	// Used to turn the character 180 degrees. [18/7/2016 Matthew Woolley]
 	UPROPERTY()
 	float DegreesToTurn;

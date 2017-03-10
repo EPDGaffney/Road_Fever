@@ -31,10 +31,7 @@ public:
 	ARoadFeverCameraSystem();
 
 	// Called at the beginning of game-play. [11/12/2015 Matthew Woolley]
-	virtual void BeginPlay() override;	
-	
-	// Called every frame. [20/1/2016 Matthew Woolley]
-	virtual void Tick( float DeltaTime ) override;
+	virtual void BeginPlay() override;
 
 	// Called when something enters this camera's trigger area. [11/12/2015 Matthew Woolley]
 	UFUNCTION( BlueprintCallable, Category = "Detection" )

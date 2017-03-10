@@ -3,7 +3,6 @@
 #include "Road_Fever.h"
 #include "RoadFeverCharacterNed.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "Public/Dummy Classes/RoadFeverCameraDummy.h"
 #include "Public/Inventory/Inventory.h"
 #include "Public/Items/Weapons/Weapon.h"
 #include "Public/AI/Enemy/RoadFeverEnemy.h"
@@ -24,11 +23,6 @@ ARoadFeverCharacterNed::ARoadFeverCharacterNed()
 	ShootFromPoint->AttachParent = RootComponent;
 	ShootFromPoint->RelativeLocation = FVector( 10, 10, 50 );
 
-	// Setup the Character's movement. [11/12/2015 Matthew Woolley]
-	BaseMovementSpeed = 600;
-	BackwardsMovementSpeed = 300;
-	SprintMovementSpeed = 1000;
-
 	QuickTurnSpeed = 500;
 	TurnSensitivity = 2;
 
@@ -46,17 +40,6 @@ ARoadFeverCharacterNed::ARoadFeverCharacterNed()
 
 	// Allow Actor ticking. [11/12/2015 Matthew Woolley]
 	PrimaryActorTick.bCanEverTick = true;
-}
-
-// Called at the beginning of game-play. [10/12/2015 Matthew Woolley]
-void ARoadFeverCharacterNed::BeginPlay()
-{
-	// Create the ARoadFeverCameraDummy class for the camera-system. [11/12/2015 Matthew Woolley]
-	CameraDummy = Cast<ARoadFeverCameraDummy>( GetWorld()->SpawnActor( ARoadFeverCameraDummy::StaticClass() ) );
-	CameraDummy->AttachRootComponentToActor( this, NAME_None, EAttachLocation::SnapToTarget );
-
-	// Setup walking speed of character. [20/1/2017 Matthew Woolley]
-	GetCharacterMovement()->MaxWalkSpeed = BaseMovementSpeed;
 }
 
 // Called every frame. [10/12/2015 Matthew Woolley]
@@ -299,7 +282,6 @@ void ARoadFeverCharacterNed::OnCharacterInteract_Implementation()
 				FCollisionQueryParams Line( FName( "CollisionParam" ), true );
 				TArray<AActor*> IgnoredActors;
 				IgnoredActors.Add( this );
-				IgnoredActors.Add( CameraDummy );
 				Line.AddIgnoredActors( IgnoredActors );
 
 				// Find if there is anything blocking the pickup. [15/12/2015 Matthew Woolley]
@@ -585,7 +567,6 @@ TArray<class AActor*> ARoadFeverCharacterNed::GetEnemies()
 		FCollisionQueryParams Line( FName( "Enemy Line Trace" ), true );
 		TArray<AActor*> IgnoredActors;
 		IgnoredActors.Add( this );
-		IgnoredActors.Add( CameraDummy );
 		Line.AddIgnoredActors( IgnoredActors );
 
 		// Make sure there is nothing in the way of the enemy (I.E. a wall). [16/7/2016 Matthew Woolley]
