@@ -252,13 +252,7 @@ bool ARoadFeverCharacterNed::GameHasFocus()
 // Moves the Character in the X axis. [10/12/2015 Matthew Woolley]
 void ARoadFeverCharacterNed::MoveForward( float InInputVal )
 {
-	if ( !GameHasFocus() || bIsAiming )
-	{
-		_move( 0, EAxis::X );
-	} else
-	{
-		_move( InInputVal, EAxis::X );
-	}
+	MoveForwardAxis = InInputVal;
 }
 
 // Called when the player wishes to turn. [10/12/2015 Matthew Woolley]
@@ -570,49 +564,6 @@ void ARoadFeverCharacterNed::Reload( float InInputVal )
 		// Reset the timer. [26/7/2016 Matthew Woolley]
 		TimeHeld = 0;
 	}
-}
-
-void ARoadFeverCharacterNed::_move( float InInputVal, EAxis::Type InMoveAxis )
-{
-	// Update the Axis Input so the animations can respond. [8/7/2016 Matthew Woolley]
-	MoveForwardAxis = InInputVal;
-
-	// If the player wishes to move backwards. [1/2/2017 Matthew Woolley]
-	if ( InInputVal < 0 )
-	{
-		// Change the max-speed to that of the max-backward-walking speed. [1/2/2017 Matthew Woolley]
-		GetCharacterMovement()->MaxWalkSpeed = BackwardsMovementSpeed;
-
-		// Update the Axis Input so the animations can respond. [8/7/2016 Matthew Woolley]
-		MoveForwardAxis = ( InInputVal / ( BackwardsMovementSpeed / BaseMovementSpeed ) );
-	}
-	// If the player is sprinting. [1/2/2017 Matthew Woolley]
-	else if ( bIsSprinting )
-	{
-		// Change the max-speed to that of the max-sprinting speed. [1/2/2017 Matthew Woolley]
-		GetCharacterMovement()->MaxWalkSpeed = SprintMovementSpeed;
-	}
-	// If the player is neither walking backward, nor sprinting. [1/2/2017 Matthew Woolley]
-	else
-	{
-		// Set the max-speed to that of the normal-walking speed. [1/2/2017 Matthew Woolley]
-		GetCharacterMovement()->MaxWalkSpeed = BaseMovementSpeed;
-	}
-
-	// Get the current rotation of the controller. [10/12/2015 Matthew Woolley]
-	FRotator Rotation = GetControlRotation();
-
-	// If we are falling or we are moving on the ground. [10/12/2015 Matthew Woolley]
-	if ( GetCharacterMovement()->IsFalling() || GetCharacterMovement()->IsMovingOnGround() )
-	{
-		// Ignore the Character's pitch. [10/12/2015 Matthew Woolley]
-		Rotation.Pitch = 0.f;
-	}
-
-	// Find the direction to move the Character in. [10/12/2015 Matthew Woolley]
-	FVector MovementVector = FRotationMatrix( Rotation ).GetScaledAxis( InMoveAxis );
-	// Move the Character in the aforementioned direction. [10/12/2015 Matthew Woolley]
-	AddMovementInput( MovementVector, InInputVal );
 }
 
 // Gets all the enemies that aren't blocked by walls, etc.. [24/7/2016 Matthew Woolley]
