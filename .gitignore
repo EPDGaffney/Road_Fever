@@ -233,12 +233,9 @@ pip-log.txt
 #UE4 Files
 *.sdf
 *.suo
+*.sln
 
 /Binaries
 /DerivedDataCache
-/Intermediate/Build
-/Intermediate/Config
-/Intermediate/ReimportCache
-/Intermediate/Shaders
-/Intermediate/CachedAssetRegistry.bin
+/Intermediate
 /Saved
