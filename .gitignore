@@ -236,5 +236,9 @@ pip-log.txt
 
 /Binaries
 /DerivedDataCache
-/Intermediate
+/Intermediate/Build
+/Intermediate/Config
+/Intermediate/ReimportCache
+/Intermediate/Shaders
+/Intermediate/CachedAssetRegistry.bin
 /Saved

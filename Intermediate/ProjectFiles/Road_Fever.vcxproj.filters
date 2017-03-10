@@ -1,0 +1,163 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<None Include="..\..\Road_Fever.uproject" />
+		<Filter Include="Source">
+			<UniqueIdentifier>{F7D87A49-635E-42EF-8C34-486A3CBE0A0C}</UniqueIdentifier>
+		</Filter>
+		<None Include="..\..\Source\Road_Fever.Target.cs">
+			<Filter>Source</Filter>
+		</None >
+		<None Include="..\..\Source\Road_FeverEditor.Target.cs">
+			<Filter>Source</Filter>
+		</None >
+		<Filter Include="Config">
+			<UniqueIdentifier>{45210A47-B1A7-41B1-8F19-E590C0B06620}</UniqueIdentifier>
+		</Filter>
+		<None Include="..\..\Config\DefaultEditor.ini">
+			<Filter>Config</Filter>
+		</None >
+		<None Include="..\..\Config\DefaultEngine.ini">
+			<Filter>Config</Filter>
+		</None >
+		<None Include="..\..\Config\DefaultGame.ini">
+			<Filter>Config</Filter>
+		</None >
+		<None Include="..\..\Config\DefaultInput.ini">
+			<Filter>Config</Filter>
+		</None >
+		<Filter Include="Source\Road_Fever">
+			<UniqueIdentifier>{961AFF03-7D88-4158-A291-E2F4BC276C22}</UniqueIdentifier>
+		</Filter>
+		<None Include="..\..\Source\Road_Fever\Road_Fever.Build.cs">
+			<Filter>Source\Road_Fever</Filter>
+		</None >
+		<ClCompile Include="..\..\Source\Road_Fever\Road_Fever.cpp">
+			<Filter>Source\Road_Fever</Filter>
+		</ClCompile >
+		<ClInclude Include="..\..\Source\Road_Fever\Road_Fever.h">
+			<Filter>Source\Road_Fever</Filter>
+		</ClInclude >
+		<Filter Include="Source\Road_Fever\Private">
+			<UniqueIdentifier>{3486F65B-7BE4-4B8D-A3D9-4D62FDB95FE2}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="Source\Road_Fever\Private\AI">
+			<UniqueIdentifier>{C77BC9FD-D889-4300-BD01-BA826DC08F74}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="Source\Road_Fever\Private\AI\Enemy">
+			<UniqueIdentifier>{215AEFE4-998B-47E5-A4F3-41463671A649}</UniqueIdentifier>
+		</Filter>
+		<ClCompile Include="..\..\Source\Road_Fever\Private\AI\Enemy\RoadFeverEnemy.cpp">
+			<Filter>Source\Road_Fever\Private\AI\Enemy</Filter>
+		</ClCompile >
+		<Filter Include="Source\Road_Fever\Private\Camera System">
+			<UniqueIdentifier>{AF2CE857-FE93-4494-B4B1-03A248240C5A}</UniqueIdentifier>
+		</Filter>
+		<ClCompile Include="..\..\Source\Road_Fever\Private\Camera System\RoadFeverCameraSystem.cpp">
+			<Filter>Source\Road_Fever\Private\Camera System</Filter>
+		</ClCompile >
+		<Filter Include="Source\Road_Fever\Private\Characters">
+			<UniqueIdentifier>{D092FA4A-5657-484C-8614-FA3BD18BF99D}</UniqueIdentifier>
+		</Filter>
+		<ClCompile Include="..\..\Source\Road_Fever\Private\Characters\RoadFeverCharacterNed.cpp">
+			<Filter>Source\Road_Fever\Private\Characters</Filter>
+		</ClCompile >
+		<Filter Include="Source\Road_Fever\Private\GameModes">
+			<UniqueIdentifier>{D78DC99D-F2CB-4F05-8F79-11A6A34764AD}</UniqueIdentifier>
+		</Filter>
+		<ClCompile Include="..\..\Source\Road_Fever\Private\GameModes\RoadFeverGameMode.cpp">
+			<Filter>Source\Road_Fever\Private\GameModes</Filter>
+		</ClCompile >
+		<Filter Include="Source\Road_Fever\Private\Inventory">
+			<UniqueIdentifier>{6219B2B9-C95C-4523-A8CD-8B389ED06FA1}</UniqueIdentifier>
+		</Filter>
+		<ClCompile Include="..\..\Source\Road_Fever\Private\Inventory\Inventory.cpp">
+			<Filter>Source\Road_Fever\Private\Inventory</Filter>
+		</ClCompile >
+		<Filter Include="Source\Road_Fever\Private\Items">
+			<UniqueIdentifier>{CDA9E38C-1F62-4AFD-85EB-AEECCB5681D8}</UniqueIdentifier>
+		</Filter>
+		<ClCompile Include="..\..\Source\Road_Fever\Private\Items\Item.cpp">
+			<Filter>Source\Road_Fever\Private\Items</Filter>
+		</ClCompile >
+		<Filter Include="Source\Road_Fever\Private\Items\Ammo">
+			<UniqueIdentifier>{AF19458D-7952-4534-AD9D-342C12DC77C9}</UniqueIdentifier>
+		</Filter>
+		<ClCompile Include="..\..\Source\Road_Fever\Private\Items\Ammo\Ammo.cpp">
+			<Filter>Source\Road_Fever\Private\Items\Ammo</Filter>
+		</ClCompile >
+		<Filter Include="Source\Road_Fever\Private\Items\Drugs">
+			<UniqueIdentifier>{CA6B4C76-DA07-4FA7-957D-3CB0CB9464AA}</UniqueIdentifier>
+		</Filter>
+		<ClCompile Include="..\..\Source\Road_Fever\Private\Items\Drugs\Drug.cpp">
+			<Filter>Source\Road_Fever\Private\Items\Drugs</Filter>
+		</ClCompile >
+		<Filter Include="Source\Road_Fever\Private\Items\Weapons">
+			<UniqueIdentifier>{AF89E82F-0C46-463D-B933-6D58E9B67366}</UniqueIdentifier>
+		</Filter>
+		<ClCompile Include="..\..\Source\Road_Fever\Private\Items\Weapons\Weapon.cpp">
+			<Filter>Source\Road_Fever\Private\Items\Weapons</Filter>
+		</ClCompile >
+		<Filter Include="Source\Road_Fever\Public">
+			<UniqueIdentifier>{7E4F7BB3-2457-4268-8BD3-D1FC6AA20CB8}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="Source\Road_Fever\Public\AI">
+			<UniqueIdentifier>{AD4292A3-087B-413B-9781-2441C6767BCE}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="Source\Road_Fever\Public\AI\Enemy">
+			<UniqueIdentifier>{9460D15D-95D7-4113-9505-9EF4AD721AA7}</UniqueIdentifier>
+		</Filter>
+		<ClInclude Include="..\..\Source\Road_Fever\Public\AI\Enemy\RoadFeverEnemy.h">
+			<Filter>Source\Road_Fever\Public\AI\Enemy</Filter>
+		</ClInclude >
+		<Filter Include="Source\Road_Fever\Public\Camera System">
+			<UniqueIdentifier>{278AAF92-E823-4589-A156-99C7F0453C03}</UniqueIdentifier>
+		</Filter>
+		<ClInclude Include="..\..\Source\Road_Fever\Public\Camera System\RoadFeverCameraSystem.h">
+			<Filter>Source\Road_Fever\Public\Camera System</Filter>
+		</ClInclude >
+		<Filter Include="Source\Road_Fever\Public\Characters">
+			<UniqueIdentifier>{5EE16A72-E799-4742-A50E-798162C54DA6}</UniqueIdentifier>
+		</Filter>
+		<ClInclude Include="..\..\Source\Road_Fever\Public\Characters\RoadFeverCharacterNed.h">
+			<Filter>Source\Road_Fever\Public\Characters</Filter>
+		</ClInclude >
+		<Filter Include="Source\Road_Fever\Public\GameModes">
+			<UniqueIdentifier>{5D0719FD-52EB-4D78-8ECB-B7F86BB8AA71}</UniqueIdentifier>
+		</Filter>
+		<ClInclude Include="..\..\Source\Road_Fever\Public\GameModes\RoadFeverGameMode.h">
+			<Filter>Source\Road_Fever\Public\GameModes</Filter>
+		</ClInclude >
+		<Filter Include="Source\Road_Fever\Public\Inventory">
+			<UniqueIdentifier>{04D1A6D9-E21F-45BE-A32A-6F0D0508A4E3}</UniqueIdentifier>
+		</Filter>
+		<ClInclude Include="..\..\Source\Road_Fever\Public\Inventory\Inventory.h">
+			<Filter>Source\Road_Fever\Public\Inventory</Filter>
+		</ClInclude >
+		<Filter Include="Source\Road_Fever\Public\Items">
+			<UniqueIdentifier>{22DF874C-0250-4C50-943D-F486BA3DE217}</UniqueIdentifier>
+		</Filter>
+		<ClInclude Include="..\..\Source\Road_Fever\Public\Items\Item.h">
+			<Filter>Source\Road_Fever\Public\Items</Filter>
+		</ClInclude >
+		<Filter Include="Source\Road_Fever\Public\Items\Ammo">
+			<UniqueIdentifier>{6DD10433-8A72-4DCE-A682-20BA153800F3}</UniqueIdentifier>
+		</Filter>
+		<ClInclude Include="..\..\Source\Road_Fever\Public\Items\Ammo\Ammo.h">
+			<Filter>Source\Road_Fever\Public\Items\Ammo</Filter>
+		</ClInclude >
+		<Filter Include="Source\Road_Fever\Public\Items\Drugs">
+			<UniqueIdentifier>{E14D19AE-F229-4379-B2BD-0637B28BB89D}</UniqueIdentifier>
+		</Filter>
+		<ClInclude Include="..\..\Source\Road_Fever\Public\Items\Drugs\Drug.h">
+			<Filter>Source\Road_Fever\Public\Items\Drugs</Filter>
+		</ClInclude >
+		<Filter Include="Source\Road_Fever\Public\Items\Weapons">
+			<UniqueIdentifier>{4E7D66AF-A3BA-49E8-98F1-7297C184BB5B}</UniqueIdentifier>
+		</Filter>
+		<ClInclude Include="..\..\Source\Road_Fever\Public\Items\Weapons\Weapon.h">
+			<Filter>Source\Road_Fever\Public\Items\Weapons</Filter>
+		</ClInclude >
+	</ItemGroup>
+</Project>
