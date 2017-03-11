@@ -56,7 +56,7 @@ void ARoadFeverCameraSystem::OnActorEnter( class AActor* InOtherActor, class UPr
 	if ( InOtherActor->IsA( ARoadFeverCharacterNed::StaticClass() ) )
 	{
 		// Get the player's Character. [11/12/2015 Matthew Woolley]
-		ARoadFeverCharacterNed* PlayerCharacter = Cast<ARoadFeverCharacterNed>( GetWorld()->GetFirstPlayerController()->GetPawn() );
+		ARoadFeverCharacterNed* PlayerCharacter = Cast<ARoadFeverCharacterNed>( InOtherActor );
 
 		// If there isn't a Camera in use. [20/1/2016 Matthew Woolley]
 		if ( PlayerCharacter->CurrentCamera == nullptr )
