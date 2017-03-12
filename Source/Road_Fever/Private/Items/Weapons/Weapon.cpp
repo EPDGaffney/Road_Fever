@@ -164,7 +164,7 @@ void AWeapon::OnAttack_Implementation()
 	{
 		// Remove ammo from the gun. [24/7/2016 Matthew Woolley]
 		ItemInfo.CurrentAmmo--;
-		PlayerCharacter->CharactersInventory->ItemSlots[ ItemInfo.HoldingSlot ].CurrentAmmo--;
+		PlayerCharacter->CharactersInventory->ItemSlots[ PlayerCharacter->CharactersInventory->EquippedItemsSlot ].CurrentAmmo--;
 	}
 }
 

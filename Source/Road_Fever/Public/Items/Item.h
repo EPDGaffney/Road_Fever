@@ -67,10 +67,6 @@ public:
 	// Whether or not this is ammo. [6/9/2016 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "" )
 	bool bIsAmmo;
-
-	// The slot that this item is held in within the inventory. [12/3/2017 Matthew Woolley]
-	UPROPERTY( BlueprintReadWrite, Category = "Inventory" )
-	int32 HoldingSlot;
 };
 
 
