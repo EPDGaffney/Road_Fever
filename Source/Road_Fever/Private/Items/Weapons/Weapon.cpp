@@ -163,7 +163,8 @@ void AWeapon::OnAttack_Implementation()
 	if ( ItemInfo.MaxAmmo != 0 )
 	{
 		// Remove ammo from the gun. [24/7/2016 Matthew Woolley]
-		ItemInfo.CurrentAmmo -= 1;
+		ItemInfo.CurrentAmmo--;
+		PlayerCharacter->CharactersInventory->ItemSlots[ ItemInfo.HoldingSlot ].CurrentAmmo--;
 	}
 }
 
