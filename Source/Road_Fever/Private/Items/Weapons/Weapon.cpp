@@ -52,9 +52,9 @@ void AWeapon::OnAttack_Implementation()
 	ARoadFeverCharacterNed* PlayerCharacter = ( ARoadFeverCharacterNed* ) GetWorld()->GetFirstPlayerController()->GetCharacter();
 
 	// Make sure the weapon isn't currently cooling down [20/11/2015 Matthew Woolley]
-	if ( WeaponProperties.bIsReloading || WeaponProperties.bIsCoolingDown || ( ItemInfo.MaxAmmo != 0 && ItemInfo.CurrentAmmo == 0 ) )
+	if ( WeaponProperties.bIsReloading || WeaponProperties.bIsCoolingDown || ( ItemInfo.MaxAmmo != 0 && ItemInfo.CurrentAmmo <= 0 ) )
 	{
-		if ( ItemInfo.CurrentAmmo == 0 )
+		if ( ItemInfo.CurrentAmmo <= 0 )
 		{
 			PlayerCharacter->GetMesh()->PlayAnimation( WeaponProperties.AttackAnimation_NoAmmo, false );
 		}
@@ -247,6 +247,7 @@ void AWeapon::FullReload()
 	// In case there was an issue with the partial reload, revert to this (if there is one). [27/7/2016 Matthew Woolley]
 	FInventoryItem FullClip;
 	int32 FullClipSlotNumber = 0;
+	bool bFoundClip = false;
 
 	// For each slot in the inventory, search for the ammo this weapon uses. [27/7/2016 Matthew Woolley]
 	for ( int32 iSlotIterator = 0; iSlotIterator < PlayerCharacter->CharactersInventory->ItemSlots.Num(); iSlotIterator++ )
@@ -260,6 +261,7 @@ void AWeapon::FullReload()
 				// Store the full clip in case there is an issue with the partial clip. [27/7/2016 Matthew Woolley]
 				FullClip = PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ];
 				FullClipSlotNumber = iSlotIterator;
+				bFoundClip = true;
 				continue;
 			} else
 			{
@@ -272,12 +274,12 @@ void AWeapon::FullReload()
 	}
 
 	// If we found a clip (partial or full) that is of the type requested (partial or full). [27/7/2016 Matthew Woolley]
-	if ( LargestAmmoCount.CurrentAmmo >= 0 )
+	if ( LargestAmmoCount.CurrentAmmo >= 0 && bFoundClip )
 	{
 		// Reload this weapon with the amount of ammo in the clip. [27/7/2016 Matthew Woolley]
 		ItemInfo.CurrentAmmo = LargestAmmoCount.CurrentAmmo;
 		PlayerCharacter->CharactersInventory->ItemSlots[ LargestAmmoCountSlotNumber ].CurrentItemStack--;
-	} else if ( FullClip.CurrentAmmo >= 0 ) // If we only found a full clip, but a partial was requested. [27/7/2016 Matthew Woolley]
+	} else if ( FullClip.CurrentAmmo >= 0 && bFoundClip ) // If we only found a full clip, but a partial was requested. [27/7/2016 Matthew Woolley]
 	{
 		// Reload the full clip. [27/7/2016 Matthew Woolley]
 		ItemInfo.CurrentAmmo = FullClip.CurrentAmmo;
