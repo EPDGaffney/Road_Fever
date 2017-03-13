@@ -302,6 +302,7 @@ void AWeapon::FullReload()
 	}
 
 	// Tell the code the weapon is no longer reloading. [27/7/2016 Matthew Woolley]
+	PlayerCharacter->CharactersInventory->ItemSlots[ PlayerCharacter->CharactersInventory->EquippedItemsSlot ].CurrentAmmo = ItemInfo.CurrentAmmo;
 	WeaponProperties.bIsReloading = false;
 }
 
@@ -330,6 +331,7 @@ void AWeapon::SingleRoundReload()
 		{
 			PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentItemStack--;
 			ItemInfo.CurrentAmmo++;
+			PlayerCharacter->CharactersInventory->ItemSlots[ PlayerCharacter->CharactersInventory->EquippedItemsSlot ].CurrentAmmo++;
 			bFoundAmmo = true;
 		}
 	}
