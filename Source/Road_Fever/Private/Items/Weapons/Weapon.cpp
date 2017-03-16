@@ -270,17 +270,18 @@ void AWeapon::FullReload()
 				LargestAmmoCount = PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ];
 				LargestAmmoCountNumber = PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo;
 				LargestAmmoCountSlotNumber = iSlotIterator;
+				bFoundClip = true;
 			}
 		}
 	}
 
 	// If we found a clip (partial or full) that is of the type requested (partial or full). [27/7/2016 Matthew Woolley]
-	if ( LargestAmmoCount.CurrentAmmo >= 0 && bFoundClip )
+	if ( LargestAmmoCount.CurrentAmmo > 0 && bFoundClip )
 	{
 		// Reload this weapon with the amount of ammo in the clip. [27/7/2016 Matthew Woolley]
 		ItemInfo.CurrentAmmo = LargestAmmoCount.CurrentAmmo;
 		PlayerCharacter->CharactersInventory->ItemSlots[ LargestAmmoCountSlotNumber ].CurrentItemStack--;
-	} else if ( FullClip.CurrentAmmo >= 0 && bFoundClip ) // If we only found a full clip, but a partial was requested. [27/7/2016 Matthew Woolley]
+	} else if ( FullClip.CurrentAmmo > 0 && bFoundClip ) // If we only found a full clip, but a partial was requested. [27/7/2016 Matthew Woolley]
 	{
 		// Reload the full clip. [27/7/2016 Matthew Woolley]
 		ItemInfo.CurrentAmmo = FullClip.CurrentAmmo;
