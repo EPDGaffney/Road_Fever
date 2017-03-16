@@ -6,7 +6,6 @@
 #include "Items/Item.h"
 #include "Inventory.generated.h"
 
-class UUserWidget;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ROAD_FEVER_API UInventory : public UActorComponent

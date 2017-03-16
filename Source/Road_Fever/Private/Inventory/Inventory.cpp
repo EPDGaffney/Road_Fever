@@ -2,10 +2,6 @@
 
 #include "Road_Fever.h"
 #include "Public/Inventory/Inventory.h"
-#include "Public/Items/Item.h"
-#include "Public/UMG.h"
-#include "SlateBasics.h"
-#include "SlateExtras.h"
 #include "Characters/RoadFeverCharacterNed.h"
 
 

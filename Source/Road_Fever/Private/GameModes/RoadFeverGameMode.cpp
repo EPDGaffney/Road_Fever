@@ -15,3 +15,8 @@ ARoadFeverGameMode::ARoadFeverGameMode()
 	// Implement it into the game. [16/12/2015 Matthew Woolley]
 	DefaultPawnClass = PawnClassObj.Class;
 }
+
+bool ARoadFeverGameMode::SetPause( APlayerController* PC, FCanUnpause CanUnpauseDelegate /* = FCanUnpause() */ )
+{
+	return false;
+}

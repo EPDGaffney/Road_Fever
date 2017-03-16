@@ -14,13 +14,13 @@ ARoadFeverCharacterNed::ARoadFeverCharacterNed()
 {
 	// Create the collection area. [10/12/2015 Matthew Woolley]
 	CollectionArea = CreateDefaultSubobject<UBoxComponent>( TEXT( "CollectionArea" ) );
-	CollectionArea->AttachParent = RootComponent;
+	CollectionArea->SetupAttachment( RootComponent );
 	CollectionArea->RelativeScale3D = FVector( 2, 2, 2 );
 	CollectionArea->RelativeLocation = FVector( 50, 0, 0 );
 
 	// Create the ShootFromPoint. [1/3/2017 Matthew Woolley]
 	ShootFromPoint = CreateDefaultSubobject<UArrowComponent>( TEXT( "ShootFromPoint" ) );
-	ShootFromPoint->AttachParent = RootComponent;
+	ShootFromPoint->SetupAttachment(RootComponent);
 	ShootFromPoint->RelativeLocation = FVector( 10, 10, 50 );
 
 	QuickTurnSpeed = 500;
