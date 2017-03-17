@@ -227,7 +227,7 @@ bool ARoadFeverCharacterNed::AddItemToInventory( struct FInventoryItem ItemToAdd
 }
 
 // Returns true if the game has focus (no menu is open, no dialog etc.). [5/4/2016 Matthew Woolley]
-bool ARoadFeverCharacterNed::GameHasFocus()
+const bool ARoadFeverCharacterNed::GameHasFocus()
 {
 	return ( !CharactersInventory->bIsOpen && !CharactersInventory->ItemPickupConfirmationInstance );
 }
