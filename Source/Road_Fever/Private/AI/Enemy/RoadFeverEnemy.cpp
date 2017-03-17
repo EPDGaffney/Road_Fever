@@ -2,6 +2,7 @@
 
 #include "Road_Fever.h"
 #include "RoadFeverEnemy.h"
+#include "Public/Characters/RoadFeverCharacterNed.h"
 
 
 
@@ -29,7 +30,7 @@ void ARoadFeverEnemy::BeginPlay()
 		int EnemyMeshToUse = FMath::FRandRange( 0, EnemyMeshes.Num() );
 
 		// Set it as the mesh for this instance. [3/2/2017 Matthew Woolley]
-		GetMesh()->SetSkeletalMesh( EnemyMeshes[EnemyMeshToUse] );
+		GetMesh()->SetSkeletalMesh( EnemyMeshes[ EnemyMeshToUse ] );
 	}
 
 	Super::BeginPlay();
@@ -52,4 +53,24 @@ void ARoadFeverEnemy::TakeDamage_Implementation( int32 InDamage )
 	{
 		Die();
 	}
+}
+
+// Whether the player is in the inventory, or item confirmation screen. [17/3/2017 Matthew Woolley]
+const bool ARoadFeverEnemy::PlayerIsPaused()
+{
+	if (GetWorld() && GetWorld()->GetFirstPlayerController())
+	{
+		// Get Ned's character from the world. [17/3/2017 Matthew Woolley]
+		ARoadFeverCharacterNed* PlayerCharacter = Cast<ARoadFeverCharacterNed>( GetWorld()->GetFirstPlayerController()->GetPawn() );
+
+		// If we got Ned from the level. [17/3/2017 Matthew Woolley]
+		if ( PlayerCharacter )
+		{
+			// Return whether the player has the game in focus or not. [17/3/2017 Matthew Woolley]
+			return !PlayerCharacter->GameHasFocus();
+		}
+	}
+
+	// If we didn't find Ned. [17/3/2017 Matthew Woolley]
+	return false;
 }

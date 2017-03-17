@@ -43,6 +43,10 @@ public:
 	TSubclassOf<class AItem> ItemsInInventory;
 
 protected:
+	// Whether the player is in the inventory, or item confirmation screen. [17/3/2017 Matthew Woolley]
+	UFUNCTION( BlueprintPure, Category = "UI" )
+	const bool PlayerIsPaused();
+
 	// The slowest this enemy can move. [23/1/2017 Matthew Woolley]
 	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Movement" )
 	float MinMoveSpeed;

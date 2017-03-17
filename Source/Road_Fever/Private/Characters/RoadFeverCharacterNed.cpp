@@ -235,7 +235,13 @@ bool ARoadFeverCharacterNed::GameHasFocus()
 // Moves the Character in the X axis. [10/12/2015 Matthew Woolley]
 void ARoadFeverCharacterNed::MoveForward( float InInputVal )
 {
-	MoveForwardAxis = InInputVal;
+	if ( bIsAiming == false && GameHasFocus() )
+	{
+		MoveForwardAxis = InInputVal;
+	} else
+	{
+		MoveForwardAxis = 0;
+	}
 }
 
 // Called when the player wishes to turn. [10/12/2015 Matthew Woolley]
