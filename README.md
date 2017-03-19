@@ -1,5 +1,5 @@
 # Game Plot/Story
-Click [here](github markdown files/public_site_write-up.md) if you wish to read the plot/story behind this game.
+Click [here](https://github.com/FortuneMatthew/Road_Fever/github markdown files/public_site_write-up.md) if you wish to read the plot/story behind this game.
 
 # Project Prerequisites
 To get the project files, one needs the following things installed:
