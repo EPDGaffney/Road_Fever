@@ -56,7 +56,7 @@ void ARoadFeverEnemy::TakeDamage_Implementation( int32 InDamage )
 }
 
 // Whether the player is in the inventory, or item confirmation screen. [17/3/2017 Matthew Woolley]
-const bool ARoadFeverEnemy::PlayerIsPaused()
+const bool ARoadFeverEnemy::IsPlayerPaused()
 {
 	if (GetWorld() && GetWorld()->GetFirstPlayerController())
 	{

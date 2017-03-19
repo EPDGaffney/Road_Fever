@@ -39,7 +39,7 @@ void ARoadFeverCameraSystem::BeginPlay()
 	// Destroy the camera so that the game doesn't keep rendering un-needed scenes. [11/12/2015 Matthew Woolley]
 	EditorCameraReference->DestroyComponent();
 
-	if ( bIsPrimaryCamera )
+	if ( bPrimaryCamera )
 	{
 		ARoadFeverCharacterNed* PlayerCharacter = Cast<ARoadFeverCharacterNed>( GetWorld()->GetFirstPlayerController()->GetPawn() );
 

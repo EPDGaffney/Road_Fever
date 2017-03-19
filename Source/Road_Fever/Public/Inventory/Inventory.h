@@ -33,7 +33,7 @@ public:
 
 	// Whether or not the inventory is open. [21/11/2015 Matthew Woolley]
 	UPROPERTY(BlueprintReadWrite, Category = "Inventory")
-	bool bIsOpen;
+	bool bOpen;
 
 	// The widget that is spawned to show the UI. [30/11/2015 Matthew Woolley]
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")

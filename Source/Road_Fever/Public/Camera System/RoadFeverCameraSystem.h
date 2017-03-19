@@ -55,6 +55,6 @@ public:
 
 	// Whether or not the game starts using this camera. [11/12/2015 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Rendering" )
-	bool bIsPrimaryCamera;
+	bool bPrimaryCamera;
 
 };

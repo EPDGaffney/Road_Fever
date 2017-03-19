@@ -29,14 +29,14 @@ AItem::AItem()
 	ItemsMesh->SetCollisionProfileName( "NoCollision" );
 
 	// Setup some generic properties. [20/7/2016 Matthew Woolley]
-	bCanBePickedUp = true;
+	bPickupable = true;
 }
 
 void AItem::AttachItemToNed_Hand()
 {
 	ARoadFeverCharacterNed* PlayerCharacter = Cast<ARoadFeverCharacterNed>( GetWorld()->GetFirstPlayerController()->GetPawn() );
 	USkeletalMeshComponent* NedsCharacterMesh = PlayerCharacter->GetMesh();
-	bCanBePickedUp = false;
+	bPickupable = false;
 
 	if ( NedsCharacterMesh )
 	{
