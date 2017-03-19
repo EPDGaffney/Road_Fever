@@ -1,5 +1,3 @@
-<img src="http://icons.fortune-studios.com/PNG/Sqaure%20Crank.png">
-
 # ROAD FEVER PUBLIC SITE WRITE-UP.
 
 ## THE SHORT VERSION:
