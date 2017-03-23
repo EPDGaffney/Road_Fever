@@ -131,6 +131,7 @@ void AWeapon::OnAttack_Implementation()
 				{
 					// Cast the enemy from the hit Actor. [15/7/2016 Matthew Woolley]
 					ARoadFeverEnemy* HitEnemy = ( ARoadFeverEnemy* ) HitActor;
+					FDamageEvent DamageEvent;
 
 					// If the enemy is further away than this weapon can attack with full damage. [17/7/2016 Matthew Woolley]
 					if ( HitEnemy->GetDistanceTo( this ) > WeaponProperties.EffectiveRange )
@@ -141,13 +142,17 @@ void AWeapon::OnAttack_Implementation()
 						// Get the damage we should deal (the closer to the maximum range distance, the more damage). [17/7/2016 Matthew Woolley]
 						int DamageToDeal = FMath::FRandRange( WeaponProperties.EffectiveRangeMinDamage, WeaponProperties.EffectiveRangeMaxDamage ) - ( WeaponProperties.MaximumRangeMaxDamage * ( ( DistanceToEnemy - WeaponProperties.EffectiveRange ) / WeaponProperties.MaximumRange ) );
 
+
 						// Deal damage to the enemy. [17/7/2016 Matthew Woolley]
-						HitEnemy->TakeDamage( DamageToDeal );
+						HitEnemy->TakeDamage( DamageToDeal, DamageEvent, World->GetFirstPlayerController(), this );
 
 					} else
 					{
+						// Get the damage we should deal (random range between the max and min). [23/3/2017 Matthew Woolley]
+						float DamageToDeal = FMath::FRandRange( WeaponProperties.EffectiveRangeMinDamage, WeaponProperties.EffectiveRangeMaxDamage );
+
 						// Deal damage to the enemy. [17/7/2016 Matthew Woolley]
-						HitEnemy->TakeDamage( FMath::FRandRange( WeaponProperties.EffectiveRangeMinDamage, WeaponProperties.EffectiveRangeMaxDamage ) );
+						HitEnemy->TakeDamage( DamageToDeal, DamageEvent, World->GetFirstPlayerController(), this );
 					}
 				}
 			}

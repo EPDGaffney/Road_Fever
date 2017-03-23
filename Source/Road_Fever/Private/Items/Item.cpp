@@ -40,7 +40,7 @@ void AItem::AttachItemToNed_Hand()
 
 	if ( NedsCharacterMesh )
 	{
-		AttachRootComponentTo( NedsCharacterMesh, FName( TEXT( "ItemPoint" ) ), EAttachLocation::SnapToTarget );
+		AttachToComponent( NedsCharacterMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName( TEXT( "ItemPoint" ) ) );
 		DetectionBox->DestroyComponent();
 	}
 }

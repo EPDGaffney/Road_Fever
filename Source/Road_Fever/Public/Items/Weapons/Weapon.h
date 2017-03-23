@@ -115,7 +115,7 @@ public:
 
 	// Called when the user wishes to reload; bShouldUseFullClip will be true if they don't hold the reload key. [25/7/2016 Matthew Woolley]
 	UFUNCTION( BlueprintCallable, Category = "Attack" )
-	void Reload( bool bUseFullClip );
+	void Reload( bool bInUseFullClip );
 
 	// Called when the weapon has cooled down. [27/7/2016 Matthew Woolley]
 	void Cooldown();

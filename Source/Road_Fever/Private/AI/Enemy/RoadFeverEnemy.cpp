@@ -43,8 +43,11 @@ void ARoadFeverEnemy::Die_Implementation()
 }
 
 // Takes away health from this enemy. [15/7/2016 Matthew Woolley]
-void ARoadFeverEnemy::TakeDamage_Implementation( int32 InDamage )
+float ARoadFeverEnemy::TakeDamage( float InDamage, struct FDamageEvent const& InDamageEvent, class AController* InEventInstigator, class AActor* InDamageCauser )
 {
+	// Call base functionality [23/3/2017 Matthew Woolley]
+	Super::TakeDamage( InDamage, InDamageEvent, InEventInstigator, InDamageCauser );
+
 	// Deal damage to the enemy. [8/2/2017 Matthew Woolley]
 	EnemyHealth -= InDamage;
 
@@ -53,6 +56,9 @@ void ARoadFeverEnemy::TakeDamage_Implementation( int32 InDamage )
 	{
 		Die();
 	}
+
+	// Return the value of this enemy's health. [23/3/2017 Matthew Woolley]
+	return EnemyHealth;
 }
 
 // Whether the player is in the inventory, or item confirmation screen. [17/3/2017 Matthew Woolley]
