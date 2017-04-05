@@ -35,11 +35,11 @@ public:
 
 	// Called when something enters this camera's trigger area. [11/12/2015 Matthew Woolley]
 	UFUNCTION( BlueprintCallable, Category = "Detection" )
-	void OnActorEnter( class AActor* InOtherActor, class UPrimitiveComponent* InOtherComp, int32 InOtherBodyIndex, bool bInFromSweep, const FHitResult& InSweepResult );
+	void OnActorEnter( class UPrimitiveComponent* InPrimitiveComponent, AActor* InOtherActor, UPrimitiveComponent* InOtherPrimitiveComponent, int32 InInt, bool InSweepResult, const FHitResult& InFHit );
 
 	// Called when something leaves this camera's trigger area. [20/1/2016 Matthew Woolley]
 	UFUNCTION( BlueprintCallable, Category = "Detection" )
-	void OnActorLeave( class AActor* InOtherActor, class UPrimitiveComponent* InOtherComp, int32 InOtherBodyIndex );
+	void OnActorLeave( class UPrimitiveComponent* InPrimitiveCompnent, AActor* InOtherActor, UPrimitiveComponent* InOtherPrimitiveComponent, int32 InInt );
 
 	// The area that, when entered, triggers the Character's camera location. [11/12/2015 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Detection" )
@@ -55,6 +55,6 @@ public:
 
 	// Whether or not the game starts using this camera. [11/12/2015 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Rendering" )
-	bool bIsPrimaryCamera;
+	bool bPrimaryCamera;
 
 };

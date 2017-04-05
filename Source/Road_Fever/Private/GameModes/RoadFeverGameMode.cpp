@@ -10,8 +10,13 @@
 ARoadFeverGameMode::ARoadFeverGameMode()
 {
 	// Get the Pawn class from the content browser. [16/12/2015 Matthew Woolley]
-	static ConstructorHelpers::FClassFinder<APawn> PawnClassObj( TEXT( "Blueprint'/Game/Ned/Ned.Ned_C'" ) );
+	static ConstructorHelpers::FClassFinder<APawn> PawnClassObj( TEXT( "Blueprint'/Game/RoadFever/Characters/Ned/BP_Ned.BP_Ned_C'" ) );
 
 	// Implement it into the game. [16/12/2015 Matthew Woolley]
 	DefaultPawnClass = PawnClassObj.Class;
+}
+
+bool ARoadFeverGameMode::SetPause( APlayerController* PC, FCanUnpause CanUnpauseDelegate /* = FCanUnpause() */ )
+{
+	return PC->IsPaused();
 }

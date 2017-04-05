@@ -13,10 +13,5 @@ UCLASS()
 class ROAD_FEVER_API AAmmo : public AItem
 {
 	GENERATED_BODY()
-public:
-	AAmmo()
-	{ 
-		ItemInfo.bIsAmmo = true;
-	}
 	
 };

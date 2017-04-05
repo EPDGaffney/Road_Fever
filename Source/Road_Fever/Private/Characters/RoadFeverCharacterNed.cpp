@@ -14,13 +14,13 @@ ARoadFeverCharacterNed::ARoadFeverCharacterNed()
 {
 	// Create the collection area. [10/12/2015 Matthew Woolley]
 	CollectionArea = CreateDefaultSubobject<UBoxComponent>( TEXT( "CollectionArea" ) );
-	CollectionArea->AttachParent = RootComponent;
+	CollectionArea->SetupAttachment( RootComponent );
 	CollectionArea->RelativeScale3D = FVector( 2, 2, 2 );
 	CollectionArea->RelativeLocation = FVector( 50, 0, 0 );
 
 	// Create the ShootFromPoint. [1/3/2017 Matthew Woolley]
 	ShootFromPoint = CreateDefaultSubobject<UArrowComponent>( TEXT( "ShootFromPoint" ) );
-	ShootFromPoint->AttachParent = RootComponent;
+	ShootFromPoint->SetupAttachment(RootComponent);
 	ShootFromPoint->RelativeLocation = FVector( 10, 10, 50 );
 
 	QuickTurnSpeed = 500;
@@ -166,7 +166,7 @@ bool ARoadFeverCharacterNed::AddItemToInventory( struct FInventoryItem ItemToAdd
 			if ( CharactersInventory->ItemSlots[ iSlotIterator ].CurrentItemStack < ItemToAdd.MaxItemStack )
 			{
 				// If this is a clip and it has found a clip of similar size OR it isn't a clip. [25/7/2016 Matthew Woolley]
-				if ( ( ItemToAdd.bIsClip && ItemToAdd.CurrentAmmo == CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo ) || !ItemToAdd.bIsClip )
+				if ( ( ItemToAdd.bClip && ItemToAdd.CurrentAmmo == CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo ) || !ItemToAdd.bClip )
 				{
 					// Add an item to the slot. [5/3/2016 Matthew Woolley]
 					CharactersInventory->ItemSlots[ iSlotIterator ].CurrentItemStack++;
@@ -194,11 +194,11 @@ bool ARoadFeverCharacterNed::AddItemToInventory( struct FInventoryItem ItemToAdd
 			CharactersInventory->ItemSlots[ iSlotIterator ].ItemClass = ItemToAdd.ItemClass;
 			CharactersInventory->ItemSlots[ iSlotIterator ].ItemToolTip = ItemToAdd.ItemToolTip;
 			CharactersInventory->ItemSlots[ iSlotIterator ].MaxItemStack = ItemToAdd.MaxItemStack;
-			CharactersInventory->ItemSlots[ iSlotIterator ].bIsEquipable = ItemToAdd.bIsEquipable;
+			CharactersInventory->ItemSlots[ iSlotIterator ].bEquipable = ItemToAdd.bEquipable;
 			CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo = ItemToAdd.CurrentAmmo;
 
 			// If this item is a weapon. [24/7/2016 Matthew Woolley]
-			if ( ItemToAdd.bIsWeapon )
+			if ( ItemToAdd.bWeapon )
 			{
 				// Setup the weapon stats. [24/7/2016 Matthew Woolley]
 				CharactersInventory->ItemSlots[ iSlotIterator ].MaxAmmo = ItemToAdd.MaxAmmo;
@@ -211,9 +211,9 @@ bool ARoadFeverCharacterNed::AddItemToInventory( struct FInventoryItem ItemToAdd
 			}
 
 			// If this is a clip ammo type (other ammo types are added normally). [25/7/2016 Matthew Woolley]
-			if ( ItemToAdd.bIsClip )
+			if ( ItemToAdd.bClip )
 			{
-				CharactersInventory->ItemSlots[ iSlotIterator ].bIsClip = ItemToAdd.bIsClip;
+				CharactersInventory->ItemSlots[ iSlotIterator ].bClip = ItemToAdd.bClip;
 				CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo = ItemToAdd.CurrentAmmo;
 			}
 
@@ -227,15 +227,21 @@ bool ARoadFeverCharacterNed::AddItemToInventory( struct FInventoryItem ItemToAdd
 }
 
 // Returns true if the game has focus (no menu is open, no dialog etc.). [5/4/2016 Matthew Woolley]
-bool ARoadFeverCharacterNed::GameHasFocus()
+const bool ARoadFeverCharacterNed::GameHasFocus()
 {
-	return ( !CharactersInventory->bIsOpen && !CharactersInventory->ItemPickupConfirmationInstance );
+	return ( !CharactersInventory->bOpen && !CharactersInventory->ItemPickupConfirmationInstance );
 }
 
 // Moves the Character in the X axis. [10/12/2015 Matthew Woolley]
 void ARoadFeverCharacterNed::MoveForward( float InInputVal )
 {
-	MoveForwardAxis = InInputVal;
+	if ( bIsAiming == false && GameHasFocus() )
+	{
+		MoveForwardAxis = InInputVal;
+	} else
+	{
+		MoveForwardAxis = 0;
+	}
 }
 
 // Called when the player wishes to turn. [10/12/2015 Matthew Woolley]
@@ -269,7 +275,7 @@ void ARoadFeverCharacterNed::OnCharacterInteract_Implementation()
 		for ( AActor* iActorIterator : NearbyActors )
 		{
 			// If the actor we found is an AItem AND it can be picked up. [22/6/2016 Matthew Woolley]
-			if ( iActorIterator->IsA( AItem::StaticClass() ) && ( ( AItem* ) iActorIterator )->bCanBePickedUp )
+			if ( iActorIterator->IsA( AItem::StaticClass() ) && ( ( AItem* ) iActorIterator )->bPickupable )
 			{
 				// Get reference to AItem found. [22/6/2016 Matthew Woolley]
 				AItem* Item = ( AItem* ) iActorIterator;

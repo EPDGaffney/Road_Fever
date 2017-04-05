@@ -6,6 +6,15 @@
 #include "Public/Items/Ammo/Ammo.h"
 #include "Weapon.generated.h"
 
+// The current state of the weapon. [19/3/2017 Matthew Woolley]
+UENUM( BlueprintType )
+enum class EWeaponState : uint8
+{
+	Reloading,
+	CoolingDown,
+	Normal
+};
+
 // The properties to customize how the weapon behaves [20/11/2015 Matthew Woolley]
 USTRUCT( BlueprintType )
 struct FWeaponProperties
@@ -45,14 +54,6 @@ public:
 	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Attack" )
 	float ReloadTime;
 
-	// Whether the weapons is cooling down or not [20/11/2015 Matthew Woolley]
-	UPROPERTY( BlueprintReadWrite, Category = "Attack" )
-	bool bIsCoolingDown;
-
-	// Whether this weapon is reloading or now. [27/7/2016 Matthew Woolley]
-	UPROPERTY( BlueprintReadWrite, Category = "Attack" )
-	bool bIsReloading;
-
 	// The amount of traces this weapon does per shot. [21/7/2016 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack" )
 	int32 NumberOfTraces;
@@ -67,7 +68,7 @@ public:
 
 	// Whether this weapon uses a line trace, or a box trace. [3/2/2017 Matthew Woolley]
 	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Attack" )
-	bool bIsBoxTrace;
+	bool bBoxTrace;
 
 	// Played when the player uses the attack function, with ammo in the weapon if required. [11/2/2017 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack|Animation" )
@@ -81,6 +82,9 @@ public:
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack|Animation" )
 	UAnimationAsset* ReloadAnimation;
 
+	// The current state of the weapon. [19/3/2017 Matthew Woolley]
+	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Attack" )
+	EWeaponState WeaponState;
 };
 
 
@@ -111,7 +115,7 @@ public:
 
 	// Called when the user wishes to reload; bShouldUseFullClip will be true if they don't hold the reload key. [25/7/2016 Matthew Woolley]
 	UFUNCTION( BlueprintCallable, Category = "Attack" )
-	void Reload( bool bUseFullClip );
+	void Reload( bool bInUseFullClip );
 
 	// Called when the weapon has cooled down. [27/7/2016 Matthew Woolley]
 	void Cooldown();
@@ -123,10 +127,10 @@ public:
 	void SingleRoundReload();
 
 	// Whether or not the reload should attempt a full clip. [27/7/2016 Matthew Woolley]
-	bool bShouldUseFullClip;
+	bool bUseFullClip;
 
 	// Whether or not the reloading is getting interrupted. [27/7/2016 Matthew Woolley]
-	bool bShouldInterrupt;
+	bool bInterruptReload;
 
 private:
 	// The timer for cooling the weapon down. [27/7/2016 Matthew Woolley]

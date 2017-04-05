@@ -73,8 +73,8 @@ public:
 	bool AddItemToInventory( struct FInventoryItem ItemToAdd );
 
 	// Returns true if the game has focus (no menu is open, no dialog etc.). [5/4/2016 Matthew Woolley]
-	UFUNCTION( BlueprintCallable, Category = "Misc" )
-	bool GameHasFocus( );
+	UFUNCTION( BlueprintPure, Category = "Misc" )
+	const bool GameHasFocus();
 
 	// The value of which the character is looking up or down. [8/7/2016 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack" )

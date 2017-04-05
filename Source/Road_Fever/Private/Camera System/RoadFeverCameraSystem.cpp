@@ -15,7 +15,7 @@ ARoadFeverCameraSystem::ARoadFeverCameraSystem()
 
 	// Create the trigger for this camera. [11/12/2015 Matthew Woolley]
 	TriggerArea = CreateDefaultSubobject<UBoxComponent>( TEXT( "TriggerArea" ) );
-	TriggerArea->AttachParent = RootComponent;
+	TriggerArea->SetupAttachment( RootComponent );
 	TriggerArea->bAbsoluteRotation = true;
 	TriggerArea->SetCollisionProfileName( TEXT( "PlayerDetection" ) );
 	TriggerArea->OnComponentBeginOverlap.AddDynamic( this, &ARoadFeverCameraSystem::OnActorEnter );
@@ -23,7 +23,7 @@ ARoadFeverCameraSystem::ARoadFeverCameraSystem()
 
 	// Create the editor's camera. [11/12/2015 Matthew Woolley]
 	EditorCameraReference = CreateDefaultSubobject<UCameraComponent>( TEXT( "EditorCameraReference" ) );
-	EditorCameraReference->AttachParent = RootComponent;
+	EditorCameraReference->SetupAttachment( RootComponent );
 }
 
 
@@ -39,10 +39,15 @@ void ARoadFeverCameraSystem::BeginPlay()
 	// Destroy the camera so that the game doesn't keep rendering un-needed scenes. [11/12/2015 Matthew Woolley]
 	EditorCameraReference->DestroyComponent();
 
-	if ( bIsPrimaryCamera )
+	if ( bPrimaryCamera )
 	{
 		ARoadFeverCharacterNed* PlayerCharacter = Cast<ARoadFeverCharacterNed>( GetWorld()->GetFirstPlayerController()->GetPawn() );
-		OnActorEnter( PlayerCharacter, nullptr, 0, false, FHitResult() );
+
+		// Set the camera's position. [11/12/2015 Matthew Woolley]
+		PlayerCharacter->CharactersCamera->SetWorldLocation( CameraPosition.Location );
+		PlayerCharacter->CharactersCamera->SetWorldRotation( CameraPosition.Rotation );
+		PlayerCharacter->CurrentCamera = this;
+		RevertTo = nullptr;
 
 		// Set the camera's position. [11/12/2015 Matthew Woolley]
 		PlayerCharacter->CharactersCamera->SetWorldLocation( CameraPosition.Location );
@@ -50,7 +55,7 @@ void ARoadFeverCameraSystem::BeginPlay()
 	}
 }
 
-void ARoadFeverCameraSystem::OnActorEnter( class AActor* InOtherActor, class UPrimitiveComponent* InOtherComp, int32 InOtherBodyIndex, bool bInFromSweep, const FHitResult& InSweepResult )
+void ARoadFeverCameraSystem::OnActorEnter( class UPrimitiveComponent* InPrimitiveComponent, AActor* InOtherActor, UPrimitiveComponent* InOtherPrimitiveComponent, int32 InInt, bool InSweepResult, const FHitResult& InFHit )
 {
 	// If it is the player's camera dummy. [11/12/2015 Matthew Woolley]
 	if ( InOtherActor->IsA( ARoadFeverCharacterNed::StaticClass() ) )
@@ -78,7 +83,7 @@ void ARoadFeverCameraSystem::OnActorEnter( class AActor* InOtherActor, class UPr
 	}
 }
 
-void ARoadFeverCameraSystem::OnActorLeave( class AActor* InOtherActor, class UPrimitiveComponent* InOtherComp, int32 InOtherBodyIndex )
+void ARoadFeverCameraSystem::OnActorLeave( class UPrimitiveComponent* InPrimitiveCompnent, AActor* InOtherActor, UPrimitiveComponent* InOtherPrimitiveComponent, int32 InInt )
 {
 	// If it is the player's camera dummy. [11/12/2015 Matthew Woolley]
 	if ( InOtherActor->IsA( ARoadFeverCharacterNed::StaticClass() ) )

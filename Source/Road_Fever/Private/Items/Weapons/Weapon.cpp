@@ -11,7 +11,7 @@
 AWeapon::AWeapon()
 {
 	// Default weapon properties [20/11/2015 Matthew Woolley]
-	WeaponProperties.bIsCoolingDown = false;
+	WeaponProperties.WeaponState = EWeaponState::Normal;
 	WeaponProperties.CoolDownTime = 1;
 
 
@@ -29,10 +29,10 @@ AWeapon::AWeapon()
 	WeaponProperties.MultiTraceSpread = 12.0f;
 
 	// Make sure all weapons are treated as weapons. [26/7/2016 Matthew Woolley]
-	ItemInfo.bIsWeapon = true;
+	ItemInfo.bWeapon = true;
 
 	// Make all weapons default to a box trace, rather than a line trace. [3/2/2017 Matthew Woolley]
-	WeaponProperties.bIsBoxTrace = true;
+	WeaponProperties.bBoxTrace = true;
 
 	// Allow Actor ticking [20/11/2015 Matthew Woolley]
 	PrimaryActorTick.bCanEverTick = true;
@@ -52,7 +52,7 @@ void AWeapon::OnAttack_Implementation()
 	ARoadFeverCharacterNed* PlayerCharacter = ( ARoadFeverCharacterNed* ) GetWorld()->GetFirstPlayerController()->GetCharacter();
 
 	// Make sure the weapon isn't currently cooling down [20/11/2015 Matthew Woolley]
-	if ( WeaponProperties.bIsReloading || WeaponProperties.bIsCoolingDown || ( ItemInfo.MaxAmmo != 0 && ItemInfo.CurrentAmmo <= 0 ) )
+	if ( WeaponProperties.WeaponState != EWeaponState::Normal || ( ItemInfo.MaxAmmo != 0 && ItemInfo.CurrentAmmo <= 0 ) )
 	{
 		if ( ItemInfo.CurrentAmmo <= 0 )
 		{
@@ -60,9 +60,9 @@ void AWeapon::OnAttack_Implementation()
 		}
 
 		// If this weapon is reloading, but can be interrupted. [27/7/2016 Matthew Woolley]
-		if ( WeaponProperties.bIsReloading )
+		if ( WeaponProperties.WeaponState == EWeaponState::Reloading )
 		{
-			bShouldInterrupt = true;
+			bInterruptReload = true;
 		}
 
 		return;
@@ -112,7 +112,7 @@ void AWeapon::OnAttack_Implementation()
 			bool bHadBlockingHit = NULL;
 
 			// If we are using the box trace. [3/2/2017 Matthew Woolley]
-			if ( WeaponProperties.bIsBoxTrace )
+			if ( WeaponProperties.bBoxTrace )
 			{
 				// Use the box shape in the trace params. [3/2/2017 Matthew Woolley]
 				bHadBlockingHit = World->SweepSingleByChannel( OutHit, Start, End, Rot, WEAPON_TRACE, Shape, Params );
@@ -131,6 +131,7 @@ void AWeapon::OnAttack_Implementation()
 				{
 					// Cast the enemy from the hit Actor. [15/7/2016 Matthew Woolley]
 					ARoadFeverEnemy* HitEnemy = ( ARoadFeverEnemy* ) HitActor;
+					FDamageEvent DamageEvent;
 
 					// If the enemy is further away than this weapon can attack with full damage. [17/7/2016 Matthew Woolley]
 					if ( HitEnemy->GetDistanceTo( this ) > WeaponProperties.EffectiveRange )
@@ -141,13 +142,17 @@ void AWeapon::OnAttack_Implementation()
 						// Get the damage we should deal (the closer to the maximum range distance, the more damage). [17/7/2016 Matthew Woolley]
 						int DamageToDeal = FMath::FRandRange( WeaponProperties.EffectiveRangeMinDamage, WeaponProperties.EffectiveRangeMaxDamage ) - ( WeaponProperties.MaximumRangeMaxDamage * ( ( DistanceToEnemy - WeaponProperties.EffectiveRange ) / WeaponProperties.MaximumRange ) );
 
+
 						// Deal damage to the enemy. [17/7/2016 Matthew Woolley]
-						HitEnemy->TakeDamage( DamageToDeal );
+						HitEnemy->TakeDamage( DamageToDeal, DamageEvent, World->GetFirstPlayerController(), this );
 
 					} else
 					{
+						// Get the damage we should deal (random range between the max and min). [23/3/2017 Matthew Woolley]
+						float DamageToDeal = FMath::FRandRange( WeaponProperties.EffectiveRangeMinDamage, WeaponProperties.EffectiveRangeMaxDamage );
+
 						// Deal damage to the enemy. [17/7/2016 Matthew Woolley]
-						HitEnemy->TakeDamage( FMath::FRandRange( WeaponProperties.EffectiveRangeMinDamage, WeaponProperties.EffectiveRangeMaxDamage ) );
+						HitEnemy->TakeDamage( DamageToDeal, DamageEvent, World->GetFirstPlayerController(), this );
 					}
 				}
 			}
@@ -156,7 +161,8 @@ void AWeapon::OnAttack_Implementation()
 	}
 
 	// Make sure the weapon cools down before shooting again [20/11/2015 Matthew Woolley]
-	WeaponProperties.bIsCoolingDown = true;
+	WeaponProperties.WeaponState = EWeaponState::CoolingDown;
+
 	GetWorld()->GetTimerManager().SetTimer( WeaponCooldownHandle, this, &AWeapon::Cooldown, WeaponProperties.CoolDownTime );
 
 	// If this weapon relies on ammo. [26/7/2016 Matthew Woolley]
@@ -171,7 +177,7 @@ void AWeapon::OnAttack_Implementation()
 // Called when the user wishes to reload; bShouldUseFullClip will be true if they don't hold the reload key. [25/7/2016 Matthew Woolley]
 void AWeapon::Reload( bool bUseFullClip )
 {
-	if ( WeaponProperties.bIsReloading || WeaponProperties.bIsCoolingDown || ItemInfo.CurrentAmmo == ItemInfo.MaxAmmo )
+	if ( WeaponProperties.WeaponState != EWeaponState::Normal || ItemInfo.CurrentAmmo == ItemInfo.MaxAmmo )
 		return;
 
 	// Get the UWorld object to spawn the ammo class. [27/7/2016 Matthew Woolley]
@@ -194,13 +200,13 @@ void AWeapon::Reload( bool bUseFullClip )
 			TemporaryItemInfoHolder->SetActorHiddenInGame( true );
 
 			// Tell the code whether the user requested a full clip or not. [27/7/2016 Matthew Woolley]
-			bShouldUseFullClip = bUseFullClip;
+			bUseFullClip = bUseFullClip;
 
 			// Tell the code we are reloading. [27/7/2016 Matthew Woolley]
-			WeaponProperties.bIsReloading = true;
+			WeaponProperties.WeaponState = EWeaponState::Reloading;
 
 			// If this weapon uses a clip. [27/7/2016 Matthew Woolley]
-			if ( TemporaryItemInfoHolder->ItemInfo.bIsClip )
+			if ( TemporaryItemInfoHolder->ItemInfo.bClip )
 			{
 				GetWorld()->GetTimerManager().SetTimer( WeaponReloadHandle, this, &AWeapon::FullReload, WeaponProperties.ReloadTime, false );
 			} else
@@ -214,7 +220,7 @@ void AWeapon::Reload( bool bUseFullClip )
 // Called when the weapon has cooled down. [27/7/2016 Matthew Woolley]
 void AWeapon::Cooldown()
 {
-	WeaponProperties.bIsCoolingDown = false;
+	WeaponProperties.WeaponState = EWeaponState::Normal;
 }
 
 // Called when the weapon used is using a clip and requires a "full-reload" each time. [27/7/2016 Matthew Woolley]
@@ -225,8 +231,8 @@ void AWeapon::FullReload()
 
 	// Setup its inventory properties. [27/7/2016 Matthew Woolley]
 	FInventoryItem ClipToAdd;
-	ClipToAdd.bIsClip = true;
-	ClipToAdd.bIsEquipable = false;
+	ClipToAdd.bClip = true;
+	ClipToAdd.bEquipable = false;
 	ClipToAdd.CurrentAmmo = ItemInfo.CurrentAmmo;
 	ClipToAdd.DisplayIcon = TemporaryItemInfoHolder->ItemInfo.DisplayIcon;
 	ClipToAdd.DisplayName = TemporaryItemInfoHolder->ItemInfo.DisplayName;
@@ -257,7 +263,7 @@ void AWeapon::FullReload()
 		if ( LargestAmmoCountNumber <= PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo && TemporaryItemInfoHolder->ItemInfo.DisplayName == PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].DisplayName )
 		{
 			// If the user has requested a partial reload AND this is a full clip. [27/7/2016 Matthew Woolley]
-			if ( !bShouldUseFullClip && PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo == ItemInfo.MaxAmmo )
+			if ( !bUseFullClip && PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo == ItemInfo.MaxAmmo )
 			{
 				// Store the full clip in case there is an issue with the partial clip. [27/7/2016 Matthew Woolley]
 				FullClip = PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ];
@@ -304,7 +310,7 @@ void AWeapon::FullReload()
 
 	// Tell the code the weapon is no longer reloading. [27/7/2016 Matthew Woolley]
 	PlayerCharacter->CharactersInventory->ItemSlots[ PlayerCharacter->CharactersInventory->EquippedItemsSlot ].CurrentAmmo = ItemInfo.CurrentAmmo;
-	WeaponProperties.bIsReloading = false;
+	WeaponProperties.WeaponState = EWeaponState::Normal;
 }
 
 // Called when the weapon used is loaded one-shot at a time. [27/7/2016 Matthew Woolley]
@@ -314,7 +320,7 @@ void AWeapon::SingleRoundReload()
 	if ( ItemInfo.CurrentAmmo == ItemInfo.MaxAmmo )
 	{
 		// Stop the gun from reloading further. [27/7/2016 Matthew Woolley]
-		WeaponProperties.bIsReloading = false;
+		WeaponProperties.WeaponState = EWeaponState::Normal;
 		GetWorld()->GetTimerManager().ClearTimer( WeaponReloadHandle );
 		TemporaryItemInfoHolder->Destroy();
 	}
@@ -341,17 +347,17 @@ void AWeapon::SingleRoundReload()
 	if ( !bFoundAmmo || ItemInfo.CurrentAmmo == ItemInfo.MaxAmmo )
 	{
 		// Stop the gun from reloading further. [27/7/2016 Matthew Woolley]
-		WeaponProperties.bIsReloading = false;
+		WeaponProperties.WeaponState = EWeaponState::Normal;
 		GetWorld()->GetTimerManager().ClearTimer( WeaponReloadHandle );
 		TemporaryItemInfoHolder->Destroy();
 	}
 
-	if ( bShouldInterrupt )
+	if ( bInterruptReload )
 	{
-		WeaponProperties.bIsReloading = false;
+		WeaponProperties.WeaponState = EWeaponState::Normal;
 		GetWorld()->GetTimerManager().ClearTimer( WeaponReloadHandle );
 		TemporaryItemInfoHolder->Destroy();
-		bShouldInterrupt = false;
+		bInterruptReload = false;
 	}
 }
 

@@ -2,10 +2,7 @@
 
 #include "Road_Fever.h"
 #include "Public/Inventory/Inventory.h"
-#include "Public/Items/Item.h"
-#include "Public/UMG.h"
-#include "SlateBasics.h"
-#include "SlateExtras.h"
+#include "Public/Items/Ammo/Ammo.h"
 #include "Characters/RoadFeverCharacterNed.h"
 
 
@@ -13,7 +10,7 @@
 // Sets default values for this component's properties
 UInventory::UInventory()
 {
-	bIsOpen = false;
+	bOpen = false;
 	PrimaryComponentTick.bCanEverTick = true;
 	PrimaryComponentTick.bTickEvenWhenPaused = true;
 }
@@ -29,16 +26,21 @@ void UInventory::TickComponent( float DeltaTime, enum ELevelTick TickType, FActo
 		bool bHasItems = ( SlotItem.CurrentItemStack > 0 );
 
 		// True if there is ammo in this/these clip(s). [10/8/2016 Matthew Woolley]
-		bool bHasAmmo =  SlotItem.bIsAmmo ? ( ( SlotItem.CurrentAmmo > 0 ) && ( !SlotItem.bIsWeapon ) ) : bHasItems;
+		bool bHasAmmo = SlotItem.bClip ? ( ( SlotItem.CurrentAmmo > 0 ) && ( !SlotItem.bWeapon ) ) : bHasItems;
+
+		if ( SlotItem.ItemClass->IsChildOf( AAmmo::StaticClass() ) )
+		{
+			GEngine->AddOnScreenDebugMessage( -1, 5.f, FColor::Orange, TEXT( "Ammo" ) );
+		}
 
 		// If there are no items, or no ammo. [10/8/2016 Matthew Woolley]
 		if ( !bHasItems || !bHasAmmo )
 		{
 			// Empty the slot. [10/8/2016 Matthew Woolley]
-			ItemSlots[ iItemSlotIterator ].bIsClip = false;
-			ItemSlots[ iItemSlotIterator ].bIsEquipable = false;
-			ItemSlots[ iItemSlotIterator ].bIsEquipped = false;
-			ItemSlots[ iItemSlotIterator ].bIsWeapon = false;
+			ItemSlots[ iItemSlotIterator ].bClip = false;
+			ItemSlots[ iItemSlotIterator ].bEquipable = false;
+			ItemSlots[ iItemSlotIterator ].bEquipped = false;
+			ItemSlots[ iItemSlotIterator ].bWeapon = false;
 			ItemSlots[ iItemSlotIterator ].CurrentAmmo = 0;
 			ItemSlots[ iItemSlotIterator ].CurrentItemStack = 0;
 			ItemSlots[ iItemSlotIterator ].DisplayIcon = nullptr;
@@ -57,10 +59,10 @@ void UInventory::ToggleInventory()
 	ARoadFeverCharacterNed* PlayerCharacter = ( ARoadFeverCharacterNed* ) GetWorld()->GetFirstPlayerController()->GetPawn();
 
 	// If the game should allow input. [29/7/2016 Matthew Woolley]
-	if ( !PlayerCharacter->bIsAiming && ( PlayerCharacter->GameHasFocus() || bIsOpen ) )
+	if ( !PlayerCharacter->bIsAiming && ( PlayerCharacter->GameHasFocus() || bOpen ) )
 	{
-		bIsOpen = !bIsOpen;
-		bIsOpen ? OpenInv() : CloseInv();
+		bOpen = !bOpen;
+		bOpen ? OpenInv() : CloseInv();
 	}
 }
 

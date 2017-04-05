@@ -2,6 +2,7 @@
 
 #include "Road_Fever.h"
 #include "RoadFeverEnemy.h"
+#include "Public/Characters/RoadFeverCharacterNed.h"
 
 
 
@@ -29,7 +30,7 @@ void ARoadFeverEnemy::BeginPlay()
 		int EnemyMeshToUse = FMath::FRandRange( 0, EnemyMeshes.Num() );
 
 		// Set it as the mesh for this instance. [3/2/2017 Matthew Woolley]
-		GetMesh()->SetSkeletalMesh( EnemyMeshes[EnemyMeshToUse] );
+		GetMesh()->SetSkeletalMesh( EnemyMeshes[ EnemyMeshToUse ] );
 	}
 
 	Super::BeginPlay();
@@ -42,8 +43,11 @@ void ARoadFeverEnemy::Die_Implementation()
 }
 
 // Takes away health from this enemy. [15/7/2016 Matthew Woolley]
-void ARoadFeverEnemy::TakeDamage_Implementation( int32 InDamage )
+float ARoadFeverEnemy::TakeDamage( float InDamage, struct FDamageEvent const& InDamageEvent, class AController* InEventInstigator, class AActor* InDamageCauser )
 {
+	// Call base functionality [23/3/2017 Matthew Woolley]
+	Super::TakeDamage( InDamage, InDamageEvent, InEventInstigator, InDamageCauser );
+
 	// Deal damage to the enemy. [8/2/2017 Matthew Woolley]
 	EnemyHealth -= InDamage;
 
@@ -52,4 +56,27 @@ void ARoadFeverEnemy::TakeDamage_Implementation( int32 InDamage )
 	{
 		Die();
 	}
+
+	// Return the value of this enemy's health. [23/3/2017 Matthew Woolley]
+	return EnemyHealth;
+}
+
+// Whether the player is in the inventory, or item confirmation screen. [17/3/2017 Matthew Woolley]
+const bool ARoadFeverEnemy::IsPlayerPaused()
+{
+	if (GetWorld() && GetWorld()->GetFirstPlayerController())
+	{
+		// Get Ned's character from the world. [17/3/2017 Matthew Woolley]
+		ARoadFeverCharacterNed* PlayerCharacter = Cast<ARoadFeverCharacterNed>( GetWorld()->GetFirstPlayerController()->GetPawn() );
+
+		// If we got Ned from the level. [17/3/2017 Matthew Woolley]
+		if ( PlayerCharacter )
+		{
+			// Return whether the player has the game in focus or not. [17/3/2017 Matthew Woolley]
+			return !PlayerCharacter->GameHasFocus();
+		}
+	}
+
+	// If we didn't find Ned. [17/3/2017 Matthew Woolley]
+	return false;
 }

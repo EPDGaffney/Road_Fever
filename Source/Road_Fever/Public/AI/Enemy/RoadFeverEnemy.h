@@ -26,10 +26,8 @@ public:
 	void Die_Implementation();
 
 	// Takes away health from this enemy. [15/7/2016 Matthew Woolley]
-	UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Attack" )
-	void TakeDamage( int32 InDamage );
-	void TakeDamage_Implementation( int32 InDamage );
-
+	virtual float TakeDamage( float InDamage, struct FDamageEvent const& InDamageEvent, class AController* InEventInstigator, class AActor* InDamageCauser ) override;
+	
 	// The speed this enemy can move. [23/1/2017 Matthew Woolley]
 	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Movement" )
 	float MoveSpeed;
@@ -43,6 +41,10 @@ public:
 	TSubclassOf<class AItem> ItemsInInventory;
 
 protected:
+	// Whether the player is in the inventory, or item confirmation screen. [17/3/2017 Matthew Woolley]
+	UFUNCTION( BlueprintPure, Category = "UI" )
+	const bool IsPlayerPaused();
+
 	// The slowest this enemy can move. [23/1/2017 Matthew Woolley]
 	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Movement" )
 	float MinMoveSpeed;

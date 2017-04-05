@@ -42,15 +42,15 @@ public:
 
 	// Whether or not the item in this slot can be equipped. [13/7/2016 Matthew Woolley]
 	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Equipping" )
-	bool bIsEquipable;
+	bool bEquipable;
 
 	// Whether or not this item is equipped. [13/7/2016 Matthew Woolley]
 	UPROPERTY( BlueprintReadWrite, Category = "Equipping" )
-	bool bIsEquipped;
+	bool bEquipped;
 
 	// Whether or not this item is a weapon. [24/7/2016 Matthew Woolley]
 	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Attack" )
-	bool bIsWeapon;
+	bool bWeapon;
 
 	// The maximum amount of times this weapon can be used before reloading (if it is a weapon). [24/7/2016 Matthew Woolley]
 	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Attack" )
@@ -62,11 +62,7 @@ public:
 
 	// Whether this ammo type is a clip. [25/7/2016 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack" )
-	bool bIsClip;
-
-	// Whether or not this is ammo. [6/9/2016 Matthew Woolley]
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "" )
-	bool bIsAmmo;
+	bool bClip;
 };
 
 
@@ -128,7 +124,7 @@ public:
 
 	// Whether or not this item can be picked up (if it is equipped, the response is false). [20/7/2016 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Item" )
-	bool bCanBePickedUp;
+	bool bPickupable;
 
 protected:
 	// The box that the Character uses to detect this item on the ground. [14/7/2016 Matthew Woolley]
