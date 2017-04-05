@@ -4,7 +4,7 @@ Click [here](https://github.com/FortuneMatthew/Road_Fever/blob/master/github%20m
 # Project Prerequisites
 To get the project files, one needs the following things installed:
 * [Visual Studio 2015](https://1drv.ms/u/s!AhIK9Eqc9f5mgcglW_t37wRYy7OLNQ)
-* [Unreal Engine 4.15.0](https://accounts.unrealengine.com/register]
+* [Unreal Engine 4.15.0](https://accounts.unrealengine.com/register)
 * Substance Painter for Unreal Engine 4.15.0 (Downloaded via launcher)
 
 # Generating the Project-Files
