@@ -6,7 +6,10 @@
 
 
 
-// The current state of the weapon. [19/3/2017 Matthew Woolley]
+/*
+ *	Used by the weapon code to determine whether or not the weapon is available to attack or not.
+ *	11/4/2017 - Matthew Woolley
+ */
 UENUM( BlueprintType )
 enum class EWeaponState : uint8
 {
@@ -18,6 +21,10 @@ enum class EWeaponState : uint8
 
 
 // The properties to customize how the weapon behaves [20/11/2015 Matthew Woolley]
+/*
+ *	Used to customise weapon behaviour, such as cool down length, damage etc..
+ *	11/4/2017 - Matthew Woolley
+ */
 USTRUCT( BlueprintType )
 struct FWeaponProperties
 {

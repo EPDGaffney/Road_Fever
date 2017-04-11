@@ -6,7 +6,10 @@
 
 
 
-// What is required to create a certain drug. [6/9/2016 Matthew Woolley]
+/*
+ *	The recipe used when any given item is combined with another.
+ *	11/4/2017 - Matthew Woolley
+ */
 USTRUCT( BlueprintType )
 struct FCrafting
 {

@@ -5,7 +5,10 @@
 #include "CameraPositioning.generated.h"
 
 
-// Handles the position of the camera in-game. [11/12/2015 Matthew Woolley]
+/*
+ *	Stores the location and rotation of any-given camera placed in the level.
+ *	11/4/2017 - Matthew Woolley
+ */
 USTRUCT( BlueprintType )
 struct FCameraPositioning
 {

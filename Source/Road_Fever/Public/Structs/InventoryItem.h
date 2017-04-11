@@ -4,9 +4,12 @@
 
 #include "InventoryItem.generated.h"
 
+
+
 /*
-* The struct that controls default info for elements of the inventory (inventory slots)
-*/
+ *	The default pieces of info that each item and slot within an inventory needs.
+ *	11/4/2017 - Matthew Woolley
+ */
 USTRUCT()
 struct FInventoryItem
 {
