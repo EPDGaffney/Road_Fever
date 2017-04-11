@@ -3,23 +3,8 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
+#include "Structs/CameraPositioning.h"
 #include "RoadFeverCameraSystem.generated.h"
-
-// Handles the position of the camera in-game. [11/12/2015 Matthew Woolley]
-USTRUCT( BlueprintType )
-struct FCameraPositioning
-{
-	GENERATED_USTRUCT_BODY()
-
-public:
-	// The location for this camera. [11/12/2015 Matthew Woolley]
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Rendering" )
-	FVector Location;
-
-	// The rotation of this camera. [11/12/2015 Matthew Woolley]
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Rendering" )
-	FRotator Rotation;
-};
 
 UCLASS()
 class ROAD_FEVER_API ARoadFeverCameraSystem : public AActor
@@ -27,17 +12,36 @@ class ROAD_FEVER_API ARoadFeverCameraSystem : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Called when this Actor enters memory. [11/12/2015 Matthew Woolley]
+	/*
+	*	Setup the root component so this Actor has world positioning.
+	*	Setup a trigger area so that when the player enters/leaves it, the appropriate function gets called.
+	*	Setup a camera so that one can see in the editor where that camera points to.
+	*	11/4/2017 - Matthew Woolley
+	*/
 	ARoadFeverCameraSystem();
 
-	// Called at the beginning of game-play. [11/12/2015 Matthew Woolley]
+	/*
+	*	Calls any BP implemented version of this function.
+	*	Stores the camera's position in a variable so that it can be accessed later.
+	*	Destroys the camera from memory.
+	*	If the camera is the primary one in the level (the camera used when the level loads), use it straight away.
+	*	11/4/2017 - Matthew Woolley
+	*/
 	virtual void BeginPlay() override;
 
-	// Called when something enters this camera's trigger area. [11/12/2015 Matthew Woolley]
+	/*
+	*	Sets the position of the character's camera so that it uses the location setup by the camera placed in the editor.
+	*	Uses the ReverTo variable for when the player leaves this camera detector.
+	*	11/4/2017 - Matthew Woolley
+	*/
 	UFUNCTION( BlueprintCallable, Category = "Detection" )
 	void OnActorEnter( class UPrimitiveComponent* InPrimitiveComponent, AActor* InOtherActor, UPrimitiveComponent* InOtherPrimitiveComponent, int32 InInt, bool InSweepResult, const FHitResult& InFHit );
 
-	// Called when something leaves this camera's trigger area. [20/1/2016 Matthew Woolley]
+	/*
+	*	De-assigns the RevertTo variable if its value is that of this camera.
+	*	If the RevertTo variable refers to a different camera, and this is the camera in use, set the camera in the RevertTo variabla to be the one being used.
+	*	11/4/2017 - Matthew Woolley
+	*/
 	UFUNCTION( BlueprintCallable, Category = "Detection" )
 	void OnActorLeave( class UPrimitiveComponent* InPrimitiveCompnent, AActor* InOtherActor, UPrimitiveComponent* InOtherPrimitiveComponent, int32 InInt );
 

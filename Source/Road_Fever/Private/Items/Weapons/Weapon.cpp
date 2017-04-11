@@ -8,6 +8,12 @@
 
 
 
+/*
+ *	Sets up default WeaponProperties for all new weapons (to be altered in Blueprint for each weapon).
+ *	Setup default ItemInfo for use within the inventory and world.
+ *	Allow the Tick function to fire every frame.
+ *	11/4/2017 - Matthew Woolley
+ */
 AWeapon::AWeapon()
 {
 	// Default weapon properties [20/11/2015 Matthew Woolley]
@@ -28,17 +34,20 @@ AWeapon::AWeapon()
 	WeaponProperties.NumberOfTraces = 1;
 	WeaponProperties.MultiTraceSpread = 12.0f;
 
-	// Make sure all weapons are treated as weapons. [26/7/2016 Matthew Woolley]
-	ItemInfo.bWeapon = true;
-
 	// Make all weapons default to a box trace, rather than a line trace. [3/2/2017 Matthew Woolley]
 	WeaponProperties.bBoxTrace = true;
+
+	// Make sure all weapons are treated as weapons. [26/7/2016 Matthew Woolley]
+	ItemInfo.bWeapon = true;
 
 	// Allow Actor ticking [20/11/2015 Matthew Woolley]
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-// Called when this object is destroyed. [27/7/2016 Matthew Woolley]
+/*
+ *	Clears timers before this weapon is removed from memory.
+ *	11/4/2017 - Matthew Woolley
+ */
 void AWeapon::EndPlay( const EEndPlayReason::Type InEndPlayReason )
 {
 	// Stop any weapon timers that may be going. [27/7/2016 Matthew Woolley]
@@ -46,7 +55,13 @@ void AWeapon::EndPlay( const EEndPlayReason::Type InEndPlayReason )
 	GetWorld()->GetTimerManager().ClearTimer( WeaponReloadHandle );
 }
 
-// Called when the player wishes to attack with this weapon [20/11/2015 Matthew Woolley]
+/*
+ *	If the weapon is able to fire:
+ *		play a shooting animation;
+ *		create a line-trace for each trace and slightly angle it;
+ *		If an enemy was found, deal damage to it.
+ *	11/4/2017 - Matthew Woolley
+ */
 void AWeapon::OnAttack_Implementation()
 {
 	ARoadFeverCharacterNed* PlayerCharacter = ( ARoadFeverCharacterNed* ) GetWorld()->GetFirstPlayerController()->GetCharacter();
@@ -174,7 +189,10 @@ void AWeapon::OnAttack_Implementation()
 	}
 }
 
-// Called when the user wishes to reload; bShouldUseFullClip will be true if they don't hold the reload key. [25/7/2016 Matthew Woolley]
+/*
+ *	Conduit function to determine whether to call FullReload or SingleRoundReload.
+ *	11/4/2017 - Matthew Woolley
+ */
 void AWeapon::Reload( bool bUseFullClip )
 {
 	if ( WeaponProperties.WeaponState != EWeaponState::Normal || ItemInfo.CurrentAmmo == ItemInfo.MaxAmmo )
@@ -217,13 +235,10 @@ void AWeapon::Reload( bool bUseFullClip )
 	}
 }
 
-// Called when the weapon has cooled down. [27/7/2016 Matthew Woolley]
-void AWeapon::Cooldown()
-{
-	WeaponProperties.WeaponState = EWeaponState::Normal;
-}
-
-// Called when the weapon used is using a clip and requires a "full-reload" each time. [27/7/2016 Matthew Woolley]
+/*
+ *	This is called for weapons that use a clip and require a full reload each time a reload has started.
+ *	11/4/2017 - Matthew Woolley
+ */
 void AWeapon::FullReload()
 {
 	// Get Ned so we can use his inventory later. [25/7/2016 Matthew Woolley]
@@ -313,7 +328,10 @@ void AWeapon::FullReload()
 	WeaponProperties.WeaponState = EWeaponState::Normal;
 }
 
-// Called when the weapon used is loaded one-shot at a time. [27/7/2016 Matthew Woolley]
+/*
+ *	This is called for weapons that use single rounds to reload (such as a shotgun) and that can be interupted.
+ *	11/4/2017 - Matthew Woolley
+ */
 void AWeapon::SingleRoundReload()
 {
 	// If the gun has full ammo. [27/7/2016 Matthew Woolley]
@@ -361,3 +379,11 @@ void AWeapon::SingleRoundReload()
 	}
 }
 
+/*
+*	Changes the weapon state so that the weapon can now fire normally.
+*	11/4/2017 - Matthew Woolley
+*/
+void AWeapon::Cooldown()
+{
+	WeaponProperties.WeaponState = EWeaponState::Normal;
+}

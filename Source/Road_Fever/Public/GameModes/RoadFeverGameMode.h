@@ -17,5 +17,4 @@ public:
 	// Called when this GameMode enters memory. [11/12/2015 Matthew Woolley]
 	ARoadFeverGameMode();
 	
-	virtual bool SetPause( APlayerController* PC, FCanUnpause CanUnpauseDelegate /* = FCanUnpause() */ ) override;
 };

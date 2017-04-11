@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
-#include "Items/Item.h"
+#include "Structs/InventoryItem.h"
 #include "Inventory.generated.h"
 
 
@@ -13,23 +13,62 @@ class ROAD_FEVER_API UInventory : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
+	/*
+	*	Sets the inventory to default as closed.
+	*	Sets up the ticking so that the TickComponent function fires even when paused.
+	*	11/4/2017 - Matthew Woolley
+	*/
 	UInventory();
 
-	// Called every frame. [10/8/2016 Matthew Woolley]
+	/*
+	*	Ensures that slots with no ammo or stack size is removed from the inventory.
+	*	11/4/2017 - Matthew Woolley
+	*/
 	virtual void TickComponent( float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction ) override;
 
-	// Called when the player toggles the inventory. [21/11/2015 Matthew Woolley]
+	/*
+	*	Toggles the state of the inventory, then calls the function that opens
+	*	and closes the UI.
+	*	11/4/2017 - Matthew Woolley
+	*/
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void ToggleInventory();
 
-	// Called when the player opens the inventory [20/11/2015 Andreas Gustavsen]
+	/*
+	*	Spawns the UI for the player to interact with.
+	*	Sets the input mode to focus onto the UI.
+	*	Shows the mouse cursor.
+	*	11/4/2017 - Matthew Woolley
+	*/
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void OpenInv();
 
-	// Called when the player closes the inventory [20/11/2015 Andreas Gustavsen]
+	/*
+	*	Destroys the UI.
+	*	Sets the input mode to focus into the game.
+	*	Hides the mouse cursor.
+	*	11/4/2017 - Matthew Woolley
+	*/
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void CloseInv();
+
+	/*
+	*	Shows a confirmation screen so that the user can pickup or cancel an item interaction.
+	*	Sets the focus of the game onto the UI.
+	*	Shows the mouse cursor
+	*	11/4/2017 - Matthew Woolley
+	*/
+	UFUNCTION( BlueprintCallable, Category = "Pickup" )
+	void OpenPickupConfirmation();
+
+	/*
+	*	Destroys the UI.
+	*	Sets the input mode to focus into the game.
+	*	Hides the mouse cursor.
+	*	11/4/2017 - Matthew Woolley
+	*/
+	UFUNCTION( BlueprintCallable, Category = "Pickup" )
+	void ClosePickupConfirmation();
 
 	// Whether or not the inventory is open. [21/11/2015 Matthew Woolley]
 	UPROPERTY(BlueprintReadWrite, Category = "Inventory")
@@ -70,12 +109,4 @@ public:
 	// The current instance of the confirmation screen that is in game. [22/7/2016 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Pickup" )
 	UUserWidget* ItemPickupConfirmationInstance;
-
-	// Called when to ask the player whether or not they wish to pick the item. [22/7/2016 Matthew Woolley]
-	UFUNCTION( BlueprintCallable, Category = "Pickup" )
-	void OpenPickupConfirmation();
-
-	// Called when the confirmation screen should be dismissed. [22/7/2016 Matthew Woolley]
-	UFUNCTION( BlueprintCallable, Category = "Pickup" )
-	void ClosePickupConfirmation();
 };

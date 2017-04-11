@@ -9,7 +9,16 @@
 
 
 
-// Called when this Character enters memory. [10/12/2015 Matthew Woolley]
+/*
+ *	Sets up the collection area for collecting items.
+ *	Sets up the shooting point for weapons' ray tracing.
+ *	Sets up the default settings like sensitivity.
+ *	Creates the camera that is used by the CameraSystem.
+ *	Creates the inventory for later use.
+ *	Sets up default stats like Health and BloodLoss.
+ *	Turns ticking on.
+ *	11/4/2017 - Matthew Woolley
+ */
 ARoadFeverCharacterNed::ARoadFeverCharacterNed()
 {
 	// Create the collection area. [10/12/2015 Matthew Woolley]
@@ -42,7 +51,11 @@ ARoadFeverCharacterNed::ARoadFeverCharacterNed()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-// Called every frame. [10/12/2015 Matthew Woolley]
+/*
+ *	Switches animations based on whether anything is equipped or whether the player is aiming.
+ *	Turns the character if the DegreesToTurn is not 0 or less (used for quick turning).
+ *	11/4/2017 - Matthew Woolley
+ */
 void ARoadFeverCharacterNed::Tick( float InDeltaSeconds )
 {
 	// Call the initial implementation. [10/12/2015 Matthew Woolley]
@@ -87,7 +100,10 @@ void ARoadFeverCharacterNed::Tick( float InDeltaSeconds )
 	}
 }
 
-// Called to bind player input. [10/12/2015 Matthew Woolley]
+/*
+ *	Sets up the default input bindings.
+ *	11/4/2017 - Matthew Woolley
+ */
 void ARoadFeverCharacterNed::SetupPlayerInputComponent( class UInputComponent* InInputComponent )
 {
 	Super::SetupPlayerInputComponent( InInputComponent );
@@ -116,7 +132,10 @@ void ARoadFeverCharacterNed::SetupPlayerInputComponent( class UInputComponent* I
 	}
 }
 
-// Returns the text that the inventory screen should display for the health value. [25/12/2015 Matthew Woolley]
+/*
+ *	Returns a string that is used by the UI to display the current state of the player's health.
+ *	11/4/2017 - Matthew Woolley
+ */
 FString ARoadFeverCharacterNed::UpdateHealthMessage()
 {
 	// If the player has more than 75% of their health. [25/12/2015 Matthew Woolley]
@@ -135,7 +154,10 @@ FString ARoadFeverCharacterNed::UpdateHealthMessage()
 	}
 }
 
-// Returns the text that the inventory screen should display for the blood loss value. [25/12/2015 Matthew Woolley]
+/*
+*	Returns a string that is used by the UI to display the current state of the player's blood loss.
+*	11/4/2017 - Matthew Woolley
+*/
 FString ARoadFeverCharacterNed::UpdateBloodMessage()
 {
 	// If the player has more than 75% of blood loss. [25/12/2015 Matthew Woolley]
@@ -154,6 +176,12 @@ FString ARoadFeverCharacterNed::UpdateBloodMessage()
 	}
 }
 
+/*
+ *	Finds a stack that the item being added can be added into (true).
+ *	Finds an empty slot that the item being added can be added into (true).
+ *	Leaves the item if there was no space for it (false).
+ *	11/4/2017 - Matthew Woolley
+ */
 bool ARoadFeverCharacterNed::AddItemToInventory( struct FInventoryItem ItemToAdd )
 {
 	// For each inventory slot. [5/3/2016 Matthew Woolley]
@@ -226,13 +254,20 @@ bool ARoadFeverCharacterNed::AddItemToInventory( struct FInventoryItem ItemToAdd
 	return false;
 }
 
-// Returns true if the game has focus (no menu is open, no dialog etc.). [5/4/2016 Matthew Woolley]
+/*
+ *	Whether or not this player is in a menu, paused (true), or playing (false).
+ *	11/4/2017 - Matthew Woolley
+ */
 const bool ARoadFeverCharacterNed::GameHasFocus()
 {
 	return ( !CharactersInventory->bOpen && !CharactersInventory->ItemPickupConfirmationInstance );
 }
 
-// Moves the Character in the X axis. [10/12/2015 Matthew Woolley]
+/*
+ *	If the player isn't aiming, it assigns the MoveForwardAxis variable to be equal to that of the player input
+ *	the AnimationBP then uses this for RootMotion and moves the character Forward (+) and backward (-).
+ *	11/4/2017 - Matthew Woolley
+ */
 void ARoadFeverCharacterNed::MoveForward( float InInputVal )
 {
 	if ( bIsAiming == false && GameHasFocus() )
@@ -244,7 +279,11 @@ void ARoadFeverCharacterNed::MoveForward( float InInputVal )
 	}
 }
 
-// Called when the player wishes to turn. [10/12/2015 Matthew Woolley]
+/*
+ *	If the player is allowed to move, turn the character right (+) or left (-) with the sensitivity
+ *	that has been set.
+ *	11/4/2017 - Matthew Woolley
+ */
 void ARoadFeverCharacterNed::Turn( float InInputVal )
 {
 	if ( !GetCharacterMovement()->MovementMode == EMovementMode::MOVE_None )
@@ -253,7 +292,10 @@ void ARoadFeverCharacterNed::Turn( float InInputVal )
 	}
 }
 
-// Called when the player attempts to interact. [10/12/2015 Matthew Woolley]
+/*
+ *	If the game has focus, and the player is not aiming, interact with the nearest item.
+ *	11/4/2017 - Matthew Woolley
+ */
 void ARoadFeverCharacterNed::OnCharacterInteract_Implementation()
 {
 	if ( !GameHasFocus() || bIsAiming )
@@ -330,7 +372,11 @@ void ARoadFeverCharacterNed::OnCharacterInteract_Implementation()
 	}
 }
 
-// Called when the player wishes to sprint. [10/12/2015 Matthew Woolley]
+/*
+ *	If the game isn't paused and the player isn't aiming, set Sprinting to true
+ *	so that the AnimationBP can change the animation to a sprinting one.
+ *	11/4/2017 - Matthew Woolley
+ */
 void ARoadFeverCharacterNed::OnBeginSprint()
 {
 	if ( !GameHasFocus() || bIsAiming )
@@ -341,13 +387,19 @@ void ARoadFeverCharacterNed::OnBeginSprint()
 	bIsSprinting = true;
 }
 
-// Called when the player stops sprinting. [10/12/2015 Matthew Woolley]
+/*
+ *	Set Sprinting to false so that the AnimationBP uses default walking animations.
+ *	11/4/2017 - Matthew Woolley
+ */
 void ARoadFeverCharacterNed::OnEndSprint()
 {
 	bIsSprinting = false;
 }
 
-// Called when the player wishes to do a quick-turn. [10/12/2015 Matthew Woolley]
+/*
+ *	Sets the DegreesToTurn to 180° so that the player turns around (done in Tick).
+ *	11/4/2017 - Matthew Woolley
+ */
 void ARoadFeverCharacterNed::OnBeginQuickTurn()
 {
 	if ( !GameHasFocus() || bIsAiming )
@@ -361,7 +413,10 @@ void ARoadFeverCharacterNed::OnBeginQuickTurn()
 	}
 }
 
-// Called when the player begins aiming. [10/12/2015 Matthew Woolley]
+/*
+ *	When the player begins aiming, find the nearest enemy and look at it.
+ *	11/4/2017 - Matthew Woolley
+ */
 void ARoadFeverCharacterNed::OnBeginAim()
 {
 	if ( GameHasFocus() && CharactersInventory->EquippedItem )
@@ -402,13 +457,20 @@ void ARoadFeverCharacterNed::OnBeginAim()
 	}
 }
 
-// Called when the player stops aiming. [10/12/2015 Matthew Woolley]
+/*
+ *	Used so that the animation can go back to not-aiming and so that the player can move again.
+ *	11/4/2017 - Matthew Woolley
+ */
 void ARoadFeverCharacterNed::OnEndAim()
 {
 	bIsAiming = false;
 }
 
-// Calls the attack function on the currently equipped weapon. [14/7/2016 Matthew Woolley]
+/*
+ *	Fires a ray-trace from the weapon which then determines whether and enemy was hit.
+ *	Logic for shooting is done within the Weapon class.
+ *	11/4/2017 - Matthew Woolley
+ */
 void ARoadFeverCharacterNed::OnAttack()
 {
 	if ( !GameHasFocus() || !bIsAiming || !CharactersInventory->EquippedItem && !( AWeapon* ) CharactersInventory->EquippedItem )
@@ -423,7 +485,11 @@ void ARoadFeverCharacterNed::OnAttack()
 	}
 }
 
-// Controls the character's up and down aiming. [8/7/2016 Matthew Woolley]
+/*
+ *	Controls the aim-offset so that the weapon can aim up and down
+ *	TODO: Fix this. The shooting animation call stops the aim offset working.
+ *	11/4/2017 - Matthew Woolley
+ */
 void ARoadFeverCharacterNed::AimUp_Down( float InInputVal )
 {
 	if ( bIsAiming )
@@ -435,7 +501,11 @@ void ARoadFeverCharacterNed::AimUp_Down( float InInputVal )
 	}
 }
 
-// Auto-aims at the enemy that is the right of the currently-aimed at enemy. [24/7/2016 Matthew Woolley]
+/*
+ *	Finds which enemy is to the right of the enemy you are currently aiming at
+ *	then aims at it.
+ *	11/4/2017 - Matthew Woolley
+ */
 void ARoadFeverCharacterNed::SwitchToNextEnemy()
 {
 	if ( GameHasFocus() && bIsAiming && CharactersInventory->EquippedItem )
@@ -498,7 +568,10 @@ void ARoadFeverCharacterNed::SwitchToNextEnemy()
 	}
 }
 
-// Called when the player wishes to reload. [26/7/2016 Matthew Woolley]
+/*
+ *	Determines whether the player wishes to reload with a full clip or with a half-full clip.
+ *	11/4/2017 - Matthew Woolley
+ */
 void ARoadFeverCharacterNed::Reload( float InInputVal )
 {
 	// Only allow reloading if the weapon is being aimed. [8/8/2016 Matthew Woolley]
@@ -554,7 +627,11 @@ void ARoadFeverCharacterNed::Reload( float InInputVal )
 	}
 }
 
-// Gets all the enemies that aren't blocked by walls, etc.. [24/7/2016 Matthew Woolley]
+/*
+ *	Gets all the enemies within the level that aren't being blocked by anything
+ *	such as a wall.
+ *	11/4/2017 - Matthew Woolley
+ */
 TArray<class AActor*> ARoadFeverCharacterNed::GetEnemies()
 {
 	// The enemies that can be aimed at. [17/7/2016 Matthew Woolley]

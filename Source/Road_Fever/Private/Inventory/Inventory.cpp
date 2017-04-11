@@ -7,7 +7,11 @@
 
 
 
-// Sets default values for this component's properties
+/*
+ *	Sets the inventory to default as closed.
+ *	Sets up the ticking so that the TickComponent function fires even when paused.
+ *	11/4/2017 - Matthew Woolley
+ */
 UInventory::UInventory()
 {
 	bOpen = false;
@@ -15,7 +19,10 @@ UInventory::UInventory()
 	PrimaryComponentTick.bTickEvenWhenPaused = true;
 }
 
-// Called every frame. [10/8/2016 Matthew Woolley]
+/*
+ *	Ensures that slots with no ammo or stack size is removed from the inventory.
+ *	11/4/2017 - Matthew Woolley
+ */
 void UInventory::TickComponent( float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction )
 {
 	for ( int32 iItemSlotIterator = 0; iItemSlotIterator < ItemSlots.Num() ; iItemSlotIterator++)
@@ -27,11 +34,6 @@ void UInventory::TickComponent( float DeltaTime, enum ELevelTick TickType, FActo
 
 		// True if there is ammo in this/these clip(s). [10/8/2016 Matthew Woolley]
 		bool bHasAmmo = SlotItem.bClip ? ( ( SlotItem.CurrentAmmo > 0 ) && ( !SlotItem.bWeapon ) ) : bHasItems;
-
-		if ( SlotItem.ItemClass->IsChildOf( AAmmo::StaticClass() ) )
-		{
-			GEngine->AddOnScreenDebugMessage( -1, 5.f, FColor::Orange, TEXT( "Ammo" ) );
-		}
 
 		// If there are no items, or no ammo. [10/8/2016 Matthew Woolley]
 		if ( !bHasItems || !bHasAmmo )
@@ -53,20 +55,29 @@ void UInventory::TickComponent( float DeltaTime, enum ELevelTick TickType, FActo
 	}
 }
 
-// Toggles the inventory. [22/11/2015 Matthew Woolley]
+/*
+ *	Toggles the state of the inventory, then calls the function that opens
+ *	and closes the UI.
+ *	11/4/2017 - Matthew Woolley
+ */
 void UInventory::ToggleInventory()
 {
 	ARoadFeverCharacterNed* PlayerCharacter = ( ARoadFeverCharacterNed* ) GetWorld()->GetFirstPlayerController()->GetPawn();
 
 	// If the game should allow input. [29/7/2016 Matthew Woolley]
-	if ( !PlayerCharacter->bIsAiming && ( PlayerCharacter->GameHasFocus() || bOpen ) )
+	if ( PlayerCharacter && !PlayerCharacter->bIsAiming && ( PlayerCharacter->GameHasFocus() || bOpen ) )
 	{
 		bOpen = !bOpen;
 		bOpen ? OpenInv() : CloseInv();
 	}
 }
 
-// Open inventory [20/11/2015 Andreas Gustavsen]
+/*
+ *	Spawns the UI for the player to interact with.
+ *	Sets the input mode to focus onto the UI.
+ *	Shows the mouse cursor.
+ *	11/4/2017 - Matthew Woolley
+ */
 void UInventory::OpenInv()
 {
 	// Spawn the InventoryUIWidget if a valid template was provided. [30/11/2015 Matthew Woolley]
@@ -93,7 +104,12 @@ void UInventory::OpenInv()
 	}
 }
 
-// Close inventory [20/11/2015 Andreas Gustavsen]
+/*
+*	Destroys the UI.
+*	Sets the input mode to focus into the game.
+*	Hides the mouse cursor.
+*	11/4/2017 - Matthew Woolley
+*/
 void UInventory::CloseInv()
 {
 	// If there is a widget. [30/11/2015 Matthew Woolley]
@@ -116,7 +132,12 @@ void UInventory::CloseInv()
 	}
 }
 
-// Called when to ask the player whether or not they wish to pick the item. [22/7/2016 Matthew Woolley]
+/*
+ *	Shows a confirmation screen so that the user can pickup or cancel an item interaction.
+ *	Sets the focus of the game onto the UI.
+ *	Shows the mouse cursor
+ *	11/4/2017 - Matthew Woolley
+ */
 void UInventory::OpenPickupConfirmation()
 {
 	// Spawn the InventoryUIWidget if a valid template was provided. [22/7/2016 Matthew Woolley]
@@ -142,7 +163,12 @@ void UInventory::OpenPickupConfirmation()
 	}
 }
 
-// Called when the confirmation screen should be dismissed. [22/7/2016 Matthew Woolley]
+/*
+*	Destroys the UI.
+*	Sets the input mode to focus into the game.
+*	Hides the mouse cursor.
+*	11/4/2017 - Matthew Woolley
+*/
 void UInventory::ClosePickupConfirmation()
 {
 	// If there is a widget. [22/7/2016 Matthew Woolley]
