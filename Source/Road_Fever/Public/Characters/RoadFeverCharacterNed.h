@@ -122,6 +122,10 @@ public:
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack" )
 	UArrowComponent* ShootFromPoint;
 
+	// Whether debug traces and what-not are shown. [11/4/2017 Matthew Woolley]
+	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Rendering" )
+	bool bIsDebugging;
+
 protected:
 	/*
 	*	If the player isn't aiming, it assigns the MoveForwardAxis variable to be equal to that of the player input

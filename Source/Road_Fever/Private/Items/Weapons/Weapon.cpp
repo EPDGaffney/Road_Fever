@@ -120,9 +120,15 @@ void AWeapon::OnAttack_Implementation()
 		// The current UWorld object [20/11/2015 Matthew Woolley]
 		UWorld* const World = GetWorld();
 
+		// If the world exists. [11/4/2017 Matthew Woolley]
 		if ( World )
 		{
-			World->DebugDrawTraceTag = "WeaponTrace";
+			if ( PlayerCharacter->bIsDebugging )
+			{
+				World->DebugDrawTraceTag = "WeaponTrace";
+			}
+
+
 			// Whether this weapon hit something or not. [11/2/2017 Matthew Woolley]
 			bool bHadBlockingHit = NULL;
 
