@@ -20,3 +20,4 @@ Before adding/editing things within the project, make sure you are following thi
 
 # Stuff for Programmers
 If you are programming stuff, I have created some snippets for Visual Assist that generate most of the code you need when working with UE4. You can get them from [here](https://github.com/FortuneMatthew/VisualAssistSnippets). I have included installation instructions as well as usage instructions with them. The way these snippets are written is basically the programming-style-guide that we have been using, so it might be worth your while checking them out, even if you haven't Visual Assist.
+
