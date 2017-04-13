@@ -18,6 +18,10 @@
  */
 AItem::AItem()
 {
+	// Create a generic scene object to give the item world transform. [13/4/2017 Matthew Woolley]
+	USceneComponent* Root = CreateDefaultSubobject<USceneComponent>( TEXT( "Root" ) );
+	RootComponent = Root;
+
 	// Create the default detection box. [14/7/2016 Matthew Woolley]
 	DetectionBox = CreateDefaultSubobject<UBoxComponent>( TEXT( "Detection Box" ) );
 	DetectionBox->SetBoxExtent( FVector( 32, 32, 32 ) );

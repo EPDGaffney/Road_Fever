@@ -475,6 +475,7 @@ void ARoadFeverCharacterNed::OnEndAim()
  */
 void ARoadFeverCharacterNed::OnAttack()
 {
+	// Ensure the player is playing the game (not in a menu, for example), aiming, and has a weapon equipped. [13/4/2017 Matthew Woolley]
 	if ( !GameHasFocus() || !bIsAiming || !CharactersInventory->EquippedItem && !( AWeapon* ) CharactersInventory->EquippedItem )
 	{
 		return;
@@ -543,7 +544,7 @@ void ARoadFeverCharacterNed::SwitchToNextEnemy()
 			// Make Ned look at the found enemy. [16/7/2016 Matthew Woolley]
 			FRotator LookAtRotation = ( GetActorLocation() - ClosestEnemy->GetActorLocation() ).Rotation();
 			GetController()->SetControlRotation( FRotator( 0, LookAtRotation.Yaw - 180, 0 ) );
-		} else // If we didn't find an enemy. [24/7/2016 Matthew Woolley]
+		} else
 		{
 			// Redo the enemy check, however, allow the code to find an enemy that is also to the left. [24/7/2016 Matthew Woolley]
 			for ( AActor* Enemy : Enemies )
@@ -593,8 +594,6 @@ void ARoadFeverCharacterNed::Reload( float InInputVal )
 	// If the player has only held the key long enough to preform a full reload. [26/7/2016 Matthew Woolley]
 	if ( InInputVal == 0 && TimeHeld > .01f && bCanReload )
 	{
-		GEngine->AddOnScreenDebugMessage( -1, 1.f, FColor::Red, TEXT( "Resquested Full Reload" ) );
-
 		// Check if the player has a weapon to reload. [26/7/2016 Matthew Woolley]
 		if ( ( AWeapon* ) CharactersInventory->EquippedItem )
 		{
@@ -613,8 +612,6 @@ void ARoadFeverCharacterNed::Reload( float InInputVal )
 	// If the button has been held long enough for the partial reload. [26/7/2016 Matthew Woolley]
 	if ( InInputVal != 0 && TimeHeld >= 2 && bCanReload )
 	{
-		GEngine->AddOnScreenDebugMessage( -1, 1.f, FColor::Red, TEXT( "Requested Partial Reload" ) );
-
 		// Check if the player has a weapon to reload. [26/7/2016 Matthew Woolley]
 		if ( ( AWeapon* ) CharactersInventory->EquippedItem )
 		{

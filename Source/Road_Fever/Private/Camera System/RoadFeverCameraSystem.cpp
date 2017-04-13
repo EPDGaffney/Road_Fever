@@ -47,10 +47,10 @@ void ARoadFeverCameraSystem::BeginPlay()
 	CameraPosition.Location = EditorCameraReference->GetComponentLocation();
 	CameraPosition.Rotation = EditorCameraReference->GetComponentRotation();
 
-	// Destroy the camera so that the game doesn't keep rendering un-needed scenes. [11/12/2015 Matthew Woolley]
+	// Destroy the camera so that the game doesn't keep rendering unneeded scenes. [11/12/2015 Matthew Woolley]
 	EditorCameraReference->DestroyComponent();
 
-	if ( bPrimaryCamera )
+	if ( bPrimaryCamera && GetWorld() )
 	{
 		ARoadFeverCharacterNed* PlayerCharacter = Cast<ARoadFeverCharacterNed>( GetWorld()->GetFirstPlayerController()->GetPawn() );
 
@@ -84,22 +84,27 @@ void ARoadFeverCameraSystem::OnActorEnter( class UPrimitiveComponent* InPrimitiv
 		// Get the player's Character. [11/12/2015 Matthew Woolley]
 		ARoadFeverCharacterNed* PlayerCharacter = Cast<ARoadFeverCharacterNed>( InOtherActor );
 
-		// If there isn't a Camera in use. [20/1/2016 Matthew Woolley]
-		if ( PlayerCharacter->CurrentCamera == nullptr )
+		if ( PlayerCharacter )
 		{
-			// Set the camera's position. [11/12/2015 Matthew Woolley]
-			PlayerCharacter->CharactersCamera->SetWorldLocation( CameraPosition.Location );
-			PlayerCharacter->CharactersCamera->SetWorldRotation( CameraPosition.Rotation );
-			PlayerCharacter->CurrentCamera = this;
-			RevertTo = nullptr;
-		} else
-		{
-			RevertTo = PlayerCharacter->CurrentCamera;
+			// If there isn't a Camera in use. [20/1/2016 Matthew Woolley]
+			if ( PlayerCharacter->CurrentCamera == nullptr )
+			{
+				// Set the camera's position. [11/12/2015 Matthew Woolley]
+				PlayerCharacter->CharactersCamera->SetWorldLocation( CameraPosition.Location );
+				PlayerCharacter->CharactersCamera->SetWorldRotation( CameraPosition.Rotation );
+				PlayerCharacter->CurrentCamera = this;
+				RevertTo = nullptr;
+			}
+			else
+			{
+				// Stores the camera that was in use, so that we can revert to it later when leaving this camera's influence. [13/4/2017 Matthew Woolley]
+				RevertTo = PlayerCharacter->CurrentCamera;
 
-			// Set the camera's position. [11/12/2015 Matthew Woolley]
-			PlayerCharacter->CharactersCamera->SetWorldLocation( CameraPosition.Location );
-			PlayerCharacter->CharactersCamera->SetWorldRotation( CameraPosition.Rotation );
-			PlayerCharacter->CurrentCamera = this;
+				// Set the camera's position. [11/12/2015 Matthew Woolley]
+				PlayerCharacter->CharactersCamera->SetWorldLocation( CameraPosition.Location );
+				PlayerCharacter->CharactersCamera->SetWorldRotation( CameraPosition.Rotation );
+				PlayerCharacter->CurrentCamera = this;
+			}
 		}
 	}
 }
@@ -114,20 +119,25 @@ void ARoadFeverCameraSystem::OnActorLeave( class UPrimitiveComponent* InPrimitiv
 	// If it is the player's camera dummy. [11/12/2015 Matthew Woolley]
 	if ( InOtherActor->IsA( ARoadFeverCharacterNed::StaticClass() ) )
 	{
-		ARoadFeverCharacterNed* PlayerCharacter = Cast<ARoadFeverCharacterNed>( GetWorld()->GetFirstPlayerController()->GetPawn() );
+		ARoadFeverCharacterNed* PlayerCharacter = Cast<ARoadFeverCharacterNed>( InOtherActor );
 
-		if ( PlayerCharacter->CurrentCamera == this )
+		if ( PlayerCharacter )
 		{
-			if ( RevertTo != nullptr )
+			// If this camera is currently being used. [13/4/2017 Matthew Woolley]
+			if ( PlayerCharacter->CurrentCamera == this )
 			{
-				PlayerCharacter->CurrentCamera = RevertTo;
-
-				// Set the camera's position. [11/12/2015 Matthew Woolley]
-				PlayerCharacter->CharactersCamera->SetWorldLocation( RevertTo->CameraPosition.Location );
-				PlayerCharacter->CharactersCamera->SetWorldRotation( RevertTo->CameraPosition.Rotation );
-			} else
-			{
-				PlayerCharacter->CurrentCamera = nullptr;
+				// If there is another camera area that influences the area the character is in. [13/4/2017 Matthew Woolley]
+				if ( RevertTo != nullptr )
+				{
+					// Set that camera to be the one in use. [13/4/2017 Matthew Woolley]
+					PlayerCharacter->CurrentCamera = RevertTo;
+					PlayerCharacter->CharactersCamera->SetWorldLocation( RevertTo->CameraPosition.Location );
+					PlayerCharacter->CharactersCamera->SetWorldRotation( RevertTo->CameraPosition.Rotation );
+				}
+				else
+				{
+					PlayerCharacter->CurrentCamera = nullptr;
+				}
 			}
 		}
 
