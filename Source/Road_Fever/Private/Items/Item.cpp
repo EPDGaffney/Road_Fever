@@ -57,19 +57,19 @@ void AItem::OnCombine_Implementation( AItem* CombinedItem, int32 ItemASlot, int3
 			FInventoryItem ItemBeingAdded;
 			ItemBeingAdded = CreatedItem->ItemInfo;
 
-			ARoadFeverCharacterNed* PlayerCharacter = ( ARoadFeverCharacterNed* )GetWorld()->GetFirstPlayerController()->GetPawn();
+			ARoadFeverCharacterNed* PlayerCharacter = Cast<ARoadFeverCharacterNed>( GetWorld()->GetFirstPlayerController()->GetPawn() );
 
-			if ( PlayerCharacter )
+			if ( CreatedItem && PlayerCharacter )
 			{
-				// Make the initial item become the crafted item. [8/9/2016 Matthew Woolley]
-				PlayerCharacter->CharactersInventory->ItemSlots[ ItemASlot ] = ItemBeingAdded;
-				PlayerCharacter->CharactersInventory->ItemSlots[ ItemASlot ].CurrentItemStack = 1;
+				// Remove items from the inventory that were used to craft the new item. [14/4/2017 Matthew Woolley]
+				PlayerCharacter->CharactersInventory->ItemSlots[ ItemASlot ].CurrentItemStack--;
+				PlayerCharacter->CharactersInventory->ItemSlots[ ItemBSlot ].CurrentItemStack--;
+
+				// Add the item that was crafted to the inventory. [14/4/2017 Matthew Woolley]
+				PlayerCharacter->AddItemToInventory( CreatedItem->ItemInfo );
 
 				// Select the initial item's item slot. [8/9/2016 Matthew Woolley]
 				PlayerCharacter->CharactersInventory->CurrentActiveSlot = ItemASlot;
-
-				// Remove the item combined with it. [8/9/2016 Matthew Woolley]
-				PlayerCharacter->CharactersInventory->ItemSlots[ ItemBSlot ].CurrentItemStack--;
 
 				// Destroy all the drugs' placeholder objects. [8/9/2016 Matthew Woolley]
 				CreatedItem->Destroy();
@@ -89,12 +89,16 @@ void AItem::OnCombine_Implementation( AItem* CombinedItem, int32 ItemASlot, int3
 void AItem::AttachItemToNed_Hand()
 {
 	ARoadFeverCharacterNed* PlayerCharacter = Cast<ARoadFeverCharacterNed>( GetWorld()->GetFirstPlayerController()->GetPawn() );
-	USkeletalMeshComponent* NedsCharacterMesh = PlayerCharacter->GetMesh();
-	bPickupable = false;
 
-	if ( NedsCharacterMesh )
+	if ( PlayerCharacter )
 	{
-		AttachToComponent( NedsCharacterMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName( TEXT( "ItemPoint" ) ) );
-		DetectionBox->DestroyComponent();
+		USkeletalMeshComponent* NedsCharacterMesh = PlayerCharacter->GetMesh();
+
+		if ( NedsCharacterMesh )
+		{
+			AttachToComponent( NedsCharacterMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName( TEXT( "ItemPoint" ) ) );
+			bPickupable = false;
+			DetectionBox->DestroyComponent();
+		}
 	}
 }

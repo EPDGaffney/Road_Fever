@@ -21,6 +21,8 @@ ARoadFeverEnemy::ARoadFeverEnemy()
 	// Set-up the mesh so it isn't orientated strangely. [8/2/2017 Matthew Woolley]
 	GetMesh()->SetRelativeLocation( FVector( 0, 0, -90 ) );
 	GetMesh()->SetRelativeRotation( FRotator( 0, -90, 0 ) );
+
+	GetCapsuleComponent()->SetCollisionProfileName( "Enemy" );
 }
 
 /*
@@ -86,7 +88,7 @@ float ARoadFeverEnemy::TakeDamage( float InDamage, struct FDamageEvent const& In
 const bool ARoadFeverEnemy::IsPlayerPaused()
 {
 	// Find out whether the game world exists and whether the controller exists. [11/4/2017 Matthew Woolley]
-	if (GetWorld() && GetWorld()->GetFirstPlayerController())
+	if ( GetWorld() && GetWorld()->GetFirstPlayerController() )
 	{
 		// Get Ned's character from the world. [17/3/2017 Matthew Woolley]
 		ARoadFeverCharacterNed* PlayerCharacter = Cast<ARoadFeverCharacterNed>( GetWorld()->GetFirstPlayerController()->GetPawn() );

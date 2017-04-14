@@ -29,7 +29,7 @@ ARoadFeverCharacterNed::ARoadFeverCharacterNed()
 
 	// Create the ShootFromPoint. [1/3/2017 Matthew Woolley]
 	ShootFromPoint = CreateDefaultSubobject<UArrowComponent>( TEXT( "ShootFromPoint" ) );
-	ShootFromPoint->SetupAttachment(RootComponent);
+	ShootFromPoint->SetupAttachment( RootComponent );
 	ShootFromPoint->RelativeLocation = FVector( 10, 10, 50 );
 
 	QuickTurnSpeed = 500;
@@ -71,12 +71,14 @@ void ARoadFeverCharacterNed::Tick( float InDeltaSeconds )
 		{
 			// Use the aiming Blueprint. [18/7/2016 Matthew Woolley]
 			GetMesh()->SetAnimInstanceClass( CharactersInventory->EquippedItem->AnimationBlueprint_Aiming );
-		} else
+		}
+		else
 		{
 			// If the player isn't aiming. [19/7/2016 Matthew Woolley]
 			GetMesh()->SetAnimInstanceClass( CharactersInventory->EquippedItem->AnimationBlueprint_Default );
 		}
-	} else
+	}
+	else
 	{
 		// If the player hasn't got a weapon equipped. [19/7/2016 Matthew Woolley]
 		GetMesh()->SetAnimInstanceClass( DefaultAnimation );
@@ -95,7 +97,8 @@ void ARoadFeverCharacterNed::Tick( float InDeltaSeconds )
 		RotationToChange.Yaw += InDeltaSeconds * QuickTurnSpeed;
 
 		GetController()->SetControlRotation( FMath::RInterpTo( GetControlRotation(), RotationToChange, 3, 0 ) );
-	} else
+	}
+	else
 	{
 		// Re-enable the character's movement. [18/7/2016 Matthew Woolley]
 		GetCharacterMovement()->SetMovementMode( EMovementMode::MOVE_Walking );
@@ -144,13 +147,16 @@ FString ARoadFeverCharacterNed::UpdateHealthMessage()
 	if ( Health > 750 )
 	{
 		return FString( "Strong" );
-	} else if ( Health > 500 ) // If they have less than 75% and more than 50%. [25/12/2015 Matthew Woolley]
+	}
+	else if ( Health > 500 ) // If they have less than 75% and more than 50%. [25/12/2015 Matthew Woolley]
 	{
 		return FString( "Compromised" );
-	} else if ( Health > 250 ) // If they have less than 50% and more than 25%. [25/12/2015 Matthew Woolley]
+	}
+	else if ( Health > 250 ) // If they have less than 50% and more than 25%. [25/12/2015 Matthew Woolley]
 	{
 		return FString( "Caution" );
-	} else // If they have less than 25%. [25/12/2015 Matthew Woolley]
+	}
+	else // If they have less than 25%. [25/12/2015 Matthew Woolley]
 	{
 		return FString( "Danger" );
 	}
@@ -166,13 +172,16 @@ FString ARoadFeverCharacterNed::UpdateBloodMessage()
 	if ( BloodLoss > 750 )
 	{
 		return FString( "Minor" );
-	} else if ( BloodLoss > 500 ) // If they have less than 75% and more than 50%. [25/12/2015 Matthew Woolley]
+	}
+	else if ( BloodLoss > 500 ) // If they have less than 75% and more than 50%. [25/12/2015 Matthew Woolley]
 	{
 		return FString( "Moderate" );
-	} else if ( BloodLoss > 250 ) // If they have less than 50% and more than 25%. [25/12/2015 Matthew Woolley]
+	}
+	else if ( BloodLoss > 250 ) // If they have less than 50% and more than 25%. [25/12/2015 Matthew Woolley]
 	{
 		return FString( "Caution" );
-	} else // If they have less than 25%. [25/12/2015 Matthew Woolley]
+	}
+	else // If they have less than 25%. [25/12/2015 Matthew Woolley]
 	{
 		return FString( "Danger" );
 	}
@@ -204,7 +213,8 @@ bool ARoadFeverCharacterNed::AddItemToInventory( struct FInventoryItem ItemToAdd
 					// Tell the code that this item was added successfully. [5/3/2016 Matthew Woolley]
 					return true;
 				}
-			} else // If there isn't enough space. [24/7/2016 Matthew Woolley]
+			}
+			else // If there isn't enough space. [24/7/2016 Matthew Woolley]
 			{
 				continue;
 			}
@@ -233,7 +243,8 @@ bool ARoadFeverCharacterNed::AddItemToInventory( struct FInventoryItem ItemToAdd
 				// Setup the weapon stats. [24/7/2016 Matthew Woolley]
 				CharactersInventory->ItemSlots[ iSlotIterator ].MaxAmmo = ItemToAdd.MaxAmmo;
 				CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo = ItemToAdd.CurrentAmmo;
-			} else
+			}
+			else
 			{
 				// Setup the weapon stats. [24/7/2016 Matthew Woolley]
 				CharactersInventory->ItemSlots[ iSlotIterator ].MaxAmmo = 0;
@@ -275,7 +286,8 @@ void ARoadFeverCharacterNed::MoveForward( float InInputVal )
 	if ( bIsAiming == false && GameHasFocus() )
 	{
 		MoveForwardAxis = InInputVal;
-	} else
+	}
+	else
 	{
 		MoveForwardAxis = 0;
 	}
@@ -319,23 +331,19 @@ void ARoadFeverCharacterNed::OnCharacterInteract_Implementation()
 		for ( AActor* iActorIterator : NearbyActors )
 		{
 			// If the actor we found is an AItem AND it can be picked up. [22/6/2016 Matthew Woolley]
-			if ( iActorIterator->IsA( AItem::StaticClass() ) && ( ( AItem* ) iActorIterator )->bPickupable )
+			if ( iActorIterator->IsA( AItem::StaticClass() ) && ( ( AItem* )iActorIterator )->bPickupable )
 			{
 				// Get reference to AItem found. [22/6/2016 Matthew Woolley]
-				AItem* Item = ( AItem* ) iActorIterator;
+				AItem* Item = Cast<AItem>( iActorIterator );
 
 				// Get the world. [15/12/2015 Matthew Woolley]
 				UWorld* const World = GetWorld();
 
 				// Collision parameters for line-trace. [15/12/2015 Matthew Woolley]
 				FHitResult Hit;
-				FCollisionQueryParams Line( FName( "CollisionParam" ), true );
-				TArray<AActor*> IgnoredActors;
-				IgnoredActors.Add( this );
-				Line.AddIgnoredActors( IgnoredActors );
 
 				// Find if there is anything blocking the pickup. [15/12/2015 Matthew Woolley]
-				bool bHasBlockingHit = World->LineTraceSingleByChannel( Hit, this->GetActorLocation(), Item->GetActorLocation(), COLLISION_TRACE, Line );
+				bool bHasBlockingHit = World->LineTraceSingleByChannel( Hit, this->GetActorLocation(), Item->GetActorLocation(), ITEM_COLLISION_TRACE );
 
 				// If we hit something and it is the item. [15/12/2015 Matthew Woolley]
 				if ( bHasBlockingHit && Hit.GetActor() == Item )
@@ -367,9 +375,13 @@ void ARoadFeverCharacterNed::OnCharacterInteract_Implementation()
 		{
 			// Set the closest item as the item being interacted with AND pause the game. [22/7/2016 Matthew Woolley]
 			ItemBeingInteractedWith = ClosestItem;
-			APlayerController* const PlayerController = ( APlayerController* ) GEngine->GetFirstLocalPlayerController( GetWorld() );
-			PlayerController->SetPause( true );
-			CharactersInventory->OpenPickupConfirmation();
+			APlayerController* const PlayerController = Cast<APlayerController>( GEngine->GetFirstLocalPlayerController( GetWorld() ) );
+
+			if ( PlayerController )
+			{
+				PlayerController->SetPause( true );
+				CharactersInventory->OpenPickupConfirmation();
+			}
 		}
 	}
 }
@@ -432,7 +444,7 @@ void ARoadFeverCharacterNed::OnBeginAim()
 		if ( Enemies.Num() != 0 )
 		{
 			// Get the distance to the closest enemy found. [17/7/2016 Matthew Woolley]
-			float SmallestDistance = -0;
+			float SmallestDistance = 0;
 			// Store the actual enemy so, if it is the closest one, we can look at it. [17/7/2016 Matthew Woolley]
 			AActor* ClosestEnemy = nullptr;
 
@@ -476,14 +488,14 @@ void ARoadFeverCharacterNed::OnEndAim()
 void ARoadFeverCharacterNed::OnAttack()
 {
 	// Ensure the player is playing the game (not in a menu, for example), aiming, and has a weapon equipped. [13/4/2017 Matthew Woolley]
-	if ( !GameHasFocus() || !bIsAiming || !CharactersInventory->EquippedItem && !( AWeapon* ) CharactersInventory->EquippedItem )
+	if ( !GameHasFocus() || !bIsAiming || !CharactersInventory->EquippedItem && !Cast<AWeapon>( CharactersInventory->EquippedItem ) )
 	{
 		return;
 	}
 
 	if ( CharactersInventory->EquippedItem->IsA( AWeapon::StaticClass() ) )
 	{
-		AWeapon* CurrentlyEquippedWeapon = ( AWeapon* ) CharactersInventory->EquippedItem;
+		AWeapon* CurrentlyEquippedWeapon = Cast<AWeapon>( CharactersInventory->EquippedItem );
 		CurrentlyEquippedWeapon->OnAttack();
 	}
 }
@@ -498,7 +510,8 @@ void ARoadFeverCharacterNed::AimUp_Down( float InInputVal )
 	if ( bIsAiming )
 	{
 		AimValue = InInputVal;
-	} else
+	}
+	else
 	{
 		AimValue = 0;
 	}
@@ -530,7 +543,7 @@ void ARoadFeverCharacterNed::SwitchToNextEnemy()
 			float LookAtRotation = ( ( GetActorLocation() - Enemy->GetActorLocation() ).Rotation().Yaw - 180 );
 
 			// If the rotation is closer than the last enemy AND is to the right. [24/7/2016 Matthew Woolley]
-			if ( ( LookAtRotation < ClosestToTheRight || ClosestToTheRight == -1 ) && LookAtRotation >( CurrentRotation ) )
+			if ( ( LookAtRotation < ClosestToTheRight || ClosestToTheRight == -1 ) && LookAtRotation > ( CurrentRotation ) )
 			{
 				// Set it as the closest enemy. [24/7/2016 Matthew Woolley]
 				ClosestToTheRight = LookAtRotation;
@@ -544,7 +557,8 @@ void ARoadFeverCharacterNed::SwitchToNextEnemy()
 			// Make Ned look at the found enemy. [16/7/2016 Matthew Woolley]
 			FRotator LookAtRotation = ( GetActorLocation() - ClosestEnemy->GetActorLocation() ).Rotation();
 			GetController()->SetControlRotation( FRotator( 0, LookAtRotation.Yaw - 180, 0 ) );
-		} else
+		}
+		else
 		{
 			// Redo the enemy check, however, allow the code to find an enemy that is also to the left. [24/7/2016 Matthew Woolley]
 			for ( AActor* Enemy : Enemies )
@@ -585,6 +599,9 @@ void ARoadFeverCharacterNed::Reload( float InInputVal )
 	static float TimeHeld = 0;
 	static bool bCanReload = true;
 
+	// The weapon to reload. [14/4/2017 Matthew Woolley]
+	AWeapon* const EquippedWeapon = Cast<AWeapon>( CharactersInventory->EquippedItem );
+
 	// If the user is pressing the reload button. [26/7/2016 Matthew Woolley]
 	if ( InInputVal != 0 && bCanReload )
 	{
@@ -595,16 +612,16 @@ void ARoadFeverCharacterNed::Reload( float InInputVal )
 	if ( InInputVal == 0 && TimeHeld > .01f && bCanReload )
 	{
 		// Check if the player has a weapon to reload. [26/7/2016 Matthew Woolley]
-		if ( ( AWeapon* ) CharactersInventory->EquippedItem )
+		if ( EquippedWeapon )
 		{
 			// Request a full-reload. [26/7/2016 Matthew Woolley]
-			AWeapon* EquippedWeapon = ( AWeapon* ) CharactersInventory->EquippedItem;
 			EquippedWeapon->Reload( true );
 		}
 
 		// Reset the timer. [26/7/2016 Matthew Woolley]
 		TimeHeld = 0;
-	} else if ( InInputVal == 0 && !bCanReload ) // If the player preformed a secondary reload, and has stopped pressing the key, allow another reload. [26/7/2016 Matthew Woolley]
+	}
+	else if ( InInputVal == 0 && !bCanReload ) // If the player preformed a secondary reload, and has stopped pressing the key, allow another reload. [26/7/2016 Matthew Woolley]
 	{
 		bCanReload = true;
 	}
@@ -613,10 +630,9 @@ void ARoadFeverCharacterNed::Reload( float InInputVal )
 	if ( InInputVal != 0 && TimeHeld >= 2 && bCanReload )
 	{
 		// Check if the player has a weapon to reload. [26/7/2016 Matthew Woolley]
-		if ( ( AWeapon* ) CharactersInventory->EquippedItem )
+		if ( EquippedWeapon )
 		{
 			// Request a full-reload. [26/7/2016 Matthew Woolley]
-			AWeapon* EquippedWeapon = ( AWeapon* ) CharactersInventory->EquippedItem;
 			EquippedWeapon->Reload( false );
 			bCanReload = false;
 		}
@@ -646,13 +662,9 @@ TArray<class AActor*> ARoadFeverCharacterNed::GetEnemies()
 
 		// Collision parameters for the line trace. [16/7/2016 Matthew Woolley]
 		FHitResult Hit;
-		FCollisionQueryParams Line( FName( "Enemy Line Trace" ), true );
-		TArray<AActor*> IgnoredActors;
-		IgnoredActors.Add( this );
-		Line.AddIgnoredActors( IgnoredActors );
 
 		// Make sure there is nothing in the way of the enemy (I.E. a wall). [16/7/2016 Matthew Woolley]
-		bool bHasBlockingHit = World->LineTraceSingleByChannel( Hit, this->GetActorLocation(), iActorIterator->GetActorLocation(), WEAPON_TRACE, Line );
+		bool bHasBlockingHit = World->LineTraceSingleByChannel( Hit, this->GetActorLocation(), iActorIterator->GetActorLocation(), WEAPON_TRACE );
 
 		// If there is nothing in the way of the enemy. [16/7/2016 Matthew Woolley]
 		if ( bHasBlockingHit && Hit.GetActor() == iActorIterator )

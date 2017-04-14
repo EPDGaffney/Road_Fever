@@ -64,134 +64,138 @@ void AWeapon::EndPlay( const EEndPlayReason::Type InEndPlayReason )
  */
 void AWeapon::OnAttack_Implementation()
 {
-	ARoadFeverCharacterNed* PlayerCharacter = ( ARoadFeverCharacterNed* ) GetWorld()->GetFirstPlayerController()->GetCharacter();
+	ARoadFeverCharacterNed* PlayerCharacter = Cast<ARoadFeverCharacterNed>( GetWorld()->GetFirstPlayerController()->GetCharacter() );
 
-	// Make sure the weapon isn't currently cooling down [20/11/2015 Matthew Woolley]
-	if ( WeaponProperties.WeaponState != EWeaponState::Normal || ( ItemInfo.MaxAmmo != 0 && ItemInfo.CurrentAmmo <= 0 ) )
+	if ( PlayerCharacter )
 	{
-		if ( ItemInfo.CurrentAmmo <= 0 )
+
+		// Make sure the weapon isn't currently cooling down [20/11/2015 Matthew Woolley]
+		if ( WeaponProperties.WeaponState != EWeaponState::Normal || ( ItemInfo.MaxAmmo != 0 && ItemInfo.CurrentAmmo <= 0 ) )
 		{
-			PlayerCharacter->GetMesh()->PlayAnimation( WeaponProperties.AttackAnimation_NoAmmo, false );
-		}
-
-		// If this weapon is reloading, but can be interrupted. [27/7/2016 Matthew Woolley]
-		if ( WeaponProperties.WeaponState == EWeaponState::Reloading )
-		{
-			bInterruptReload = true;
-		}
-
-		return;
-	}
-
-	PlayerCharacter->GetMesh()->PlayAnimation( WeaponProperties.AttackAnimation, false );
-
-	// For each trace to complete. [21/7/2016 Matthew Woolley]
-	for ( int iTraceIterator = 0; iTraceIterator < WeaponProperties.NumberOfTraces; iTraceIterator++ )
-	{
-		// The object found during the trace [20/11/2015 Matthew Woolley]
-		FHitResult OutHit;
-
-		// The current location of this weapon [20/11/2015 Matthew Woolley]
-		FVector Start = PlayerCharacter->ShootFromPoint->GetComponentLocation();
-
-		// The . [21/7/2016 Matthew Woolley]
-		FRotator SpreadRotation = FRotator( FMath::FRandRange( WeaponProperties.MultiTraceSpread * -1, WeaponProperties.MultiTraceSpread ), FMath::FRandRange( WeaponProperties.MultiTraceSpread * -1, WeaponProperties.MultiTraceSpread ), 0 );
-
-		// Get the furthest this weapon can attack [20/11/2015 Matthew Woolley]
-		FVector End = Start + ( ( iTraceIterator == 0 ? PlayerCharacter->ShootFromPoint->GetComponentRotation() : PlayerCharacter->ShootFromPoint->GetComponentRotation() + SpreadRotation ).Vector() * WeaponProperties.MaximumRange );
-
-		// The rotation [20/11/2015 Matthew Woolley]
-		FQuat Rot = GetActorRotation().Quaternion();
-
-		// The trace's shape [20/11/2015 Matthew Woolley]
-		FCollisionShape Shape;
-		Shape.ShapeType = ECollisionShape::Box;
-		Shape.MakeBox( FVector( 1, 20, 20 ) );
-		Shape.Box.HalfExtentX = 1;
-		Shape.Box.HalfExtentY = 20;
-		Shape.Box.HalfExtentZ = 20;
-
-		// The parameters for the collision [20/11/2015 Matthew Woolley]
-		FCollisionQueryParams Params;
-		Params.AddIgnoredActor( this );
-		Params.AddIgnoredActor( PlayerCharacter );
-		Params.TraceTag = FName( "WeaponTrace" );
-
-		// The current UWorld object [20/11/2015 Matthew Woolley]
-		UWorld* const World = GetWorld();
-
-		// If the world exists. [11/4/2017 Matthew Woolley]
-		if ( World )
-		{
-			if ( PlayerCharacter->bIsDebugging )
+			if ( ItemInfo.CurrentAmmo <= 0 )
 			{
-				World->DebugDrawTraceTag = "WeaponTrace";
+				PlayerCharacter->GetMesh()->PlayAnimation( WeaponProperties.AttackAnimation_NoAmmo, false );
 			}
 
-
-			// Whether this weapon hit something or not. [11/2/2017 Matthew Woolley]
-			bool bHadBlockingHit = NULL;
-
-			// If we are using the box trace. [3/2/2017 Matthew Woolley]
-			if ( WeaponProperties.bBoxTrace )
+			// If this weapon is reloading, but can be interrupted. [27/7/2016 Matthew Woolley]
+			if ( WeaponProperties.WeaponState == EWeaponState::Reloading )
 			{
-				// Use the box shape in the trace params. [3/2/2017 Matthew Woolley]
-				bHadBlockingHit = World->SweepSingleByChannel( OutHit, Start, End, Rot, WEAPON_TRACE, Shape, Params );
-			} else
-			{
-				// Do the trace without the box shape. [3/2/2017 Matthew Woolley]
-				bHadBlockingHit = World->LineTraceSingleByChannel( OutHit, Start, End, WEAPON_TRACE, Params );
+				bInterruptReload = true;
 			}
 
-			// If there was one [20/11/2015 Matthew Woolley]
-			if ( bHadBlockingHit )
+			return;
+		}
+
+		PlayerCharacter->GetMesh()->PlayAnimation( WeaponProperties.AttackAnimation, false );
+
+		// For each trace to complete. [21/7/2016 Matthew Woolley]
+		for ( int iTraceIterator = 0; iTraceIterator < WeaponProperties.NumberOfTraces; iTraceIterator++ )
+		{
+			// The object found during the trace [20/11/2015 Matthew Woolley]
+			FHitResult OutHit;
+
+			// The current location of this weapon [20/11/2015 Matthew Woolley]
+			FVector Start = PlayerCharacter->ShootFromPoint->GetComponentLocation();
+
+			// The . [21/7/2016 Matthew Woolley]
+			FRotator SpreadRotation = FRotator( FMath::FRandRange( WeaponProperties.MultiTraceSpread * -1, WeaponProperties.MultiTraceSpread ), FMath::FRandRange( WeaponProperties.MultiTraceSpread * -1, WeaponProperties.MultiTraceSpread ), 0 );
+
+			// Get the furthest this weapon can attack [20/11/2015 Matthew Woolley]
+			FVector End = Start + ( ( iTraceIterator == 0 ? PlayerCharacter->ShootFromPoint->GetComponentRotation() : PlayerCharacter->ShootFromPoint->GetComponentRotation() + SpreadRotation ).Vector() * WeaponProperties.MaximumRange );
+
+			// The rotation [20/11/2015 Matthew Woolley]
+			FQuat Rot = GetActorRotation().Quaternion();
+
+			// The trace's shape [20/11/2015 Matthew Woolley]
+			FCollisionShape Shape;
+			Shape.ShapeType = ECollisionShape::Box;
+			Shape.MakeBox( FVector( 1, 20, 20 ) );
+			Shape.Box.HalfExtentX = 1;
+			Shape.Box.HalfExtentY = 20;
+			Shape.Box.HalfExtentZ = 20;
+
+			// The parameters for the collision [20/11/2015 Matthew Woolley]
+			FCollisionQueryParams Params;
+			Params.TraceTag = FName( "WeaponTrace" );
+
+			// The current UWorld object [20/11/2015 Matthew Woolley]
+			UWorld* const World = GetWorld();
+
+			// If the world exists. [11/4/2017 Matthew Woolley]
+			if ( World )
 			{
-				// Make sure it's still valid and not being destroyed [20/11/2015 Matthew Woolley]
-				AActor* HitActor = OutHit.GetActor();
-				if ( HitActor && !HitActor->IsPendingKill() && HitActor->IsA( ARoadFeverEnemy::StaticClass() ) )
+				if ( PlayerCharacter->bIsDebugging )
 				{
-					// Cast the enemy from the hit Actor. [15/7/2016 Matthew Woolley]
-					ARoadFeverEnemy* HitEnemy = ( ARoadFeverEnemy* ) HitActor;
-					FDamageEvent DamageEvent;
+					World->DebugDrawTraceTag = "WeaponTrace";
+				}
 
-					// If the enemy is further away than this weapon can attack with full damage. [17/7/2016 Matthew Woolley]
-					if ( HitEnemy->GetDistanceTo( this ) > WeaponProperties.EffectiveRange )
+
+				// Whether this weapon hit something or not. [11/2/2017 Matthew Woolley]
+				bool bHadBlockingHit = NULL;
+
+				// If we are using the box trace. [3/2/2017 Matthew Woolley]
+				if ( WeaponProperties.bBoxTrace )
+				{
+					// Use the box shape in the trace params. [3/2/2017 Matthew Woolley]
+					bHadBlockingHit = World->SweepSingleByChannel( OutHit, Start, End, Rot, WEAPON_TRACE, Shape, Params );
+				}
+				else
+				{
+					// Do the trace without the box shape. [3/2/2017 Matthew Woolley]
+					bHadBlockingHit = World->LineTraceSingleByChannel( OutHit, Start, End, WEAPON_TRACE, Params );
+				}
+
+				// If there was one [20/11/2015 Matthew Woolley]
+				if ( bHadBlockingHit )
+				{
+					// Make sure it's still valid and not being destroyed [20/11/2015 Matthew Woolley]
+					AActor* HitActor = OutHit.GetActor();
+					if ( HitActor && !HitActor->IsPendingKill() && HitActor->IsA( ARoadFeverEnemy::StaticClass() ) )
 					{
-						// Get the distance to the enemy being attacked. [17/7/2016 Matthew Woolley]
-						float DistanceToEnemy = HitEnemy->GetDistanceTo( this );
+						// Cast the enemy from the hit Actor. [15/7/2016 Matthew Woolley]
+						ARoadFeverEnemy* HitEnemy = Cast<ARoadFeverEnemy>( HitActor );
+						FDamageEvent DamageEvent;
 
-						// Get the damage we should deal (the closer to the maximum range distance, the more damage). [17/7/2016 Matthew Woolley]
-						int DamageToDeal = FMath::FRandRange( WeaponProperties.EffectiveRangeMinDamage, WeaponProperties.EffectiveRangeMaxDamage ) - ( WeaponProperties.MaximumRangeMaxDamage * ( ( DistanceToEnemy - WeaponProperties.EffectiveRange ) / WeaponProperties.MaximumRange ) );
+						// If the enemy is further away than this weapon can attack with full damage. [17/7/2016 Matthew Woolley]
+						if ( HitEnemy && HitEnemy->GetDistanceTo( this ) > WeaponProperties.EffectiveRange )
+						{
+							// Get the distance to the enemy being attacked. [17/7/2016 Matthew Woolley]
+							float DistanceToEnemy = HitEnemy->GetDistanceTo( this );
+
+							// Get the damage we should deal (the closer to the maximum range distance, the more damage). [17/7/2016 Matthew Woolley]
+							int DamageToDeal = FMath::FRandRange( WeaponProperties.EffectiveRangeMinDamage, WeaponProperties.EffectiveRangeMaxDamage ) - ( WeaponProperties.MaximumRangeMaxDamage * ( ( DistanceToEnemy - WeaponProperties.EffectiveRange ) / WeaponProperties.MaximumRange ) );
 
 
-						// Deal damage to the enemy. [17/7/2016 Matthew Woolley]
-						HitEnemy->TakeDamage( DamageToDeal, DamageEvent, World->GetFirstPlayerController(), this );
+							// Deal damage to the enemy. [17/7/2016 Matthew Woolley]
+							HitEnemy->TakeDamage( DamageToDeal, DamageEvent, World->GetFirstPlayerController(), this );
 
-					} else
-					{
-						// Get the damage we should deal (random range between the max and min). [23/3/2017 Matthew Woolley]
-						float DamageToDeal = FMath::FRandRange( WeaponProperties.EffectiveRangeMinDamage, WeaponProperties.EffectiveRangeMaxDamage );
+						}
+						else if ( HitEnemy )
+						{
+							// Get the damage we should deal (random range between the max and min). [23/3/2017 Matthew Woolley]
+							float DamageToDeal = FMath::FRandRange( WeaponProperties.EffectiveRangeMinDamage, WeaponProperties.EffectiveRangeMaxDamage );
 
-						// Deal damage to the enemy. [17/7/2016 Matthew Woolley]
-						HitEnemy->TakeDamage( DamageToDeal, DamageEvent, World->GetFirstPlayerController(), this );
+							// Deal damage to the enemy. [17/7/2016 Matthew Woolley]
+							HitEnemy->TakeDamage( DamageToDeal, DamageEvent, World->GetFirstPlayerController(), this );
+						}
 					}
 				}
 			}
+
 		}
 
-	}
+		// Make sure the weapon cools down before shooting again [20/11/2015 Matthew Woolley]
+		WeaponProperties.WeaponState = EWeaponState::CoolingDown;
 
-	// Make sure the weapon cools down before shooting again [20/11/2015 Matthew Woolley]
-	WeaponProperties.WeaponState = EWeaponState::CoolingDown;
+		GetWorld()->GetTimerManager().SetTimer( WeaponCooldownHandle, this, &AWeapon::Cooldown, WeaponProperties.CoolDownTime );
 
-	GetWorld()->GetTimerManager().SetTimer( WeaponCooldownHandle, this, &AWeapon::Cooldown, WeaponProperties.CoolDownTime );
-
-	// If this weapon relies on ammo. [26/7/2016 Matthew Woolley]
-	if ( ItemInfo.MaxAmmo != 0 )
-	{
-		// Remove ammo from the gun. [24/7/2016 Matthew Woolley]
-		ItemInfo.CurrentAmmo--;
-		PlayerCharacter->CharactersInventory->ItemSlots[ PlayerCharacter->CharactersInventory->EquippedItemsSlot ].CurrentAmmo--;
+		// If this weapon relies on ammo. [26/7/2016 Matthew Woolley]
+		if ( ItemInfo.MaxAmmo != 0 )
+		{
+			// Remove ammo from the gun. [24/7/2016 Matthew Woolley]
+			ItemInfo.CurrentAmmo--;
+			PlayerCharacter->CharactersInventory->ItemSlots[ PlayerCharacter->CharactersInventory->EquippedItemsSlot ].CurrentAmmo--;
+		}
 	}
 }
 
@@ -219,7 +223,6 @@ void AWeapon::Reload( bool bUseFullClip )
 		// If the ammo was created successfully. [27/7/2016 Matthew Woolley]
 		if ( TemporaryItemInfoHolder )
 		{
-			GEngine->AddOnScreenDebugMessage( -1, 5.f, FColor::Red, TEXT( "1" ) );
 			// Hide the ammo class. [28/7/2016 Matthew Woolley]
 			TemporaryItemInfoHolder->SetActorHiddenInGame( true );
 
@@ -233,7 +236,8 @@ void AWeapon::Reload( bool bUseFullClip )
 			if ( TemporaryItemInfoHolder->ItemInfo.bClip )
 			{
 				GetWorld()->GetTimerManager().SetTimer( WeaponReloadHandle, this, &AWeapon::FullReload, WeaponProperties.ReloadTime, false );
-			} else
+			}
+			else
 			{
 				GetWorld()->GetTimerManager().SetTimer( WeaponReloadHandle, this, &AWeapon::SingleRoundReload, WeaponProperties.ReloadTime, true );
 			}
@@ -250,92 +254,98 @@ void AWeapon::FullReload()
 	// Get Ned so we can use his inventory later. [25/7/2016 Matthew Woolley]
 	ARoadFeverCharacterNed* PlayerCharacter = Cast<ARoadFeverCharacterNed>( GetWorld()->GetFirstPlayerController()->GetPawn() );
 
-	// Setup its inventory properties. [27/7/2016 Matthew Woolley]
-	FInventoryItem ClipToAdd;
-	ClipToAdd.bClip = true;
-	ClipToAdd.bEquipable = false;
-	ClipToAdd.CurrentAmmo = ItemInfo.CurrentAmmo;
-	ClipToAdd.DisplayIcon = TemporaryItemInfoHolder->ItemInfo.DisplayIcon;
-	ClipToAdd.DisplayName = TemporaryItemInfoHolder->ItemInfo.DisplayName;
-	ClipToAdd.ItemClass = ItemInfo.ItemClass;
-	ClipToAdd.ItemToolTip = TemporaryItemInfoHolder->ItemInfo.ItemToolTip;
-	ClipToAdd.MaxItemStack = TemporaryItemInfoHolder->ItemInfo.MaxItemStack;
-
-	// Add it to the inventory. [27/7/2016 Matthew Woolley]
-	bool bAddedItem =  ItemInfo.CurrentAmmo != 0 ?  PlayerCharacter->AddItemToInventory( ClipToAdd ) : false;
-
-	// Remove the current ammo from the gun. [27/7/2016 Matthew Woolley]
-	ItemInfo.CurrentAmmo = 0;
-
-	// Store the largest ammo count found. [27/7/2016 Matthew Woolley]
-	FInventoryItem LargestAmmoCount;
-	int32 LargestAmmoCountNumber = 0;
-	int32 LargestAmmoCountSlotNumber = 0;
-
-	// In case there was an issue with the partial reload, revert to this (if there is one). [27/7/2016 Matthew Woolley]
-	FInventoryItem FullClip;
-	int32 FullClipSlotNumber = 0;
-	bool bFoundClip = false;
-
-	// For each slot in the inventory, search for the ammo this weapon uses. [27/7/2016 Matthew Woolley]
-	for ( int32 iSlotIterator = 0; iSlotIterator < PlayerCharacter->CharactersInventory->ItemSlots.Num(); iSlotIterator++ )
+	if ( PlayerCharacter )
 	{
-		// If the slot we have found has more ammo than the last one we found AND is the ammo this weapon uses. [27/7/2016 Matthew Woolley]
-		if ( LargestAmmoCountNumber <= PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo && TemporaryItemInfoHolder->ItemInfo.DisplayName == PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].DisplayName )
+		// Setup its inventory properties. [27/7/2016 Matthew Woolley]
+		FInventoryItem ClipToAdd;
+		ClipToAdd.bClip = true;
+		ClipToAdd.bEquipable = false;
+		ClipToAdd.CurrentAmmo = ItemInfo.CurrentAmmo;
+		ClipToAdd.DisplayIcon = TemporaryItemInfoHolder->ItemInfo.DisplayIcon;
+		ClipToAdd.DisplayName = TemporaryItemInfoHolder->ItemInfo.DisplayName;
+		ClipToAdd.ItemClass = ItemInfo.ItemClass;
+		ClipToAdd.ItemToolTip = TemporaryItemInfoHolder->ItemInfo.ItemToolTip;
+		ClipToAdd.MaxItemStack = TemporaryItemInfoHolder->ItemInfo.MaxItemStack;
+
+		// Add it to the inventory. [27/7/2016 Matthew Woolley]
+		bool bAddedItem = ItemInfo.CurrentAmmo != 0 ? PlayerCharacter->AddItemToInventory( ClipToAdd ) : false;
+
+		// Remove the current ammo from the gun. [27/7/2016 Matthew Woolley]
+		ItemInfo.CurrentAmmo = 0;
+
+		// Store the largest ammo count found. [27/7/2016 Matthew Woolley]
+		FInventoryItem LargestAmmoCount;
+		int32 LargestAmmoCountNumber = 0;
+		int32 LargestAmmoCountSlotNumber = 0;
+
+		// In case there was an issue with the partial reload, revert to this (if there is one). [27/7/2016 Matthew Woolley]
+		FInventoryItem FullClip;
+		int32 FullClipSlotNumber = 0;
+		bool bFoundClip = false;
+
+		// For each slot in the inventory, search for the ammo this weapon uses. [27/7/2016 Matthew Woolley]
+		for ( int32 iSlotIterator = 0; iSlotIterator < PlayerCharacter->CharactersInventory->ItemSlots.Num(); iSlotIterator++ )
 		{
-			// If the user has requested a partial reload AND this is a full clip. [27/7/2016 Matthew Woolley]
-			if ( !bUseFullClip && PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo == ItemInfo.MaxAmmo )
+			// If the slot we have found has more ammo than the last one we found AND is the ammo this weapon uses. [27/7/2016 Matthew Woolley]
+			if ( LargestAmmoCountNumber <= PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo && TemporaryItemInfoHolder->ItemInfo.DisplayName == PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].DisplayName )
 			{
-				// Store the full clip in case there is an issue with the partial clip. [27/7/2016 Matthew Woolley]
-				FullClip = PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ];
-				FullClipSlotNumber = iSlotIterator;
-				bFoundClip = true;
-				continue;
-			} else
-			{
-				// Store the clip for a reload. [27/7/2016 Matthew Woolley]
-				LargestAmmoCount = PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ];
-				LargestAmmoCountNumber = PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo;
-				LargestAmmoCountSlotNumber = iSlotIterator;
-				bFoundClip = true;
+				// If the user has requested a partial reload AND this is a full clip. [27/7/2016 Matthew Woolley]
+				if ( !bUseFullClip && PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo == ItemInfo.MaxAmmo )
+				{
+					// Store the full clip in case there is an issue with the partial clip. [27/7/2016 Matthew Woolley]
+					FullClip = PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ];
+					FullClipSlotNumber = iSlotIterator;
+					bFoundClip = true;
+					continue;
+				}
+				else
+				{
+					// Store the clip for a reload. [27/7/2016 Matthew Woolley]
+					LargestAmmoCount = PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ];
+					LargestAmmoCountNumber = PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo;
+					LargestAmmoCountSlotNumber = iSlotIterator;
+					bFoundClip = true;
+				}
 			}
 		}
+
+		// If we found a clip (partial or full) that is of the type requested (partial or full). [27/7/2016 Matthew Woolley]
+		if ( LargestAmmoCount.CurrentAmmo > 0 && bFoundClip )
+		{
+			// Reload this weapon with the amount of ammo in the clip. [27/7/2016 Matthew Woolley]
+			ItemInfo.CurrentAmmo = LargestAmmoCount.CurrentAmmo;
+			PlayerCharacter->CharactersInventory->ItemSlots[ LargestAmmoCountSlotNumber ].CurrentItemStack--;
+		}
+		else if ( FullClip.CurrentAmmo > 0 && bFoundClip ) // If we only found a full clip, but a partial was requested. [27/7/2016 Matthew Woolley]
+		{
+			// Reload the full clip. [27/7/2016 Matthew Woolley]
+			ItemInfo.CurrentAmmo = FullClip.CurrentAmmo;
+			PlayerCharacter->CharactersInventory->ItemSlots[ FullClipSlotNumber ].CurrentItemStack--;
+		}
+
+		// If the old clip wasn't added to the inventory. [25/7/2016 Matthew Woolley]
+		if ( !bAddedItem && ClipToAdd.CurrentAmmo != 0 )
+		{
+			// Throw the item onto the ground in front of Ned. [25/7/2016 Matthew Woolley]
+			FVector SpawnLocation = PlayerCharacter->GetActorRotation().Vector() * 20;
+			TemporaryItemInfoHolder->SetActorLocation( SpawnLocation );
+			TemporaryItemInfoHolder->SetActorHiddenInGame( false );
+
+		}
+		else // If the item was added. [25/7/2016 Matthew Woolley]
+		{
+			// Destroy it from the level. [25/7/2016 Matthew Woolley]
+			TemporaryItemInfoHolder->Destroy();
+		}
+
+		// Tell the code the weapon is no longer reloading. [27/7/2016 Matthew Woolley]
+		PlayerCharacter->CharactersInventory->ItemSlots[ PlayerCharacter->CharactersInventory->EquippedItemsSlot ].CurrentAmmo = ItemInfo.CurrentAmmo;
+		WeaponProperties.WeaponState = EWeaponState::Normal;
 	}
-
-	// If we found a clip (partial or full) that is of the type requested (partial or full). [27/7/2016 Matthew Woolley]
-	if ( LargestAmmoCount.CurrentAmmo > 0 && bFoundClip )
-	{
-		// Reload this weapon with the amount of ammo in the clip. [27/7/2016 Matthew Woolley]
-		ItemInfo.CurrentAmmo = LargestAmmoCount.CurrentAmmo;
-		PlayerCharacter->CharactersInventory->ItemSlots[ LargestAmmoCountSlotNumber ].CurrentItemStack--;
-	} else if ( FullClip.CurrentAmmo > 0 && bFoundClip ) // If we only found a full clip, but a partial was requested. [27/7/2016 Matthew Woolley]
-	{
-		// Reload the full clip. [27/7/2016 Matthew Woolley]
-		ItemInfo.CurrentAmmo = FullClip.CurrentAmmo;
-		PlayerCharacter->CharactersInventory->ItemSlots[ FullClipSlotNumber ].CurrentItemStack--;
-	}
-
-	// If the old clip wasn't added to the inventory. [25/7/2016 Matthew Woolley]
-	if ( !bAddedItem && ClipToAdd.CurrentAmmo != 0 )
-	{
-		// Throw the item onto the ground in front of Ned. [25/7/2016 Matthew Woolley]
-		FVector SpawnLocation = PlayerCharacter->GetActorRotation().Vector() * 20;
-		TemporaryItemInfoHolder->SetActorLocation( SpawnLocation );
-		TemporaryItemInfoHolder->SetActorHiddenInGame( false );
-
-	} else // If the item was added. [25/7/2016 Matthew Woolley]
-	{
-		// Destroy it from the level. [25/7/2016 Matthew Woolley]
-		TemporaryItemInfoHolder->Destroy();
-	}
-
-	// Tell the code the weapon is no longer reloading. [27/7/2016 Matthew Woolley]
-	PlayerCharacter->CharactersInventory->ItemSlots[ PlayerCharacter->CharactersInventory->EquippedItemsSlot ].CurrentAmmo = ItemInfo.CurrentAmmo;
-	WeaponProperties.WeaponState = EWeaponState::Normal;
 }
 
 /*
- *	This is called for weapons that use single rounds to reload (such as a shotgun) and that can be interupted.
+ *	This is called for weapons that use single rounds to reload (such as a shotgun) and that can be interrupted.
  *	11/4/2017 - Matthew Woolley
  */
 void AWeapon::SingleRoundReload()
@@ -350,38 +360,41 @@ void AWeapon::SingleRoundReload()
 	}
 
 	// Get Ned so we can use his inventory later. [25/7/2016 Matthew Woolley]
-	ARoadFeverCharacterNed* PlayerCharacter = ( ARoadFeverCharacterNed* ) GetWorld()->GetFirstPlayerController()->GetPawn();
+	ARoadFeverCharacterNed* PlayerCharacter = Cast<ARoadFeverCharacterNed>( GetWorld()->GetFirstPlayerController()->GetPawn() );
 
-	bool bFoundAmmo = false;
-
-	// For each slot in the inventory, search for the ammo this weapon uses. [27/7/2016 Matthew Woolley]
-	for ( int32 iSlotIterator = 0; iSlotIterator < PlayerCharacter->CharactersInventory->ItemSlots.Num(); iSlotIterator++ )
+	if ( PlayerCharacter )
 	{
-		// If this slot contains the ammo this weapon uses AND there is actually ammo in that slot. [27/7/2016 Matthew Woolley]
-		if ( TemporaryItemInfoHolder->ItemInfo.DisplayName == PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].DisplayName && PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentItemStack > 0 )
+		bool bFoundAmmo = false;
+
+		// For each slot in the inventory, search for the ammo this weapon uses. [27/7/2016 Matthew Woolley]
+		for ( int32 iSlotIterator = 0; iSlotIterator < PlayerCharacter->CharactersInventory->ItemSlots.Num(); iSlotIterator++ )
 		{
-			PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentItemStack--;
-			ItemInfo.CurrentAmmo++;
-			PlayerCharacter->CharactersInventory->ItemSlots[ PlayerCharacter->CharactersInventory->EquippedItemsSlot ].CurrentAmmo++;
-			bFoundAmmo = true;
+			// If this slot contains the ammo this weapon uses AND there is actually ammo in that slot. [27/7/2016 Matthew Woolley]
+			if ( TemporaryItemInfoHolder->ItemInfo.DisplayName == PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].DisplayName && PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentItemStack > 0 )
+			{
+				PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentItemStack--;
+				ItemInfo.CurrentAmmo++;
+				PlayerCharacter->CharactersInventory->ItemSlots[ PlayerCharacter->CharactersInventory->EquippedItemsSlot ].CurrentAmmo++;
+				bFoundAmmo = true;
+			}
 		}
-	}
 
-	// If the gun is full, or there isn't any ammo. [27/7/2016 Matthew Woolley]
-	if ( !bFoundAmmo || ItemInfo.CurrentAmmo == ItemInfo.MaxAmmo )
-	{
-		// Stop the gun from reloading further. [27/7/2016 Matthew Woolley]
-		WeaponProperties.WeaponState = EWeaponState::Normal;
-		GetWorld()->GetTimerManager().ClearTimer( WeaponReloadHandle );
-		TemporaryItemInfoHolder->Destroy();
-	}
+		// If the gun is full, or there isn't any ammo. [27/7/2016 Matthew Woolley]
+		if ( !bFoundAmmo || ItemInfo.CurrentAmmo == ItemInfo.MaxAmmo )
+		{
+			// Stop the gun from reloading further. [27/7/2016 Matthew Woolley]
+			WeaponProperties.WeaponState = EWeaponState::Normal;
+			GetWorld()->GetTimerManager().ClearTimer( WeaponReloadHandle );
+			TemporaryItemInfoHolder->Destroy();
+		}
 
-	if ( bInterruptReload )
-	{
-		WeaponProperties.WeaponState = EWeaponState::Normal;
-		GetWorld()->GetTimerManager().ClearTimer( WeaponReloadHandle );
-		TemporaryItemInfoHolder->Destroy();
-		bInterruptReload = false;
+		if ( bInterruptReload )
+		{
+			WeaponProperties.WeaponState = EWeaponState::Normal;
+			GetWorld()->GetTimerManager().ClearTimer( WeaponReloadHandle );
+			TemporaryItemInfoHolder->Destroy();
+			bInterruptReload = false;
+		}
 	}
 }
 

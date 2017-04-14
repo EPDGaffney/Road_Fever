@@ -25,7 +25,7 @@ UInventory::UInventory()
  */
 void UInventory::TickComponent( float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction )
 {
-	for ( int32 iItemSlotIterator = 0; iItemSlotIterator < ItemSlots.Num() ; iItemSlotIterator++)
+	for ( int32 iItemSlotIterator = 0; iItemSlotIterator < ItemSlots.Num(); iItemSlotIterator++ )
 	{
 		FInventoryItem SlotItem = ItemSlots[ iItemSlotIterator ];
 
@@ -62,7 +62,7 @@ void UInventory::TickComponent( float DeltaTime, enum ELevelTick TickType, FActo
  */
 void UInventory::ToggleInventory()
 {
-	ARoadFeverCharacterNed* PlayerCharacter = ( ARoadFeverCharacterNed* ) GetWorld()->GetFirstPlayerController()->GetPawn();
+	ARoadFeverCharacterNed* PlayerCharacter = Cast<ARoadFeverCharacterNed>( GetWorld()->GetFirstPlayerController()->GetPawn() );
 
 	// If the game should allow input. [29/7/2016 Matthew Woolley]
 	if ( PlayerCharacter && !PlayerCharacter->bIsAiming && ( PlayerCharacter->GameHasFocus() || bOpen ) )
@@ -94,7 +94,7 @@ void UInventory::OpenInv()
 		InventoryUIWidgetInstance->AddToViewport();
 
 		// Pause the game. [29/7/2016 Matthew Woolley]
-		APlayerController* PlayerController = ( APlayerController* ) GEngine->GetFirstLocalPlayerController( GetWorld() );
+		APlayerController* PlayerController = ( APlayerController* )GEngine->GetFirstLocalPlayerController( GetWorld() );
 		PlayerController->SetPause( true );
 
 		FInputModeGameAndUI Mode;
@@ -119,7 +119,7 @@ void UInventory::CloseInv()
 		InventoryUIWidgetInstance->RemoveFromParent();
 
 		// Pause the game. [29/7/2016 Matthew Woolley]
-		APlayerController* PLayerController = ( APlayerController* ) GEngine->GetFirstLocalPlayerController( GetWorld() );
+		APlayerController* PLayerController = ( APlayerController* )GEngine->GetFirstLocalPlayerController( GetWorld() );
 		PLayerController->SetPause( false );
 
 		FInputModeGameOnly Mode;
