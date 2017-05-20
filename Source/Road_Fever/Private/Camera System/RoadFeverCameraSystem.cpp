@@ -72,6 +72,24 @@ void ARoadFeverCameraSystem::BeginPlay()
 }
 
 /*
+*	Switch the current camera being used, to this one.
+*	20/5/2017 - Matthew Woolley
+*/
+void ARoadFeverCameraSystem::SwitchTo()
+{
+	OnActorEnter( NULL, GetWorld()->GetFirstPlayerController()->GetControlledPawn(), NULL, 0, false, FHitResult() );
+}
+
+/*
+*	Switches the current camera being used, back to the one being used before this one.
+*	20/5/2017 - Matthew Woolley
+*/
+void ARoadFeverCameraSystem::SwitchBack()
+{
+	OnActorLeave( NULL, GetWorld()->GetFirstPlayerController()->GetControlledPawn(), NULL, 0 );
+}
+
+/*
  *	Sets the position of the character's camera so that it uses the location setup by the camera placed in the editor.
  *	Uses the ReverTo variable for when the player leaves this camera detector.
  *	11/4/2017 - Matthew Woolley

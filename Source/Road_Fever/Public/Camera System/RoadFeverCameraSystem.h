@@ -30,28 +30,18 @@ public:
 	virtual void BeginPlay() override;
 
 	/*
-	*	Sets the position of the character's camera so that it uses the location setup by the camera placed in the editor.
-	*	Uses the ReverTo variable for when the player leaves this camera detector.
-	*	11/4/2017 - Matthew Woolley
-	*/
-	UFUNCTION( BlueprintCallable, Category = "Detection" )
-	void OnActorEnter( class UPrimitiveComponent* InPrimitiveComponent, AActor* InOtherActor, UPrimitiveComponent* InOtherPrimitiveComponent, int32 InInt, bool InSweepResult, const FHitResult& InFHit );
+	 *	Switch the current camera being used, to this one.
+	 *	20/5/2017 - Matthew Woolley
+	 */
+	UFUNCTION( BlueprintCallable, Category = "" )
+	void SwitchTo();
 
 	/*
-	*	De-assigns the RevertTo variable if its value is that of this camera.
-	*	If the RevertTo variable refers to a different camera, and this is the camera in use, set the camera in the RevertTo variabla to be the one being used.
-	*	11/4/2017 - Matthew Woolley
-	*/
-	UFUNCTION( BlueprintCallable, Category = "Detection" )
-	void OnActorLeave( class UPrimitiveComponent* InPrimitiveCompnent, AActor* InOtherActor, UPrimitiveComponent* InOtherPrimitiveComponent, int32 InInt );
-
-	// The area that, when entered, triggers the Character's camera location. [11/12/2015 Matthew Woolley]
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Detection" )
-	class UBoxComponent* TriggerArea;
-
-	// The transform that, when triggered, the Character's camera moves to. [11/12/2015 Matthew Woolley]
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Rendering" )
-	FCameraPositioning CameraPosition;
+	 *	Switches the current camera being used, back to the one being used before this one.
+	 *	20/5/2017 - Matthew Woolley
+	 */
+	UFUNCTION( BlueprintCallable, Category = "" )
+	void SwitchBack();
 
 	// The camera that gets shown in the editor to help the LDs position them. [11/12/2015 Matthew Woolley]
 	UPROPERTY( EditAnywhere )
@@ -61,4 +51,28 @@ public:
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Rendering" )
 	bool bPrimaryCamera;
 
+	// The area that, when entered, triggers the Character's camera location. [11/12/2015 Matthew Woolley]
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Detection" )
+	class UBoxComponent* TriggerArea;
+
+private:
+	/*
+	*	Sets the position of the character's camera so that it uses the location setup by the camera placed in the editor.
+	*	Uses the ReverTo variable for when the player leaves this camera detector.
+	*	11/4/2017 - Matthew Woolley
+	*/
+	UFUNCTION()
+	void OnActorEnter( class UPrimitiveComponent* InPrimitiveComponent, AActor* InOtherActor, UPrimitiveComponent* InOtherPrimitiveComponent, int32 InInt, bool InSweepResult, const FHitResult& InFHit );
+
+	/*
+	*	De-assigns the RevertTo variable if its value is that of this camera.
+	*	If the RevertTo variable refers to a different camera, and this is the camera in use, set the camera in the RevertTo variabla to be the one being used.
+	*	11/4/2017 - Matthew Woolley
+	*/
+	UFUNCTION()
+	void OnActorLeave( class UPrimitiveComponent* InPrimitiveCompnent, AActor* InOtherActor, UPrimitiveComponent* InOtherPrimitiveComponent, int32 InInt );
+
+	// The transform that, when triggered, the Character's camera moves to. [11/12/2015 Matthew Woolley]
+	UPROPERTY()
+	FCameraPositioning CameraPosition;
 };
