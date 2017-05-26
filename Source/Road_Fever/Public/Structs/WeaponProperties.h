@@ -20,7 +20,6 @@ enum class EWeaponState : uint8
 
 
 
-// The properties to customize how the weapon behaves [20/11/2015 Matthew Woolley]
 /*
  *	Used to customise weapon behaviour, such as cool down length, damage etc..
  *	11/4/2017 - Matthew Woolley
@@ -81,15 +80,15 @@ public:
 
 	// Played when the player uses the attack function, with ammo in the weapon if required. [11/2/2017 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack|Animation" )
-	UAnimationAsset* AttackAnimation;
+	UAnimMontage* AttackAnimation;
 
 	// Played when the player uses the attack function, without ammo in the weapon. [11/2/2017 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack|Animation" )
-	UAnimationAsset* AttackAnimation_NoAmmo;
+	UAnimMontage* AttackAnimation_NoAmmo;
 
 	// Played when the player uses the reload function. [11/2/2017 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack|Animation" )
-	UAnimationAsset* ReloadAnimation;
+	UAnimMontage* ReloadAnimation;
 
 	// The current state of the weapon. [19/3/2017 Matthew Woolley]
 	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Attack" )

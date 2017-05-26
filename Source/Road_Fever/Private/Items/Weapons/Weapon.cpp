@@ -74,7 +74,7 @@ void AWeapon::OnAttack_Implementation()
 		{
 			if ( ItemInfo.CurrentAmmo <= 0 )
 			{
-				PlayerCharacter->GetMesh()->PlayAnimation( WeaponProperties.AttackAnimation_NoAmmo, false );
+				PlayerCharacter->PlayAnimMontage( WeaponProperties.AttackAnimation_NoAmmo );
 			}
 
 			// If this weapon is reloading, but can be interrupted. [27/7/2016 Matthew Woolley]
@@ -86,7 +86,7 @@ void AWeapon::OnAttack_Implementation()
 			return;
 		}
 
-		PlayerCharacter->GetMesh()->PlayAnimation( WeaponProperties.AttackAnimation, false );
+		PlayerCharacter->PlayAnimMontage( WeaponProperties.AttackAnimation );
 
 		// For each trace to complete. [21/7/2016 Matthew Woolley]
 		for ( int iTraceIterator = 0; iTraceIterator < WeaponProperties.NumberOfTraces; iTraceIterator++ )
@@ -214,6 +214,8 @@ void AWeapon::Reload( bool bUseFullClip )
 	// If the UWorld instance exists. [27/7/2016 Matthew Woolley]
 	if ( World )
 	{
+		ARoadFeverCharacterNed* PlayerCharacter = Cast<ARoadFeverCharacterNed>( World->GetFirstPlayerController()->GetCharacter() );
+
 		// Spawn the ammo class. [27/7/2016 Matthew Woolley]
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = this;
@@ -231,6 +233,9 @@ void AWeapon::Reload( bool bUseFullClip )
 
 			// Tell the code we are reloading. [27/7/2016 Matthew Woolley]
 			WeaponProperties.WeaponState = EWeaponState::Reloading;
+
+			// Plays the reload animation. [26/5/2017 Matthew Woolley]
+			PlayerCharacter->PlayAnimMontage( WeaponProperties.ReloadAnimation );
 
 			// If this weapon uses a clip. [27/7/2016 Matthew Woolley]
 			if ( TemporaryItemInfoHolder->ItemInfo.bClip )
