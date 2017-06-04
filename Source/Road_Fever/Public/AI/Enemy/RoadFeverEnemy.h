@@ -51,6 +51,10 @@ public:
 	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Movement" )
 	float MoveSpeed;
 
+	// Whether or not this enemy is dead. [4/6/2017 Matthew Woolley]
+	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Stats" )
+	bool bIsDead;
+
 	// The meshes that this enemy type can use. [3/2/2017 Matthew Woolley]
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Config" )
 	TArray<USkeletalMesh*> EnemyMeshes;

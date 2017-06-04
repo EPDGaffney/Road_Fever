@@ -17,6 +17,7 @@ ARoadFeverEnemy::ARoadFeverEnemy()
 	EnemyHealth = 100;
 	MinMoveSpeed = 1;
 	MaxMoveSpeed = 1;
+	bIsDead = false;
 
 	// Set-up the mesh so it isn't orientated strangely. [8/2/2017 Matthew Woolley]
 	GetMesh()->SetRelativeLocation( FVector( 0, 0, -90 ) );
@@ -74,6 +75,7 @@ float ARoadFeverEnemy::TakeDamage( float InDamage, struct FDamageEvent const& In
 	// Check if the enemy has died. [8/2/2017 Matthew Woolley]
 	if ( EnemyHealth <= 0 )
 	{
+		bIsDead = true;
 		Die();
 	}
 
