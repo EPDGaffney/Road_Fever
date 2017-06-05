@@ -21,6 +21,20 @@ enum class EWeaponState : uint8
 
 
 /*
+ *	
+ *	5/6/2017 - Matthew Woolley
+ */
+UENUM( BlueprintType )
+enum class EReloadType : uint8
+{
+	SingleRound,
+	Clip,
+	SpeedLoader
+};
+
+
+
+/*
  *	Used to customise weapon behaviour, such as cool down length, damage etc..
  *	11/4/2017 - Matthew Woolley
  */
@@ -70,10 +84,6 @@ public:
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Attack" )
 	float MultiTraceSpread;
 
-	// The kind of ammo this weapon uses. [25/7/2016 Matthew Woolley]
-	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Attack" )
-	TSubclassOf<AAmmo> AmmoType;
-
 	// Whether this weapon uses a line trace, or a box trace. [3/2/2017 Matthew Woolley]
 	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Attack" )
 	bool bBoxTrace;
@@ -93,4 +103,8 @@ public:
 	// The current state of the weapon. [19/3/2017 Matthew Woolley]
 	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Attack" )
 	EWeaponState WeaponState;
+
+	// The ammo this weapon uses. [5/6/2017 Matthew Woolley]
+	UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "" )
+	TArray<TSubclassOf<AAmmo>> AmmoTypes;
 };

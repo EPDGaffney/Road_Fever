@@ -220,31 +220,43 @@ void AWeapon::Reload( bool bUseFullClip )
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = this;
 		SpawnParams.Instigator = Instigator;
-		TemporaryItemInfoHolder = World->SpawnActor<AItem>( WeaponProperties.AmmoType, FVector( 0, 0, 0 ), GetActorRotation(), SpawnParams );
 
-		// If the ammo was created successfully. [27/7/2016 Matthew Woolley]
-		if ( TemporaryItemInfoHolder )
+		for ( TSubclassOf<AAmmo> Ammo : WeaponProperties.AmmoTypes )
 		{
-			// Hide the ammo class. [28/7/2016 Matthew Woolley]
-			TemporaryItemInfoHolder->SetActorHiddenInGame( true );
+			TemporaryItemInfoHolder = World->SpawnActor<AItem>( Ammo, FVector( 0, 0, 0 ), GetActorRotation(), SpawnParams );
 
-			// Tell the code whether the user requested a full clip or not. [27/7/2016 Matthew Woolley]
-			bUseFullClip = bUseFullClip;
-
-			// Tell the code we are reloading. [27/7/2016 Matthew Woolley]
-			WeaponProperties.WeaponState = EWeaponState::Reloading;
-
-			// Plays the reload animation. [26/5/2017 Matthew Woolley]
-			PlayerCharacter->PlayAnimMontage( WeaponProperties.ReloadAnimation );
-
-			// If this weapon uses a clip. [27/7/2016 Matthew Woolley]
-			if ( TemporaryItemInfoHolder->ItemInfo.bClip )
+			// If the ammo was created successfully. [27/7/2016 Matthew Woolley]
+			if ( TemporaryItemInfoHolder )
 			{
-				GetWorld()->GetTimerManager().SetTimer( WeaponReloadHandle, this, &AWeapon::FullReload, WeaponProperties.ReloadTime, false );
-			}
-			else
-			{
-				GetWorld()->GetTimerManager().SetTimer( WeaponReloadHandle, this, &AWeapon::SingleRoundReload, WeaponProperties.ReloadTime, true );
+				if ( IsAmmoAvailable( (AAmmo*)TemporaryItemInfoHolder ) )
+				{
+					// Hide the ammo class. [28/7/2016 Matthew Woolley]
+					TemporaryItemInfoHolder->SetActorHiddenInGame( true );
+
+					// Tell the code whether the user requested a full clip or not. [27/7/2016 Matthew Woolley]
+					bUseFullClip = bUseFullClip;
+
+					// Tell the code we are reloading. [27/7/2016 Matthew Woolley]
+					WeaponProperties.WeaponState = EWeaponState::Reloading;
+
+					// Plays the reload animation. [26/5/2017 Matthew Woolley]
+					PlayerCharacter->PlayAnimMontage( WeaponProperties.ReloadAnimation );
+
+					// If this weapon uses a clip. [27/7/2016 Matthew Woolley]
+					if ( TemporaryItemInfoHolder->ItemInfo.bClip )
+					{
+						GetWorld()->GetTimerManager().SetTimer( WeaponReloadHandle, this, &AWeapon::FullReload, WeaponProperties.ReloadTime, false );
+					}
+					else
+					{
+						GetWorld()->GetTimerManager().SetTimer( WeaponReloadHandle, this, &AWeapon::SingleRoundReload, WeaponProperties.ReloadTime, true );
+					}
+				}
+				else
+				{
+					TemporaryItemInfoHolder->Destroy();
+					TemporaryItemInfoHolder = NULL;
+				}
 			}
 		}
 	}
@@ -410,4 +422,46 @@ void AWeapon::SingleRoundReload()
 void AWeapon::Cooldown()
 {
 	WeaponProperties.WeaponState = EWeaponState::Normal;
+}
+
+/*
+*	Checks to see if the ammo is available within the inventory
+*	5/6/2017 - Matthew Woolley
+*/
+bool AWeapon::IsAmmoAvailable( class AAmmo* InAmmoBeingCheckedFor )
+{
+	// Get Ned so we can use his inventory later. [5/6/2017 Matthew Woolley]
+	ARoadFeverCharacterNed* PlayerCharacter = Cast<ARoadFeverCharacterNed>( GetWorld()->GetFirstPlayerController()->GetPawn() );
+	
+	if ( InAmmoBeingCheckedFor && PlayerCharacter )
+	{
+		// If this ammo type is a speed loader or a clip. [5/6/2017 Matthew Woolley]
+		if (InAmmoBeingCheckedFor->ItemInfo.bClip)
+		{
+			// For each slot in the inventory, search for the ammo this weapon uses. [5/6/2017 Matthew Woolley]
+			for ( int32 iSlotIterator = 0; iSlotIterator < PlayerCharacter->CharactersInventory->ItemSlots.Num(); iSlotIterator++ )
+			{
+				// If the slot we have found has more ammo than the last one we found AND is the ammo this weapon uses. [5/6/2017 Matthew Woolley]
+				if ( TemporaryItemInfoHolder->ItemInfo.DisplayName == PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].DisplayName )
+				{
+					return true;
+				}
+			}
+
+		}// If this ammo type is a single round. [5/6/2017 Matthew Woolley]
+		else
+		{
+			// For each slot in the inventory, search for the ammo this weapon uses. [5/6/2017 Matthew Woolley]
+			for ( int32 iSlotIterator = 0; iSlotIterator < PlayerCharacter->CharactersInventory->ItemSlots.Num(); iSlotIterator++ )
+			{
+				// If this slot contains the ammo this weapon uses AND there is actually ammo in that slot. [5/6/2017 Matthew Woolley]
+				if ( TemporaryItemInfoHolder->ItemInfo.DisplayName == PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].DisplayName && PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentItemStack > 0 )
+				{
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
 }

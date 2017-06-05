@@ -68,6 +68,13 @@ public:
 	*/
 	void Cooldown();
 
+	/*
+	 *	Checks to see if the ammo is available within the inventory
+	 *	5/6/2017 - Matthew Woolley
+	 */
+	UFUNCTION( BlueprintCallable, Category = "" )
+	bool IsAmmoAvailable( class AAmmo* InAmmoBeingCheckedFor );
+
 	// The properties for customizing this weapon [20/11/2015 Matthew Woolley]
 	UPROPERTY( BlueprintReadWrite, EditDefaultsOnly, Category = "Attack" )
 	FWeaponProperties WeaponProperties;
