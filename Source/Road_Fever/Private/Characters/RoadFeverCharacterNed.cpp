@@ -181,13 +181,34 @@ bool ARoadFeverCharacterNed::AddItemToInventory( struct FInventoryItem ItemToAdd
 		if ( CharactersInventory->ItemSlots[ iSlotIterator ].DisplayName == ItemToAdd.DisplayName )
 		{
 			// If there is less of the item than you can carry in one slot. [24/7/2016 Matthew Woolley]
-			if ( CharactersInventory->ItemSlots[ iSlotIterator ].CurrentItemStack < ItemToAdd.MaxItemStack )
+			if ( CharactersInventory->ItemSlots[ iSlotIterator ].CurrentItemStack < ItemToAdd.MaxItemStack || CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo  < ItemToAdd.MaxAmmo )
 			{
-				// If this is a clip and it has found a clip of similar size OR it isn't a clip. [25/7/2016 Matthew Woolley]
-				if ( ( ItemToAdd.bClip && ItemToAdd.CurrentAmmo == CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo ) || !ItemToAdd.bClip )
+				// If this isn't a clip nor a weapon. [6/6/2017 Matthew Woolley]
+				if ( !ItemToAdd.bClip && !ItemToAdd.bWeapon )
 				{
-					// Add an item to the slot. [5/3/2016 Matthew Woolley]
-					CharactersInventory->ItemSlots[ iSlotIterator ].CurrentItemStack++;
+					// If this isn't ammo. [6/6/2017 Matthew Woolley]
+					if ( ItemToAdd.MaxAmmo == 0 )
+					{
+						// Add an item to the slot. [5/3/2016 Matthew Woolley]
+						CharactersInventory->ItemSlots[ iSlotIterator ].CurrentItemStack++;
+					}
+					else
+					{
+						// If this won't fill the ammo stash. [6/6/2017 Matthew Woolley]
+						if ( CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo + ItemToAdd.CurrentAmmo <= ItemToAdd.MaxAmmo )
+						{
+							// Add it to the ammo stash. [6/6/2017 Matthew Woolley]
+							CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo += ItemToAdd.CurrentAmmo;
+						}
+						else // If this will fill the ammo stash and then some. [6/6/2017 Matthew Woolley]
+						{
+							// Fill the ammo stash, and remove the ammo that was taken from the thing being added. [6/6/2017 Matthew Woolley]
+							int AmmoToRemoveFromStash = ItemToAdd.MaxAmmo - CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo;
+							CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo = ItemToAdd.MaxAmmo;
+							ItemToAdd.CurrentAmmo -= AmmoToRemoveFromStash;
+							continue;
+						}
+					}
 
 					// Tell the code that this item was added successfully. [5/3/2016 Matthew Woolley]
 					return true;
@@ -215,27 +236,8 @@ bool ARoadFeverCharacterNed::AddItemToInventory( struct FInventoryItem ItemToAdd
 			CharactersInventory->ItemSlots[ iSlotIterator ].MaxItemStack = ItemToAdd.MaxItemStack;
 			CharactersInventory->ItemSlots[ iSlotIterator ].bEquipable = ItemToAdd.bEquipable;
 			CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo = ItemToAdd.CurrentAmmo;
-
-			// If this item is a weapon. [24/7/2016 Matthew Woolley]
-			if ( ItemToAdd.bWeapon )
-			{
-				// Setup the weapon stats. [24/7/2016 Matthew Woolley]
-				CharactersInventory->ItemSlots[ iSlotIterator ].MaxAmmo = ItemToAdd.MaxAmmo;
-				CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo = ItemToAdd.CurrentAmmo;
-			}
-			else
-			{
-				// Setup the weapon stats. [24/7/2016 Matthew Woolley]
-				CharactersInventory->ItemSlots[ iSlotIterator ].MaxAmmo = 0;
-				CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo = 0;
-			}
-
-			// If this is a clip ammo type (other ammo types are added normally). [25/7/2016 Matthew Woolley]
-			if ( ItemToAdd.bClip )
-			{
-				CharactersInventory->ItemSlots[ iSlotIterator ].bClip = ItemToAdd.bClip;
-				CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo = ItemToAdd.CurrentAmmo;
-			}
+			CharactersInventory->ItemSlots[ iSlotIterator ].MaxAmmo = ItemToAdd.MaxAmmo;
+			CharactersInventory->ItemSlots[ iSlotIterator ].bClip = ItemToAdd.bClip;
 
 			// Tell the code that this item was added successfully. [5/3/2016 Matthew Woolley]
 			return true;

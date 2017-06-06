@@ -387,9 +387,9 @@ void AWeapon::SingleRoundReload()
 		for ( int32 iSlotIterator = 0; iSlotIterator < PlayerCharacter->CharactersInventory->ItemSlots.Num(); iSlotIterator++ )
 		{
 			// If this slot contains the ammo this weapon uses AND there is actually ammo in that slot. [27/7/2016 Matthew Woolley]
-			if ( TemporaryItemInfoHolder->ItemInfo.DisplayName == PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].DisplayName && PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentItemStack > 0 )
+			if ( TemporaryItemInfoHolder->ItemInfo.DisplayName == PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].DisplayName && PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo > 0 )
 			{
-				PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentItemStack--;
+				PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo--;
 				ItemInfo.CurrentAmmo++;
 				PlayerCharacter->CharactersInventory->ItemSlots[ PlayerCharacter->CharactersInventory->EquippedItemsSlot ].CurrentAmmo++;
 				bFoundAmmo = true;
@@ -455,7 +455,7 @@ bool AWeapon::IsAmmoAvailable( class AAmmo* InAmmoBeingCheckedFor )
 			for ( int32 iSlotIterator = 0; iSlotIterator < PlayerCharacter->CharactersInventory->ItemSlots.Num(); iSlotIterator++ )
 			{
 				// If this slot contains the ammo this weapon uses AND there is actually ammo in that slot. [5/6/2017 Matthew Woolley]
-				if ( TemporaryItemInfoHolder->ItemInfo.DisplayName == PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].DisplayName && PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentItemStack > 0 )
+				if ( TemporaryItemInfoHolder->ItemInfo.DisplayName == PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].DisplayName && PlayerCharacter->CharactersInventory->ItemSlots[ iSlotIterator ].CurrentAmmo > 0 )
 				{
 					return true;
 				}

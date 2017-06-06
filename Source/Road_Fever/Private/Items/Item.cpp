@@ -61,9 +61,59 @@ void AItem::OnCombine_Implementation( AItem* CombinedItem, int32 ItemASlot, int3
 
 			if ( CreatedItem && PlayerCharacter )
 			{
-				// Remove items from the inventory that were used to craft the new item. [14/4/2017 Matthew Woolley]
-				PlayerCharacter->CharactersInventory->ItemSlots[ ItemASlot ].CurrentItemStack--;
-				PlayerCharacter->CharactersInventory->ItemSlots[ ItemBSlot ].CurrentItemStack--;
+				// If this is a clip that is receiving ammo. [6/6/2017 Matthew Woolley]
+				if ( CreatedItem->ItemInfo.bClip )
+				{
+					// If the CombinedItem is a clip. [6/6/2017 Matthew Woolley]
+					if ( CombinedItem->ItemInfo.bClip )
+					{
+						// If there is more ammo than space in the clip. [6/6/2017 Matthew Woolley]
+						if ( ( CombinedItem->ItemInfo.CurrentAmmo + ItemInfo.CurrentAmmo ) > CreatedItem->ItemInfo.MaxAmmo )
+						{
+							// Get the amount of ammo that is currently needed from the ammo stash, and remove it. [6/6/2017 Matthew Woolley]
+							int AmountToRemoveFromBulletStash = CreatedItem->ItemInfo.MaxAmmo - CombinedItem->ItemInfo.CurrentAmmo;
+							ItemInfo.CurrentAmmo -= AmountToRemoveFromBulletStash;
+
+							// Fill the clip. [6/6/2017 Matthew Woolley]
+							CreatedItem->ItemInfo.CurrentAmmo = CreatedItem->ItemInfo.MaxAmmo;
+						}
+						else
+						{
+							// Fill the clip. [6/6/2017 Matthew Woolley]
+							CreatedItem->ItemInfo.CurrentAmmo += ItemInfo.CurrentAmmo;
+
+							// Remove the ammo from the stash. [6/6/2017 Matthew Woolley]
+							ItemInfo.CurrentAmmo = 0;
+						}
+					}
+					else
+					{
+						// If there is more ammo than space in the clip. [6/6/2017 Matthew Woolley]
+						if ( ( CombinedItem->ItemInfo.CurrentAmmo + ItemInfo.CurrentAmmo ) > CreatedItem->ItemInfo.MaxAmmo )
+						{
+							// Get the amount of ammo that is currently needed from the ammo stash, and remove it. [6/6/2017 Matthew Woolley]
+							int AmountToRemoveFromBulletStash = CreatedItem->ItemInfo.MaxAmmo - ItemInfo.CurrentAmmo;
+							CombinedItem->ItemInfo.CurrentAmmo -= AmountToRemoveFromBulletStash;
+
+							// Fill the clip. [6/6/2017 Matthew Woolley]
+							CreatedItem->ItemInfo.CurrentAmmo = CreatedItem->ItemInfo.MaxAmmo;
+						}
+						else
+						{
+							// Fill the clip. [6/6/2017 Matthew Woolley]
+							CreatedItem->ItemInfo.CurrentAmmo += CombinedItem->ItemInfo.CurrentAmmo;
+
+							// Remove the ammo from the stash. [6/6/2017 Matthew Woolley]
+							CombinedItem->ItemInfo.CurrentAmmo = 0;
+						}
+					}
+				}
+				else
+				{
+					// Remove items from the inventory that were used to craft the new item. [14/4/2017 Matthew Woolley]
+					PlayerCharacter->CharactersInventory->ItemSlots[ ItemASlot ].CurrentItemStack--;
+					PlayerCharacter->CharactersInventory->ItemSlots[ ItemBSlot ].CurrentItemStack--;
+				}
 
 				// Add the item that was crafted to the inventory. [14/4/2017 Matthew Woolley]
 				PlayerCharacter->AddItemToInventory( CreatedItem->ItemInfo );
