@@ -31,12 +31,9 @@ void UInventory::TickComponent( float DeltaTime, enum ELevelTick TickType, FActo
 
 		// True if there are items in this slot. [10/8/2016 Matthew Woolley]
 		bool bHasItems = ( SlotItem.CurrentItemStack > 0 );
-
-		// True if there is ammo in this/these clip(s). [10/8/2016 Matthew Woolley]
-		bool bHasAmmo = SlotItem.MaxAmmo != 0 && !SlotItem.bClip && !SlotItem.bWeapon ? ( ( SlotItem.CurrentAmmo > 0 ) ) : bHasItems;
-
+		
 		// If there are no items, or no ammo. [10/8/2016 Matthew Woolley]
-		if ( !bHasItems || !bHasAmmo )
+		if ( !bHasItems )
 		{
 			// Empty the slot. [10/8/2016 Matthew Woolley]
 			ItemSlots[ iItemSlotIterator ].bClip = false;
