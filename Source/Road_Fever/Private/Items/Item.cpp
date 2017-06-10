@@ -108,10 +108,18 @@ void AItem::OnCombine_Implementation( AItem* CombinedItem, int32 ItemASlot, int3
 				CombinedItem->Destroy();
 				this->Destroy();
 			}
+			
+			// Destroy all the drugs' placeholder objects. [8/9/2016 Matthew Woolley]
+			CreatedItem->Destroy();
+			CombinedItem->Destroy();
+			this->Destroy();
 
 			return;
 		}
 	}
+
+	CombinedItem->Destroy();
+	this->Destroy();
 }
 
 /*
